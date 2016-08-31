@@ -10,6 +10,8 @@
  */
 package vazkii.arl.block;
 
+import java.util.Locale;
+
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
@@ -91,7 +93,7 @@ public abstract class BlockMetaVariants<T extends Enum<T> & IStringSerializable>
 		String[] variants = new String[values.length];
 
 		for(int i = 0; i < values.length; i++)
-			variants[i] = values[i].name().toLowerCase();
+			variants[i] = values[i].name().toLowerCase(Locale.ENGLISH);
 		return variants;
 	}
 
@@ -99,7 +101,7 @@ public abstract class BlockMetaVariants<T extends Enum<T> & IStringSerializable>
 
 		@Override
 		public default String getName() {
-			return ((Enum) this).name().toLowerCase();
+			return ((Enum) this).name().toLowerCase(Locale.ENGLISH);
 		}
 
 	}
