@@ -10,7 +10,6 @@
  */
 package vazkii.arl.item;
 
-import java.util.List;
 import java.util.Set;
 
 import net.minecraft.block.Block;
@@ -19,6 +18,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import vazkii.arl.interf.IVariantHolder;
@@ -64,7 +64,7 @@ public abstract class ItemModTool extends ItemTool implements IVariantHolder {
 	}
 
 	@Override
-	public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems) {
+	public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems) {
 		for(int i = 0; i < getVariants().length; i++)
 			subItems.add(new ItemStack(itemIn, 1, i));
 	}

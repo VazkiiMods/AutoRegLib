@@ -33,7 +33,7 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 			NBTTagCompound var4 = var2.getCompoundTagAt(var3);
 			byte var5 = var4.getByte("Slot");
 			if (var5 >= 0 && var5 < inventorySlots.length)
-				inventorySlots[var5] = ItemStack.loadItemStackFromNBT(var4);
+				inventorySlots[var5] = new ItemStack(var4);
 		}
 	}
 
@@ -41,7 +41,7 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 	public void writeSharedNBT(NBTTagCompound par1NBTTagCompound) {
 		NBTTagList var2 = new NBTTagList();
 		for (int var3 = 0; var3 < inventorySlots.length; ++var3) {
-			if (inventorySlots[var3] != null) {
+			if(!inventorySlots[var3].isEmpty()) {
 				NBTTagCompound var4 = new NBTTagCompound();
 				var4.setByte("Slot", (byte)var3);
 				inventorySlots[var3].writeToNBT(var4);
@@ -58,32 +58,32 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 
 	@Override
 	public ItemStack decrStackSize(int i, int j) {
-		if (inventorySlots[i] != null) {
+		if (!inventorySlots[i].isEmpty()) {
 			ItemStack stackAt;
 
-			if (inventorySlots[i].stackSize <= j) {
+			if (inventorySlots[i].getCount() <= j) {
 				stackAt = inventorySlots[i];
-				inventorySlots[i] = null;
+				inventorySlots[i] = ItemStack.EMPTY;
 				inventoryChanged(i);
 				return stackAt;
 			} else {
 				stackAt = inventorySlots[i].splitStack(j);
 
-				if (inventorySlots[i].stackSize == 0)
-					inventorySlots[i] = null;
+				if (inventorySlots[i].getCount() == 0)
+					inventorySlots[i] = ItemStack.EMPTY;
 				inventoryChanged(i);
 
 				return stackAt;
 			}
 		}
 
-		return null;
+		return ItemStack.EMPTY;
 	}
 
 	@Override
 	public ItemStack removeStackFromSlot(int i) {
 		ItemStack stack = getStackInSlot(i);
-		setInventorySlotContents(i, null);
+		setInventorySlotContents(i, ItemStack.EMPTY);
 		inventoryChanged(i);
 		return stack;
 	}
@@ -100,8 +100,8 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 	}
 
 	@Override
-	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		return worldObj.getTileEntity(getPos()) == this && entityplayer.getDistanceSq(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) <= 64;
+	public boolean isUsableByPlayer(EntityPlayer entityplayer) {
+		return getWorld().getTileEntity(getPos()) == this && entityplayer.getDistanceSq(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) <= 64;
 	}
 
 	@Override
@@ -141,7 +141,7 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 
 	@Override
 	public void clear() {
-		Arrays.fill(inventorySlots, null);
+		Arrays.fill(inventorySlots, ItemStack.EMPTY);
 	}
 
 	@Override

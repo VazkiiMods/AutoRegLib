@@ -1,6 +1,6 @@
 [
 {
-  "modid": "AutoRegLib",
+  "modid": "autoreglib",
   "name": "AutoRegLib",
   "description": "Automatically item, block, and model registration for mods.",
   "version": "${version}",

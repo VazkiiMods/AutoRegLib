@@ -57,7 +57,7 @@ public abstract class ModelModArmor extends ModelBiped {
 			ItemStack itemstack = player.getHeldItemMainhand();
 			ItemStack itemstack1 = player.getHeldItemOffhand();
 
-			if(itemstack != null) {
+			if(!itemstack.isEmpty()) {
 				modelbiped$armpose = ModelBiped.ArmPose.ITEM;
 
 				if(player.getItemInUseCount() > 0) {
@@ -70,7 +70,7 @@ public abstract class ModelModArmor extends ModelBiped {
 				}
 			}
 
-			if(itemstack1 != null) {
+			if(!itemstack1.isEmpty()) {
 				modelbiped$armpose1 = ModelBiped.ArmPose.ITEM;
 
 				if(player.getItemInUseCount() > 0) {

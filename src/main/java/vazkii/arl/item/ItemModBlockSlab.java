@@ -10,8 +10,6 @@
  */
 package vazkii.arl.item;
 
-import java.util.List;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.creativetab.CreativeTabs;
@@ -20,6 +18,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemSlab;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import vazkii.arl.block.BlockModSlab;
 import vazkii.arl.interf.IModBlock;
 import vazkii.arl.interf.IVariantHolder;
@@ -44,7 +43,7 @@ public class ItemModBlockSlab extends ItemSlab implements IVariantHolder {
 
 	@Override
 	public ItemBlock setUnlocalizedName(String par1Str) {
-		return super.setUnlocalizedName(par1Str);
+		return (ItemBlock) super.setUnlocalizedName(par1Str);
 	}
 
 	@Override
@@ -61,7 +60,7 @@ public class ItemModBlockSlab extends ItemSlab implements IVariantHolder {
 	}
 
 	@Override
-	public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems) {
+	public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems) {
 		String[] variants = getVariants();
 		for(int i = 0; i < variants.length; i++)
 			subItems.add(new ItemStack(itemIn, 1, i));

@@ -15,8 +15,8 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 @Mod(modid = AutoRegLib.MOD_ID, name = AutoRegLib.MOD_NAME, version = AutoRegLib.VERSION)
 public class AutoRegLib {
 
-	public static final String MOD_ID = "AutoRegLib";
-	public static final String MOD_NAME = MOD_ID;
+	public static final String MOD_ID = "autoreglib";
+	public static final String MOD_NAME = "AutoRegLib";
 	public static final String BUILD = "GRADLE:BUILD";
 	public static final String VERSION = "GRADLE:VERSION-" + BUILD;	
 	

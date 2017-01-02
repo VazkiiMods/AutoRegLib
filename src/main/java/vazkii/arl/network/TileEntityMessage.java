@@ -32,7 +32,7 @@ public abstract class TileEntityMessage<T extends TileEntity> extends NetworkMes
 	@Override
 	public final IMessage handleMessage(MessageContext context) {
 		this.context = context;
-		World world = context.getServerHandler().playerEntity.worldObj;
+		World world = context.getServerHandler().playerEntity.getEntityWorld();
 		TileEntity tile = world.getTileEntity(pos);
 		if(tile != null)
 			try {

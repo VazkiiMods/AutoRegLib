@@ -136,7 +136,7 @@ public final class ModelHandler {
 	}
 
 	public static ModelResourceLocation getModelLocation(ItemStack stack) {
-		if(stack == null)
+		if(!stack.isEmpty())
 			return null;
 
 		return getModelLocation(stack.getItem(), stack.getItemDamage());
