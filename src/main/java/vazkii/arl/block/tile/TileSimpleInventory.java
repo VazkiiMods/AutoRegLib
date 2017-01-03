@@ -18,33 +18,34 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 
 public abstract class TileSimpleInventory extends TileMod implements ISidedInventory {
 
-	protected ItemStack[] inventorySlots = new ItemStack[getSizeInventory()];
+	protected NonNullList<ItemStack> inventorySlots = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
 
 	@Override
 	public void readSharedNBT(NBTTagCompound par1NBTTagCompound) {
 		NBTTagList var2 = par1NBTTagCompound.getTagList("Items", 10);
-		inventorySlots = new ItemStack[getSizeInventory()];
+		clear();
 		for(int var3 = 0; var3 < var2.tagCount(); ++var3) {
 			NBTTagCompound var4 = var2.getCompoundTagAt(var3);
 			byte var5 = var4.getByte("Slot");
-			if (var5 >= 0 && var5 < inventorySlots.length)
-				inventorySlots[var5] = new ItemStack(var4);
+			if (var5 >= 0 && var5 < inventorySlots.size())
+				inventorySlots.set(var5, new ItemStack(var4));
 		}
 	}
 
 	@Override
 	public void writeSharedNBT(NBTTagCompound par1NBTTagCompound) {
 		NBTTagList var2 = new NBTTagList();
-		for (int var3 = 0; var3 < inventorySlots.length; ++var3) {
-			if(!inventorySlots[var3].isEmpty()) {
+		for (int var3 = 0; var3 < inventorySlots.size(); ++var3) {
+			if(!inventorySlots.get(var3).isEmpty()) {
 				NBTTagCompound var4 = new NBTTagCompound();
 				var4.setByte("Slot", (byte)var3);
-				inventorySlots[var3].writeToNBT(var4);
+				inventorySlots.get(var3).writeToNBT(var4);
 				var2.appendTag(var4);
 			}
 		}
@@ -53,24 +54,24 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 
 	@Override
 	public ItemStack getStackInSlot(int i) {
-		return inventorySlots[i];
+		return inventorySlots.get(i);
 	}
 
 	@Override
 	public ItemStack decrStackSize(int i, int j) {
-		if (!inventorySlots[i].isEmpty()) {
+		if (!inventorySlots.get(i).isEmpty()) {
 			ItemStack stackAt;
 
-			if (inventorySlots[i].getCount() <= j) {
-				stackAt = inventorySlots[i];
-				inventorySlots[i] = ItemStack.EMPTY;
+			if (inventorySlots.get(i).getCount() <= j) {
+				stackAt = inventorySlots.get(i);
+				inventorySlots.set(i, ItemStack.EMPTY);
 				inventoryChanged(i);
 				return stackAt;
 			} else {
-				stackAt = inventorySlots[i].splitStack(j);
+				stackAt = inventorySlots.get(i).splitStack(j);
 
-				if (inventorySlots[i].getCount() == 0)
-					inventorySlots[i] = ItemStack.EMPTY;
+				if (inventorySlots.get(i).getCount() == 0)
+					inventorySlots.set(i, ItemStack.EMPTY);
 				inventoryChanged(i);
 
 				return stackAt;
@@ -90,7 +91,7 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
-		inventorySlots[i] = itemstack;
+		inventorySlots.set(i, itemstack);
 		inventoryChanged(i);
 	}
 
@@ -141,7 +142,7 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 
 	@Override
 	public void clear() {
-		Arrays.fill(inventorySlots, ItemStack.EMPTY);
+		inventorySlots = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
 	}
 
 	@Override
