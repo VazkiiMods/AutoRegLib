@@ -116,11 +116,6 @@ public abstract class BlockModSlab extends BlockSlab implements IModBlock {
 		return super.quantityDropped(state, fortune, random);
 	}
 
-//	@Override
-//	public ItemStack createStackedBlock(IBlockState par1) {
-//		return new ItemStack(getSingleBlock());
-//	} TODO what?
-
 	public void register() {
 		setRegistryName(getPrefix() + bareName);
 		GameRegistry.register(this);
