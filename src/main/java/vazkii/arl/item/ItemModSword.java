@@ -61,12 +61,6 @@ public abstract class ItemModSword extends ItemSword implements IVariantHolder {
 	}
 
 	@Override
-	public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems) {
-		for(int i = 0; i < getVariants().length; i++)
-			subItems.add(new ItemStack(itemIn, 1, i));
-	}
-
-	@Override
 	public String[] getVariants() {
 		return variants;
 	}

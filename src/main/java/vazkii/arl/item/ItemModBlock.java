@@ -58,11 +58,11 @@ public class ItemModBlock extends ItemBlock implements IVariantHolder {
 	}
 
 	@Override
-	public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems) {
+	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
 		String[] variants = getVariants();
 		for(int i = 0; i < variants.length; i++)
 			if(modBlock.shouldDisplayVariant(i))
-				subItems.add(new ItemStack(itemIn, 1, i));
+				subItems.add(new ItemStack(this, 1, i));
 	}
 
 	@Override

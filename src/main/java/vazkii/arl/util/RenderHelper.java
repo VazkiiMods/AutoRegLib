@@ -18,9 +18,9 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.fml.relauncher.Side;
@@ -128,7 +128,7 @@ public final class RenderHelper {
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GlStateManager.shadeModel(GL11.GL_SMOOTH);
 		Tessellator var15 = Tessellator.getInstance();
-		VertexBuffer buff = var15.getBuffer();
+		BufferBuilder buff = var15.getBuffer();
 		buff.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 		buff.pos(par3, par2, z).color(var8, var9, var10, var7).endVertex();
 		buff.pos(par1, par2, z).color(var8, var9, var10, var7).endVertex();
@@ -147,7 +147,7 @@ public final class RenderHelper {
 
 	public static void drawTexturedModalRect(int par1, int par2, float z, int par3, int par4, int par5, int par6, float f, float f1) {
 		Tessellator tessellator = Tessellator.getInstance();
-		VertexBuffer buff = tessellator.getBuffer();
+		BufferBuilder buff = tessellator.getBuffer();
 		buff.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 		buff.pos(par1 + 0, par2 + par6, z).tex((par3 + 0) * f, (par4 + par6) * f1).endVertex();
 		buff.pos(par1 + par5, par2 + par6, z).tex((par3 + par5) * f, (par4 + par6) * f1).endVertex();
