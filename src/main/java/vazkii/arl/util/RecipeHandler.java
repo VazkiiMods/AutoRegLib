@@ -34,11 +34,7 @@ import vazkii.arl.interf.IRecipeGrouped;
 
 public final class RecipeHandler {
 
-	private static String namespace;
-	
-	public static void setNamespace(String name) {
-		namespace = name;
-	}
+	private static final String namespace = "arl";
 	
 	// Bridges
 
