@@ -68,8 +68,9 @@ public abstract class ItemMod extends Item implements IVariantHolder {
 
 	@Override
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
-		for(int i = 0; i < getVariants().length; i++)
-			subItems.add(new ItemStack(this, 1, i));
+		if(func_194125_a(tab))
+			for(int i = 0; i < getVariants().length; i++)
+				subItems.add(new ItemStack(this, 1, i));
 	}
 
 	@Override

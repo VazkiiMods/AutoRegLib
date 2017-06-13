@@ -62,8 +62,9 @@ public class ItemModBlockSlab extends ItemSlab implements IVariantHolder {
 	@Override
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
 		String[] variants = getVariants();
-		for(int i = 0; i < variants.length; i++)
-			subItems.add(new ItemStack(this, 1, i));
+		if(func_194125_a(tab))
+			for(int i = 0; i < variants.length; i++)
+				subItems.add(new ItemStack(this, 1, i));
 	}
 
 	@Override

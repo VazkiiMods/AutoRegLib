@@ -20,6 +20,7 @@ import com.google.common.collect.Maps;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
@@ -28,6 +29,8 @@ import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.oredict.OreIngredient;
+import vazkii.arl.interf.IRecipeGrouped;
 
 public final class RecipeHandler {
 
@@ -58,7 +61,7 @@ public final class RecipeHandler {
 		else if(ingredients.size() > 9)
 			throw new IllegalArgumentException("Too many ingredients for shapeless recipe");
 
-		ShapelessRecipes recipe = new ShapelessRecipes("biomesoplenty", output, ingredients);
+		ShapelessRecipes recipe = new ShapelessRecipes(outputGroup(output), output, ingredients);
 		CraftingManager.func_193372_a(unusedLocForOutput(output), recipe);
 	}
 	
@@ -93,7 +96,7 @@ public final class RecipeHandler {
 		try {
 			key.put(" ", Ingredient.field_193370_a);
 			Object ingredients = ReflectiveMethods.recipeAdd.invoke(null, pattern.toArray(new String[pattern.size()]), key, width, height);
-			ShapedRecipes recipe = new ShapedRecipes("biomesoplenty", width, height, (NonNullList<Ingredient>) ingredients, output);
+			ShapedRecipes recipe = new ShapedRecipes(outputGroup(output), width, height, (NonNullList<Ingredient>) ingredients, output);
 			CraftingManager.func_193372_a(unusedLocForOutput(output), recipe);
 		} catch(Throwable e) {
 			throw new RuntimeException(e);
@@ -105,17 +108,18 @@ public final class RecipeHandler {
 	}
 
 	public static Ingredient asIngredient(Object object) {
-		if (object instanceof Item)
+		if(object instanceof Item)
 			return Ingredient.func_193367_a((Item)object);
 
-		else if (object instanceof Block)
+		else if(object instanceof Block)
 			return Ingredient.func_193369_a(new ItemStack((Block)object));
 
-		else if (object instanceof ItemStack)
+		else if(object instanceof ItemStack)
 			return Ingredient.func_193369_a((ItemStack)object);
-
-		// TODO oredict
 		
+		else if(object instanceof String)
+			return new OreIngredient((String) object);
+				
 		throw new IllegalArgumentException("Cannot convert object of type " + object.getClass().toString() + " to an Ingredient!");
 	}
 
@@ -131,6 +135,19 @@ public final class RecipeHandler {
 		}
 
 		return recipeLoc;
+	}
+	
+	private static String outputGroup(ItemStack output) {
+		Item item = output.getItem();
+		if(item instanceof IRecipeGrouped)
+			return namespace + ":" + ((IRecipeGrouped) item).getRecipeGroup();
+		if(item instanceof ItemBlock) {
+			Block block = ((ItemBlock) item).block;
+			if(block instanceof IRecipeGrouped)
+				return namespace + ":" + ((IRecipeGrouped) block).getRecipeGroup();
+		}
+		
+		return output.getItem().getRegistryName().toString();
 	}
 
 
