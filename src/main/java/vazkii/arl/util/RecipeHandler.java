@@ -58,7 +58,7 @@ public final class RecipeHandler {
 			throw new IllegalArgumentException("Too many ingredients for shapeless recipe");
 
 		ShapelessRecipes recipe = new ShapelessRecipes(outputGroup(output), output, ingredients);
-		CraftingManager.func_193372_a(unusedLocForOutput(output), recipe);
+		addRecipe(unusedLocForOutput(output), recipe);
 	}
 	
 	public static void addShapedRecipe(ItemStack output, Object... inputs) {
@@ -91,16 +91,20 @@ public final class RecipeHandler {
 
 		try {
 			key.put(" ", Ingredient.field_193370_a);
-			Object ingredients = ReflectiveMethods.recipeAdd.invoke(null, pattern.toArray(new String[pattern.size()]), key, width, height);
+			Object ingredients = ReflectiveMethods.prepareMaterials.invoke(null, pattern.toArray(new String[pattern.size()]), key, width, height);
 			ShapedRecipes recipe = new ShapedRecipes(outputGroup(output), width, height, (NonNullList<Ingredient>) ingredients, output);
-			CraftingManager.func_193372_a(unusedLocForOutput(output), recipe);
+			addRecipe(unusedLocForOutput(output), recipe);
 		} catch(Throwable e) {
 			throw new RuntimeException(e);
 		}
 	}
-
-	public static void addRecipe(String name, IRecipe recipe) {
-		CraftingManager.func_193372_a(new ResourceLocation(namespace, name), recipe);
+	
+	public static void addRecipe(ResourceLocation res, IRecipe recipe) {
+		try {
+			ReflectiveMethods.addRecipe.invoke(null, res, recipe);
+		} catch(Throwable e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public static Ingredient asIngredient(Object object) {
