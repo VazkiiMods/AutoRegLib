@@ -14,13 +14,14 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-@Mod(modid = AutoRegLib.MOD_ID, name = AutoRegLib.MOD_NAME, version = AutoRegLib.VERSION)
+@Mod(modid = AutoRegLib.MOD_ID, name = AutoRegLib.MOD_NAME, version = AutoRegLib.VERSION, dependencies = AutoRegLib.DEPENDENCIES)
 public class AutoRegLib {
 
 	public static final String MOD_ID = "autoreglib";
 	public static final String MOD_NAME = "AutoRegLib";
 	public static final String BUILD = "GRADLE:BUILD";
-	public static final String VERSION = "GRADLE:VERSION-" + BUILD;	
+	public static final String VERSION = "GRADLE:VERSION-" + BUILD;
+	public static final String DEPENDENCIES = "required-after:forge@[14.21.0.2331]";
 	
 	public static final String PROXY_COMMON = "vazkii.arl.CommonProxy";
 	public static final String PROXY_CLIENT = "vazkii.arl.ClientProxy";

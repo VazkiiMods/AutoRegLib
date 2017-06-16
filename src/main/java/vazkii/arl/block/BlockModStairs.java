@@ -21,7 +21,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import vazkii.arl.interf.IModBlock;
 import vazkii.arl.item.ItemModBlock;
-import vazkii.arl.util.RecipeHandler;
+import vazkii.arl.recipe.RecipeHandler;
 
 public abstract class BlockModStairs extends BlockStairs implements IModBlock {
 

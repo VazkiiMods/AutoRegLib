@@ -36,7 +36,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import vazkii.arl.block.BlockMetaVariants.EnumBase;
 import vazkii.arl.interf.IModBlock;
 import vazkii.arl.item.ItemModBlockSlab;
-import vazkii.arl.util.RecipeHandler;
+import vazkii.arl.recipe.RecipeHandler;
 
 public abstract class BlockModSlab extends BlockSlab implements IModBlock {
 
