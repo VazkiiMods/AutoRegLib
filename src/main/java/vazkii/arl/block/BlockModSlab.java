@@ -37,6 +37,7 @@ import vazkii.arl.block.BlockMetaVariants.EnumBase;
 import vazkii.arl.interf.IModBlock;
 import vazkii.arl.item.ItemModBlockSlab;
 import vazkii.arl.recipe.RecipeHandler;
+import vazkii.arl.util.ProxyRegistry;
 
 public abstract class BlockModSlab extends BlockSlab implements IModBlock {
 
@@ -118,9 +119,9 @@ public abstract class BlockModSlab extends BlockSlab implements IModBlock {
 
 	public void register() {
 		setRegistryName(getPrefix() + bareName);
-		GameRegistry.register(this);
+		ProxyRegistry.register(this);
 		if(!isDouble())
-			GameRegistry.register(new ItemModBlockSlab(this), new ResourceLocation(getPrefix() + bareName));
+			ProxyRegistry.register(new ItemModBlockSlab(this, new ResourceLocation(getPrefix() + bareName)));
 	}
 
 	@Override
@@ -195,9 +196,9 @@ public abstract class BlockModSlab extends BlockSlab implements IModBlock {
 		half.register();
 		full.register();
 
-		RecipeHandler.addOreDictRecipe(new ItemStack(half, 6),
+		RecipeHandler.addOreDictRecipe(new ItemStack(ProxyRegistry.getItemMapping(half), 6),
 				"BBB",
-				'B', new ItemStack(base, 1, meta));
+				'B', new ItemStack(ProxyRegistry.getItemMapping(base), 1, meta));
 	}
 
 	public static enum DummyEnum implements EnumBase {

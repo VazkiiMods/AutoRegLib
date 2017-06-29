@@ -18,10 +18,10 @@ import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import vazkii.arl.interf.IModBlock;
 import vazkii.arl.item.ItemModBlock;
 import vazkii.arl.recipe.RecipeHandler;
+import vazkii.arl.util.ProxyRegistry;
 
 public abstract class BlockModStairs extends BlockStairs implements IModBlock {
 
@@ -42,8 +42,8 @@ public abstract class BlockModStairs extends BlockStairs implements IModBlock {
 	public Block setUnlocalizedName(String name) {
 		super.setUnlocalizedName(name);
 		setRegistryName(getPrefix() + name);
-		GameRegistry.register(this);
-		GameRegistry.register(new ItemModBlock(this), new ResourceLocation(getPrefix() + name));
+		ProxyRegistry.register(this);
+		ProxyRegistry.register(new ItemModBlock(this, new ResourceLocation(getPrefix() + name)));
 		return this;
 	}
 
@@ -83,9 +83,9 @@ public abstract class BlockModStairs extends BlockStairs implements IModBlock {
 	}
 
 	public static void initStairs(Block base, int meta, BlockStairs block) {
-		RecipeHandler.addOreDictRecipe(new ItemStack(block, 4),
+		RecipeHandler.addOreDictRecipe(new ItemStack(ProxyRegistry.getItemMapping(block), 4),
 				"B  ", "BB ", "BBB",
-				'B', new ItemStack(base, 1, meta));
+				'B', new ItemStack(ProxyRegistry.getItemMapping(base), 1, meta));
 	}
 
 

@@ -27,7 +27,6 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.registry.GameData;
 import vazkii.arl.interf.IBlockColorProvider;
 import vazkii.arl.interf.IExtraVariantHolder;
 import vazkii.arl.interf.IItemColorProvider;
@@ -125,7 +124,7 @@ public final class ModelHandler {
 	}
 
 	private static <T extends Enum<T> & IStringSerializable> void registerVariantsDefaulted(Item item, Block b, Class<T> enumclazz, String variantHeader) {
-		String baseName = GameData.getBlockRegistry().getNameForObject(b).toString();
+		String baseName = Block.REGISTRY.getNameForObject(b).toString();
 		for(T e : enumclazz.getEnumConstants()) {
 			String variantName = variantHeader + "=" + e.getName();
 			ModelResourceLocation loc = new ModelResourceLocation(baseName, variantName);

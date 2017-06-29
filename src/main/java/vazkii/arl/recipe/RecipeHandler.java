@@ -32,9 +32,9 @@ import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreIngredient;
 import vazkii.arl.interf.IRecipeGrouped;
+import vazkii.arl.util.ProxyRegistry;
 
 public final class RecipeHandler {
 
@@ -61,7 +61,7 @@ public final class RecipeHandler {
 		ShapelessRecipes recipe = new ShapelessRecipes(outputGroup(namespace, output), output, ingredients);
 		addRecipe(unusedLocForOutput(namespace, output), recipe);
 	}
-
+	
 	public static void addShapedRecipe(ItemStack output, Object... inputs) {
 		String namespace = getNamespace();
 		ArrayList<String> pattern = Lists.newArrayList();
@@ -92,7 +92,7 @@ public final class RecipeHandler {
 		int height = pattern.size();
 
 		try {
-			key.put(" ", Ingredient.field_193370_a);
+			key.put(" ", Ingredient.EMPTY);
 			Object ingredients = prepareMaterials(pattern.toArray(new String[pattern.size()]), key, width, height);
 			ShapedRecipes recipe = new ShapedRecipes(outputGroup(namespace, output), width, height, (NonNullList<Ingredient>) ingredients, output);
 			addRecipe(unusedLocForOutput(namespace, output), recipe);
@@ -103,7 +103,7 @@ public final class RecipeHandler {
 
 	// copy from vanilla
 	private static NonNullList<Ingredient> prepareMaterials(String[] p_192402_0_, Map<String, Ingredient> p_192402_1_, int p_192402_2_, int p_192402_3_) {
-		NonNullList<Ingredient> nonnulllist = NonNullList.<Ingredient>withSize(p_192402_2_ * p_192402_3_, Ingredient.field_193370_a);
+		NonNullList<Ingredient> nonnulllist = NonNullList.<Ingredient>withSize(p_192402_2_ * p_192402_3_, Ingredient.EMPTY);
 		Set<String> set = Sets.newHashSet(p_192402_1_.keySet());
 		set.remove(" ");
 
@@ -124,18 +124,18 @@ public final class RecipeHandler {
 			throw new IllegalArgumentException("Illegal recipe output");
 		
 		recipe.setRegistryName(res);
-		GameRegistry.register(recipe);
+		ProxyRegistry.register(recipe);
 	}
 
 	private static Ingredient asIngredient(Object object) {
 		if(object instanceof Item)
-			return Ingredient.func_193367_a((Item)object);
+			return Ingredient.fromItem((Item)object);
 
 		else if(object instanceof Block)
-			return Ingredient.func_193369_a(new ItemStack((Block)object));
+			return Ingredient.fromStacks(new ItemStack((Block)object));
 
 		else if(object instanceof ItemStack)
-			return Ingredient.func_193369_a((ItemStack)object);
+			return Ingredient.fromStacks((ItemStack)object);
 
 		else if(object instanceof String)
 			return new OreIngredient((String) object);
@@ -149,7 +149,7 @@ public final class RecipeHandler {
 		int index = 0;
 
 		// find unused recipe name
-		while (CraftingManager.field_193380_a.containsKey(recipeLoc)) {
+		while (CraftingManager.REGISTRY.containsKey(recipeLoc)) {
 			index++;
 			recipeLoc = new ResourceLocation(namespace, baseLoc.getResourcePath() + "_" + index);
 		}
@@ -162,7 +162,7 @@ public final class RecipeHandler {
 		if(item instanceof IRecipeGrouped)
 			return namespace + ":" + ((IRecipeGrouped) item).getRecipeGroup();
 		if(item instanceof ItemBlock) {
-			Block block = ((ItemBlock) item).block;
+			Block block = ((ItemBlock) item).getBlock();
 			if(block instanceof IRecipeGrouped)
 				return namespace + ":" + ((IRecipeGrouped) block).getRecipeGroup();
 		}

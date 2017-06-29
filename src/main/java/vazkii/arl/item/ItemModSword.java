@@ -11,14 +11,12 @@
 package vazkii.arl.item;
 
 import net.minecraft.client.renderer.ItemMeshDefinition;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import vazkii.arl.interf.IVariantHolder;
+import vazkii.arl.util.ProxyRegistry;
 
 public abstract class ItemModSword extends ItemSword implements IVariantHolder {
 
@@ -42,7 +40,8 @@ public abstract class ItemModSword extends ItemSword implements IVariantHolder {
 	@Override
 	public Item setUnlocalizedName(String name) {
 		super.setUnlocalizedName(name);
-		GameRegistry.register(this, new ResourceLocation(getPrefix() + name));
+		setRegistryName(new ResourceLocation(getPrefix() + name));
+		ProxyRegistry.register(this);
 
 		return this;
 	}

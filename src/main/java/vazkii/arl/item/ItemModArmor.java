@@ -17,8 +17,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import vazkii.arl.interf.IVariantHolder;
+import vazkii.arl.util.ProxyRegistry;
 
 public abstract class ItemModArmor extends ItemArmor implements IVariantHolder {
 
@@ -36,7 +36,8 @@ public abstract class ItemModArmor extends ItemArmor implements IVariantHolder {
 	@Override
 	public Item setUnlocalizedName(String name) {
 		super.setUnlocalizedName(name);
-		GameRegistry.register(this, new ResourceLocation(getPrefix() + name));
+		setRegistryName(new ResourceLocation(getPrefix() + name));
+		ProxyRegistry.register(this);
 
 		return this;
 	}

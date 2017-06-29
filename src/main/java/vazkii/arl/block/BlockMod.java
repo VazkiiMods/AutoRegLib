@@ -17,11 +17,11 @@ import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import vazkii.arl.interf.IModBlock;
 import vazkii.arl.item.ItemModBlock;
+import vazkii.arl.util.ProxyRegistry;
 
 public abstract class BlockMod extends Block implements IModBlock {
 
@@ -45,8 +45,8 @@ public abstract class BlockMod extends Block implements IModBlock {
 	public Block setUnlocalizedName(String name) {
 		super.setUnlocalizedName(name);
 		setRegistryName(getPrefix() + name);
-		GameRegistry.register(this);
-		GameRegistry.register(new ItemModBlock(this), new ResourceLocation(getPrefix() + name));
+		ProxyRegistry.register(this);
+		ProxyRegistry.register(new ItemModBlock(this, new ResourceLocation(getPrefix() + name)));
 		return this;
 	}
 	

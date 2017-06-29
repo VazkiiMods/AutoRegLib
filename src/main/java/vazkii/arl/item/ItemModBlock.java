@@ -14,10 +14,10 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.EnumRarity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import vazkii.arl.interf.IModBlock;
 import vazkii.arl.interf.IVariantHolder;
 
@@ -25,13 +25,14 @@ public class ItemModBlock extends ItemBlock implements IVariantHolder {
 
 	private IModBlock modBlock;
 
-	public ItemModBlock(Block block) {
+	public ItemModBlock(Block block, ResourceLocation res) {
 		super(block);
 		modBlock = (IModBlock) block;
 
 		ItemMod.variantHolders.add(this);
 		if(getVariants().length > 1)
 			setHasSubtypes(true);
+		setRegistryName(res);
 	}
 
 	@Override
@@ -60,7 +61,7 @@ public class ItemModBlock extends ItemBlock implements IVariantHolder {
 	@Override
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
 		String[] variants = getVariants();
-		if(func_194125_a(tab))
+		if(isInCreativeTab(tab))
 			for(int i = 0; i < variants.length; i++)
 				if(modBlock.shouldDisplayVariant(i))
 					subItems.add(new ItemStack(this, 1, i));

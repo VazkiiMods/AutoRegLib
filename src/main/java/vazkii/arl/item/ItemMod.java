@@ -19,10 +19,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import vazkii.arl.interf.IVariantHolder;
+import vazkii.arl.util.ProxyRegistry;
 import vazkii.arl.util.TooltipHandler;
 
 public abstract class ItemMod extends Item implements IVariantHolder {
@@ -48,7 +48,8 @@ public abstract class ItemMod extends Item implements IVariantHolder {
 	@Override
 	public Item setUnlocalizedName(String name) {
 		super.setUnlocalizedName(name);
-		GameRegistry.register(this, new ResourceLocation(getPrefix() + name));
+		setRegistryName(new ResourceLocation(getPrefix() + name));
+		ProxyRegistry.register(this);
 
 		return this;
 	}
@@ -68,7 +69,7 @@ public abstract class ItemMod extends Item implements IVariantHolder {
 
 	@Override
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
-		if(func_194125_a(tab))
+		if(isInCreativeTab(tab))
 			for(int i = 0; i < getVariants().length; i++)
 				subItems.add(new ItemStack(this, 1, i));
 	}
