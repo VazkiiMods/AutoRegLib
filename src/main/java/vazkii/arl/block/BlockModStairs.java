@@ -83,9 +83,9 @@ public abstract class BlockModStairs extends BlockStairs implements IModBlock {
 	}
 
 	public static void initStairs(Block base, int meta, BlockStairs block) {
-		RecipeHandler.addOreDictRecipe(new ItemStack(ProxyRegistry.getItemMapping(block), 4),
+		RecipeHandler.addOreDictRecipe(ProxyRegistry.newStack(block, 4),
 				"B  ", "BB ", "BBB",
-				'B', new ItemStack(ProxyRegistry.getItemMapping(base), 1, meta));
+				'B', ProxyRegistry.newStack(base, 1, meta));
 	}
 
 

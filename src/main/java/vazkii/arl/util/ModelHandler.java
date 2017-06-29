@@ -26,7 +26,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import vazkii.arl.interf.IBlockColorProvider;
 import vazkii.arl.interf.IExtraVariantHolder;
 import vazkii.arl.interf.IItemColorProvider;
@@ -38,7 +40,8 @@ public final class ModelHandler {
 
 	public static final HashMap<String, ModelResourceLocation> resourceLocations = new HashMap();
 
-	public static void preInit() {
+	@SubscribeEvent
+	public static void onRegister(ModelRegistryEvent event) {
 		for(IVariantHolder holder : ItemMod.variantHolders)
 			registerModels(holder);
 	}
@@ -124,7 +127,7 @@ public final class ModelHandler {
 	}
 
 	private static <T extends Enum<T> & IStringSerializable> void registerVariantsDefaulted(Item item, Block b, Class<T> enumclazz, String variantHeader) {
-		String baseName = Block.REGISTRY.getNameForObject(b).toString();
+		String baseName = b.getRegistryName().toString();
 		for(T e : enumclazz.getEnumConstants()) {
 			String variantName = variantHeader + "=" + e.getName();
 			ModelResourceLocation loc = new ModelResourceLocation(baseName, variantName);

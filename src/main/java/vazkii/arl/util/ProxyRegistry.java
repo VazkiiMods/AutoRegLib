@@ -3,10 +3,11 @@ package vazkii.arl.util;
 import java.util.Collection;
 import java.util.HashMap;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -17,7 +18,7 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 
 public class ProxyRegistry {
 	
-	private static Multimap<Class<?>, RegistryEntry> entries = HashMultimap.create();
+	private static Multimap<Class<?>, RegistryEntry> entries = MultimapBuilder.hashKeys().arrayListValues().build();
 
 	private static HashMap<Block, Item> temporaryItemBlockMap = new HashMap();
 	
@@ -33,9 +34,9 @@ public class ProxyRegistry {
 	
 	private static Item getItemMapping(Block block) {
 		Item i = Item.getItemFromBlock(block);
-		if(i == null && temporaryItemBlockMap.containsKey(block))
+		if((i == null || i == Item.getItemFromBlock(Blocks.AIR)) && temporaryItemBlockMap.containsKey(block))
 			return temporaryItemBlockMap.get(block);
-			
+		
 		return i;
 	}
 
@@ -64,7 +65,7 @@ public class ProxyRegistry {
 	}
 	
 	@SubscribeEvent
-	public void onRegistryEvent(RegistryEvent.Register event) {
+	public static void onRegistryEvent(RegistryEvent.Register event) {
 		Class<?> type = event.getRegistry().getRegistrySuperType();
 		if(entries.containsKey(type)) {
 			Collection<RegistryEntry> ourEntries = entries.get(type);
@@ -82,7 +83,6 @@ public class ProxyRegistry {
 			this.res = res;
 			this.entry = entry;
 		}
-		
 		
 	}
 	

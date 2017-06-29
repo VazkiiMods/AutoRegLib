@@ -32,7 +32,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import vazkii.arl.block.BlockMetaVariants.EnumBase;
 import vazkii.arl.interf.IModBlock;
 import vazkii.arl.item.ItemModBlockSlab;
@@ -196,9 +195,9 @@ public abstract class BlockModSlab extends BlockSlab implements IModBlock {
 		half.register();
 		full.register();
 
-		RecipeHandler.addOreDictRecipe(new ItemStack(ProxyRegistry.getItemMapping(half), 6),
+		RecipeHandler.addOreDictRecipe(ProxyRegistry.newStack(half, 6),
 				"BBB",
-				'B', new ItemStack(ProxyRegistry.getItemMapping(base), 1, meta));
+				'B', ProxyRegistry.newStack(base, 1, meta));
 	}
 
 	public static enum DummyEnum implements EnumBase {

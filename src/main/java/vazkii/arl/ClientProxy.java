@@ -4,6 +4,7 @@
  */
 package vazkii.arl;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import vazkii.arl.util.ModelHandler;
@@ -13,7 +14,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void preInit(FMLPreInitializationEvent event) {
 		super.preInit(event);
-		ModelHandler.preInit();
+		MinecraftForge.EVENT_BUS.register(ModelHandler.class);
 	}
 
 	@Override
