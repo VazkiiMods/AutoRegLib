@@ -67,14 +67,11 @@ public class ProxyRegistry {
 	@SubscribeEvent
 	public static void onRegistryEvent(RegistryEvent.Register event) {
 		Class<?> type = event.getRegistry().getRegistrySuperType();
-		System.out.println("REGISTRY FOR " + type);
 		
 		if(entries.containsKey(type)) {
 			Collection<IForgeRegistryEntry<?>> ourEntries = entries.get(type);
-			for(IForgeRegistryEntry<?> entry : ourEntries) {
+			for(IForgeRegistryEntry<?> entry : ourEntries)
 				event.getRegistry().register(entry);
-				System.out.println("Add: " + entry.getRegistryName());
-			}
 		}
 	}
 	
