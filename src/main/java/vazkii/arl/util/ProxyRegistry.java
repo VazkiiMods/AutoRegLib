@@ -18,12 +18,12 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 
 public class ProxyRegistry {
 	
-	private static Multimap<Class<?>, RegistryEntry> entries = MultimapBuilder.hashKeys().arrayListValues().build();
+	private static Multimap<Class<?>, IForgeRegistryEntry<?>> entries = MultimapBuilder.hashKeys().arrayListValues().build();
 
 	private static HashMap<Block, Item> temporaryItemBlockMap = new HashMap();
 	
 	public static <T extends IForgeRegistryEntry<T>> void register(IForgeRegistryEntry<T> obj) {
-		entries.put(obj.getRegistryType(), new RegistryEntry(obj.getRegistryName(), obj));
+		entries.put(obj.getRegistryType(), obj);
 		
 		if(obj instanceof ItemBlock) {
 			ItemBlock iblock = (ItemBlock) obj;
@@ -67,23 +67,15 @@ public class ProxyRegistry {
 	@SubscribeEvent
 	public static void onRegistryEvent(RegistryEvent.Register event) {
 		Class<?> type = event.getRegistry().getRegistrySuperType();
+		System.out.println("REGISTRY FOR " + type);
+		
 		if(entries.containsKey(type)) {
-			Collection<RegistryEntry> ourEntries = entries.get(type);
-			for(RegistryEntry entry : ourEntries)
-				event.getRegistry().register(entry.entry);
+			Collection<IForgeRegistryEntry<?>> ourEntries = entries.get(type);
+			for(IForgeRegistryEntry<?> entry : ourEntries) {
+				event.getRegistry().register(entry);
+				System.out.println("Add: " + entry.getRegistryName());
+			}
 		}
-	}
-	
-	private static class RegistryEntry {
-		
-		public final ResourceLocation res;
-		public final IForgeRegistryEntry<?> entry;
-		
-		public RegistryEntry(ResourceLocation res, IForgeRegistryEntry<?> entry) {
-			this.res = res;
-			this.entry = entry;
-		}
-		
 	}
 	
 }

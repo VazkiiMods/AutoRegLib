@@ -13,6 +13,7 @@ package vazkii.arl.recipe;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,7 +38,9 @@ import vazkii.arl.interf.IRecipeGrouped;
 import vazkii.arl.util.ProxyRegistry;
 
 public final class RecipeHandler {
-
+	
+	private static final List<ResourceLocation> usedNames = new ArrayList();
+	
 	public static void addOreDictRecipe(ItemStack output, Object... inputs) {
 		addShapedRecipe(output, inputs);
 	}
@@ -124,6 +127,7 @@ public final class RecipeHandler {
 			throw new IllegalArgumentException("Illegal recipe output");
 		
 		recipe.setRegistryName(res);
+		usedNames.add(res);
 		ProxyRegistry.register(recipe);
 	}
 
@@ -149,7 +153,7 @@ public final class RecipeHandler {
 		int index = 0;
 
 		// find unused recipe name
-		while (CraftingManager.REGISTRY.containsKey(recipeLoc)) {
+		while(usedNames.contains(recipeLoc)) {
 			index++;
 			recipeLoc = new ResourceLocation(namespace, baseLoc.getResourcePath() + "_" + index);
 		}
