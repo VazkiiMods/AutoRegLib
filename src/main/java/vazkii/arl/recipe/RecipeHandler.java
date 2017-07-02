@@ -42,14 +42,22 @@ public final class RecipeHandler {
 	private static final List<ResourceLocation> usedNames = new ArrayList();
 	
 	public static void addOreDictRecipe(ItemStack output, Object... inputs) {
-		addShapedRecipe(output, inputs);
+		addShapedRecipe(null, output, inputs);
 	}
 
 	public static void addShapelessOreDictRecipe(ItemStack output, Object... inputs) {
-		addShapelessRecipe(output, inputs);
+		addShapelessRecipe(null, output, inputs);
+	}
+	
+	public static void addOreDictRecipe(MultiRecipe multi, ItemStack output,  Object... inputs) {
+		addShapedRecipe(multi, output, inputs);
 	}
 
-	public static void addShapelessRecipe(ItemStack output, Object... inputs) {
+	public static void addShapelessOreDictRecipe(MultiRecipe multi, ItemStack output, Object... inputs) {
+		addShapelessRecipe(multi, output, inputs);
+	}
+
+	public static void addShapelessRecipe(MultiRecipe multi, ItemStack output, Object... inputs) {
 		String namespace = getNamespace();
 		NonNullList<Ingredient> ingredients = NonNullList.create();
 
@@ -62,10 +70,12 @@ public final class RecipeHandler {
 			throw new IllegalArgumentException("Too many ingredients for shapeless recipe");
 
 		ShapelessRecipes recipe = new ShapelessRecipes(outputGroup(namespace, output), output, ingredients);
-		addRecipe(unusedLocForOutput(namespace, output), recipe);
+		if(multi != null)
+			multi.addRecipe(recipe);
+		else addRecipe(unusedLocForOutput(namespace, output), recipe);
 	}
 	
-	public static void addShapedRecipe(ItemStack output, Object... inputs) {
+	public static void addShapedRecipe(MultiRecipe multi, ItemStack output, Object... inputs) {
 		String namespace = getNamespace();
 		ArrayList<String> pattern = Lists.newArrayList();
 		Map<String, Ingredient> key = Maps.newHashMap();
@@ -98,7 +108,9 @@ public final class RecipeHandler {
 			key.put(" ", Ingredient.EMPTY);
 			Object ingredients = prepareMaterials(pattern.toArray(new String[pattern.size()]), key, width, height);
 			ShapedRecipes recipe = new ShapedRecipes(outputGroup(namespace, output), width, height, (NonNullList<Ingredient>) ingredients, output);
-			addRecipe(unusedLocForOutput(namespace, output), recipe);
+			if(multi != null)
+				multi.addRecipe(recipe);
+			else addRecipe(unusedLocForOutput(namespace, output), recipe);
 		} catch(Throwable e) {
 			throw new RuntimeException(e);
 		}
