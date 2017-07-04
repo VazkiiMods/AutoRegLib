@@ -41,6 +41,8 @@ public final class RecipeHandler {
 	
 	private static final List<ResourceLocation> usedNames = new ArrayList();
 	
+	// Many bridge methods for backwards compatibility
+	
 	public static void addOreDictRecipe(ItemStack output, Object... inputs) {
 		addShapedRecipe(null, output, inputs);
 	}
@@ -57,6 +59,14 @@ public final class RecipeHandler {
 		addShapelessRecipe(multi, output, inputs);
 	}
 
+	public static void addShapelessRecipe(ItemStack output, Object... inputs) {
+		addShapelessRecipe(null, output, inputs);
+	}
+	
+	public static void addShapedRecipe(ItemStack output, Object... inputs) {
+		addShapedRecipe(null, output, inputs);
+	}
+	
 	public static void addShapelessRecipe(MultiRecipe multi, ItemStack output, Object... inputs) {
 		String namespace = getNamespace();
 		NonNullList<Ingredient> ingredients = NonNullList.create();
