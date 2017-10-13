@@ -15,6 +15,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.item.EnumRarity;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
@@ -46,8 +47,12 @@ public abstract class BlockMod extends Block implements IModBlock {
 		super.setUnlocalizedName(name);
 		setRegistryName(getPrefix() + name);
 		ProxyRegistry.register(this);
-		ProxyRegistry.register(new ItemModBlock(this, new ResourceLocation(getPrefix() + name)));
+		ProxyRegistry.register(createItemBlock(name));
 		return this;
+	}
+	
+	public ItemBlock createItemBlock(String name) {
+		return new ItemModBlock(this, new ResourceLocation(getPrefix() + name));
 	}
 	
 	public boolean registerInConstruction() {
