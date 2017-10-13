@@ -47,12 +47,12 @@ public abstract class BlockMod extends Block implements IModBlock {
 		super.setUnlocalizedName(name);
 		setRegistryName(getPrefix() + name);
 		ProxyRegistry.register(this);
-		ProxyRegistry.register(createItemBlock(name));
+		ProxyRegistry.register(createItemBlock(new ResourceLocation(getPrefix() + name)));
 		return this;
 	}
 	
-	public ItemBlock createItemBlock(String name) {
-		return new ItemModBlock(this, new ResourceLocation(getPrefix() + name));
+	public ItemBlock createItemBlock(ResourceLocation res) {
+		return new ItemModBlock(this, res);
 	}
 	
 	public boolean registerInConstruction() {
