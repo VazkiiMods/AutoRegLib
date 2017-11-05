@@ -157,6 +157,11 @@ public abstract class BlockModSlab extends BlockSlab implements IModBlock {
 	public boolean isDouble() {
 		return doubleSlab;
 	}
+	
+	@Override
+	public boolean isFullBlock(IBlockState state) {
+		return isDouble();
+	}
 
 	@Override
 	public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {
