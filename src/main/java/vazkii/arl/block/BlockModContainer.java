@@ -21,7 +21,7 @@ public abstract class BlockModContainer extends BlockMod implements ITileEntityP
 
 	public BlockModContainer(String name, Material materialIn, String... variants) {
 		super(name, materialIn, variants);
-		isBlockContainer = true;
+		hasTileEntity = true;
 	}
 
 	@Override
