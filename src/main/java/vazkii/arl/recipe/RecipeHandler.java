@@ -154,7 +154,10 @@ public final class RecipeHandler {
 	}
 
 	private static Ingredient asIngredient(Object object) {
-		if(object instanceof Item)
+		if(object instanceof Ingredient)
+			return (Ingredient) object;
+		
+		else if(object instanceof Item)
 			return Ingredient.fromItem((Item)object);
 
 		else if(object instanceof Block)
@@ -165,6 +168,7 @@ public final class RecipeHandler {
 
 		else if(object instanceof String)
 			return new OreIngredient((String) object);
+		
 
 		throw new IllegalArgumentException("Cannot convert object of type " + object.getClass().toString() + " to an Ingredient!");
 	}
