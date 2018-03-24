@@ -153,7 +153,7 @@ public final class RecipeHandler {
 		ProxyRegistry.register(recipe);
 	}
 
-	private static Ingredient asIngredient(Object object) {
+	public static Ingredient asIngredient(Object object) {
 		if(object instanceof Ingredient)
 			return (Ingredient) object;
 		
