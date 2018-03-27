@@ -99,6 +99,17 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 	public int getInventoryStackLimit() {
 		return 64;
 	}
+	
+	@Override
+	public boolean isEmpty() {
+		for(int i = 0; i < getSizeInventory(); i++) {
+			ItemStack stack = getStackInSlot(i);
+			if(!stack.isEmpty())
+				return false;
+		}
+			
+		return true;
+	}
 
 	@Override
 	public boolean isUsableByPlayer(EntityPlayer entityplayer) {
