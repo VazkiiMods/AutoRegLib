@@ -18,6 +18,7 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import vazkii.arl.util.VanillaPacketDispatcher;
 
 public abstract class TileMod extends TileEntity {
 
@@ -48,17 +49,21 @@ public abstract class TileMod extends TileEntity {
 	public void readSharedNBT(NBTTagCompound cmp) {
 		// NO-OP
 	}
+	
+	public void sync() {
+		VanillaPacketDispatcher.dispatchTEToNearbyPlayers(this);
+	}
 
 	@Override
     public NBTTagCompound getUpdateTag()  {
-		NBTTagCompound cmp = new NBTTagCompound();
-		writeSharedNBT(cmp);
-        return cmp;
+        return writeToNBT(new NBTTagCompound());
     }
 	
 	@Override
 	public SPacketUpdateTileEntity getUpdatePacket() {
-		return new SPacketUpdateTileEntity(getPos(), getBlockMetadata(), getUpdateTag());
+		NBTTagCompound cmp = new NBTTagCompound();
+		writeSharedNBT(cmp);
+		return new SPacketUpdateTileEntity(getPos(), getBlockMetadata(), cmp);
 	}
 	
 	@Override
