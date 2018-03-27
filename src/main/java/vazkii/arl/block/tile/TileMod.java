@@ -51,14 +51,14 @@ public abstract class TileMod extends TileEntity {
 
 	@Override
     public NBTTagCompound getUpdateTag()  {
-        return writeToNBT(new NBTTagCompound());
+		NBTTagCompound cmp = new NBTTagCompound();
+		writeSharedNBT(cmp);
+        return cmp;
     }
 	
 	@Override
 	public SPacketUpdateTileEntity getUpdatePacket() {
-		NBTTagCompound cmp = new NBTTagCompound();
-		writeSharedNBT(cmp);
-		return new SPacketUpdateTileEntity(getPos(), getBlockMetadata(), cmp);
+		return new SPacketUpdateTileEntity(getPos(), getBlockMetadata(), getUpdateTag());
 	}
 	
 	@Override
