@@ -10,8 +10,6 @@
  */
 package vazkii.arl.block.tile;
 
-import java.util.Arrays;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -20,12 +18,13 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 
 public abstract class TileSimpleInventory extends TileMod implements ISidedInventory {
 
 	protected NonNullList<ItemStack> inventorySlots = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
-
+	private String name = null;
+	
 	@Override
 	public void readSharedNBT(NBTTagCompound par1NBTTagCompound) {
 		NBTTagList var2 = par1NBTTagCompound.getTagList("Items", 10);
@@ -158,7 +157,14 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 
 	@Override
 	public ITextComponent getDisplayName() {
-		return new TextComponentString(getName());
+		return new TextComponentTranslation(getName());
+	}
+	
+	@Override
+	public String getName() {
+		if(name == null)
+			name = new ItemStack(world.getBlockState(getPos()).getBlock()).getUnlocalizedName() + ".name";
+		return name;
 	}
 
 	public void inventoryChanged(int i) {
