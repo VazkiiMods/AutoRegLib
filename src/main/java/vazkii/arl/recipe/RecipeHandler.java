@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -25,7 +26,6 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.ShapedRecipes;
@@ -152,19 +152,24 @@ public final class RecipeHandler {
 		usedNames.add(res);
 		ProxyRegistry.register(recipe);
 	}
+	
+	public static Ingredient compound(Object... objects) {
+		List<Ingredient> ingredients = Arrays.asList(objects).stream().map(RecipeHandler::asIngredient).collect(Collectors.toList());
+		return new PublicCompoundIngredient(ingredients);
+	}
 
 	public static Ingredient asIngredient(Object object) {
 		if(object instanceof Ingredient)
 			return (Ingredient) object;
 		
 		else if(object instanceof Item)
-			return Ingredient.fromItem((Item)object);
+			return Ingredient.fromItem((Item) object);
 
 		else if(object instanceof Block)
-			return Ingredient.fromStacks(new ItemStack((Block)object));
+			return Ingredient.fromStacks(ProxyRegistry.newStack((Block) object));
 
 		else if(object instanceof ItemStack)
-			return Ingredient.fromStacks((ItemStack)object);
+			return Ingredient.fromStacks((ItemStack) object);
 
 		else if(object instanceof String)
 			return new OreIngredient((String) object);

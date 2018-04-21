@@ -32,7 +32,7 @@ public class ProxyRegistry {
 		}
 	}
 	
-	private static Item getItemMapping(Block block) {
+	public static Item getItemMapping(Block block) {
 		Item i = Item.getItemFromBlock(block);
 		if((i == null || i == Item.getItemFromBlock(Blocks.AIR)) && temporaryItemBlockMap.containsKey(block))
 			return temporaryItemBlockMap.get(block);
