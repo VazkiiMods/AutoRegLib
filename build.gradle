@@ -15,7 +15,9 @@ buildscript {
     }
 }
 
+apply plugin: "maven"
 apply plugin: 'net.minecraftforge.gradle.forge'
+
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
@@ -123,5 +125,12 @@ def parseConfig(File config) {
     }
 }
 
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "file:///var/www/html/maven")
+        }
+    }
+}
 
 defaultTasks 'clean', 'build', 'sort', 'incrementBuildNumber'
