@@ -87,6 +87,7 @@ public abstract class NetworkMessage<REQ extends NetworkMessage> implements Seri
 		}
 	}
 
+	@SuppressWarnings("unlikely-arg-type")
 	private static Field[] getClassFields(Class<?> clazz) {
 		if(fieldCache.containsValue(clazz))
 			return fieldCache.get(clazz);

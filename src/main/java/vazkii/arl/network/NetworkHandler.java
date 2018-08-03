@@ -14,6 +14,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import vazkii.arl.AutoRegLib;
+import vazkii.arl.network.message.MessageDropIn;
 
 public class NetworkHandler {
 
@@ -23,6 +24,10 @@ public class NetworkHandler {
 
 	public static void register(Class clazz, Side handlerSide) {
 		INSTANCE.registerMessage(clazz, clazz, i++, handlerSide);
+	}
+	
+	public static void initARLMessages() {
+		register(MessageDropIn.class, Side.SERVER);
 	}
 
 }
