@@ -15,7 +15,9 @@ buildscript {
     }
 }
 
+apply plugin: "maven"
 apply plugin: 'net.minecraftforge.gradle.forge'
+
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
@@ -27,6 +29,11 @@ ext.config = parseConfig(configFile)
 version = "${config.version}-${config.build_number}"
 group = "vazkii.autoreglib" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = config.mod_name
+
+if (System.getenv().BUILD_NUMBER != null) { 
+    //adds the build number to the end of the version string if on a build server
+    version += ".${System.getenv().BUILD_NUMBER}"
+}
 
 minecraft {
     version = "${config.mc_version}-${config.forge_version}"
@@ -118,5 +125,12 @@ def parseConfig(File config) {
     }
 }
 
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "file://" + (System.getenv("local_maven") != null ? System.getenv("local_maven") : System.getenv("bamboo_local_maven")))
+        }
+    }
+}
 
 defaultTasks 'clean', 'build', 'sort', 'incrementBuildNumber'
