@@ -27,6 +27,9 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 	
 	@Override
 	public void readSharedNBT(NBTTagCompound par1NBTTagCompound) {
+		if(!needsToSyncInventory())
+			return;
+		
 		NBTTagList var2 = par1NBTTagCompound.getTagList("Items", 10);
 		clear();
 		for(int var3 = 0; var3 < var2.tagCount(); ++var3) {
@@ -39,6 +42,9 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 
 	@Override
 	public void writeSharedNBT(NBTTagCompound par1NBTTagCompound) {
+		if(!needsToSyncInventory())
+			return;
+		
 		NBTTagList var2 = new NBTTagList();
 		for (int var3 = 0; var3 < inventorySlots.size(); ++var3) {
 			if(!inventorySlots.get(var3).isEmpty()) {
@@ -50,7 +56,11 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 		}
 		par1NBTTagCompound.setTag("Items", var2);
 	}
-
+	
+	protected boolean needsToSyncInventory() {
+		return true;
+	}
+	
 	@Override
 	public ItemStack getStackInSlot(int i) {
 		return inventorySlots.get(i);
