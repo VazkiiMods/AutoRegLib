@@ -13,9 +13,12 @@ package vazkii.arl.interf;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import vazkii.arl.block.property.PropertyString;
 
 public interface IStateMapperProvider {
 
+	public static final PropertyString TEXTURE = new PropertyString("texture");
+	
 	@SideOnly(Side.CLIENT)
 	public IStateMapper getStateMapper();
 
