@@ -18,7 +18,6 @@ public class CommonProxy {
 	public void preInit(FMLPreInitializationEvent event) { 
 		MinecraftForge.EVENT_BUS.register(ProxyRegistry.class);
 		MinecraftForge.EVENT_BUS.register(ItemTickHandler.class);
-		MinecraftForge.EVENT_BUS.register(DropInHandler.class);
 		
 		NetworkHandler.initARLMessages();
 	}
