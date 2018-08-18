@@ -1,5 +1,7 @@
 package vazkii.arl.util;
 
+import java.util.concurrent.Callable;
+
 import org.lwjgl.input.Mouse;
 
 import net.minecraft.client.Minecraft;
@@ -9,7 +11,12 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import vazkii.arl.interf.IDropInItem;
 import vazkii.arl.network.NetworkHandler;
@@ -17,6 +24,11 @@ import vazkii.arl.network.message.MessageDropIn;
 
 public final class DropInHandler {
 
+	public static void register() {
+		MinecraftForge.EVENT_BUS.register(DropInHandler.class);
+		CapabilityManager.INSTANCE.register(IDropInItem.class, CapabilityFactory.INSTANCE, CapabilityFactory.INSTANCE);
+	}
+	
 	@SubscribeEvent
 	public static void onDrawScreen(GuiScreenEvent.DrawScreenEvent.Post event) {
 		Minecraft mc = Minecraft.getMinecraft();
@@ -99,6 +111,41 @@ public final class DropInHandler {
 			return (IDropInItem) stack.getItem();
 		
 		return null;
+	}
+	
+	private static class CapabilityFactory implements Capability.IStorage<IDropInItem>, Callable<IDropInItem> {
+
+		private static CapabilityFactory INSTANCE = new CapabilityFactory(); 
+		
+		@Override
+		public NBTBase writeNBT(Capability<IDropInItem> capability, IDropInItem instance, EnumFacing side) {
+			return null;
+		}
+
+		@Override
+		public void readNBT(Capability<IDropInItem> capability, IDropInItem instance, EnumFacing side, NBTBase nbt) {
+			// NO-OP
+		}
+
+		@Override
+		public IDropInItem call() throws Exception {
+			return new DefaultImpl();
+		}
+		
+		private static class DefaultImpl implements IDropInItem {
+
+			@Override
+			public boolean canDropItemIn(ItemStack stack, ItemStack incoming) {
+				return false;
+			}
+
+			@Override
+			public ItemStack dropItemIn(ItemStack stack, ItemStack incoming) {
+				return incoming;
+			}
+			
+		}
+		
 	}
 	
 }

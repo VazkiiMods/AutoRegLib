@@ -18,7 +18,8 @@ public class ClientProxy extends CommonProxy {
 		super.preInit(event);
 		MinecraftForge.EVENT_BUS.register(ModelHandler.class);
 		MinecraftForge.EVENT_BUS.register(ClientTicker.class);
-		MinecraftForge.EVENT_BUS.register(DropInHandler.class);
+
+		DropInHandler.register();
 	}
 
 	@Override
