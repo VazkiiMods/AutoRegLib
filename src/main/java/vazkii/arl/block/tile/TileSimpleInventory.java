@@ -19,6 +19,9 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.wrapper.SidedInvWrapper;
 
 public abstract class TileSimpleInventory extends TileMod implements ISidedInventory {
 
@@ -123,6 +126,19 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 	@Override
 	public boolean isUsableByPlayer(EntityPlayer entityplayer) {
 		return getWorld().getTileEntity(getPos()) == this && entityplayer.getDistanceSq(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) <= 64;
+	}
+	
+	@Override
+	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+		return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
+	}
+	
+	@Override
+	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+			return (T) new SidedInvWrapper(this, facing);
+		
+		return null;
 	}
 
 	@Override
