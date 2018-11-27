@@ -44,7 +44,7 @@ public final class DropInHandler {
 
 					ItemStack stack = s.getStack();
 					IDropInItem dropin = getDropInHandler(stack);
-					if(dropin != null && dropin.canDropItemIn(stack, held)) {
+					if(dropin != null && dropin.canDropItemIn(mc.player, stack, held)) {
 						if(s == under) {
 							int x = event.getMouseX();
 							int y = event.getMouseY();
@@ -75,7 +75,7 @@ public final class DropInHandler {
 			if(under != null && !held.isEmpty() && under.inventory == mc.player.inventory) {
 				ItemStack stack = under.getStack();
 				IDropInItem dropin = getDropInHandler(stack);
-				if(dropin != null && dropin.canDropItemIn(stack, held)) {
+				if(dropin != null && dropin.canDropItemIn(mc.player, stack, held)) {
 					mc.player.inventory.setItemStack(ItemStack.EMPTY);
 					NetworkHandler.INSTANCE.sendToServer(new MessageDropIn(under.getSlotIndex(), held));
 					event.setCanceled(true);
@@ -88,13 +88,13 @@ public final class DropInHandler {
 		ItemStack target = player.inventory.getStackInSlot(Math.min(player.inventory.getSizeInventory() - 1, slot));
 		IDropInItem dropin = getDropInHandler(target);
 		
-		if(dropin != null && dropin.canDropItemIn(target, stack)) {
+		if(dropin != null && dropin.canDropItemIn(player, target, stack)) {
 			ItemStack held = player.inventory.getItemStack();
 
 			if(player.isCreative() && !stack.isEmpty())
 				held = stack;
 
-			ItemStack result = dropin.dropItemIn(target, held);
+			ItemStack result = dropin.dropItemIn(player, target, held);
 			player.inventory.setInventorySlotContents(slot, result);
 			player.inventory.setItemStack(ItemStack.EMPTY);
 		}
@@ -135,12 +135,12 @@ public final class DropInHandler {
 		private static class DefaultImpl implements IDropInItem {
 
 			@Override
-			public boolean canDropItemIn(ItemStack stack, ItemStack incoming) {
+			public boolean canDropItemIn(EntityPlayer player, ItemStack stack, ItemStack incoming) {
 				return false;
 			}
 
 			@Override
-			public ItemStack dropItemIn(ItemStack stack, ItemStack incoming) {
+			public ItemStack dropItemIn(EntityPlayer player, ItemStack stack, ItemStack incoming) {
 				return incoming;
 			}
 			
