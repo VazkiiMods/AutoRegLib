@@ -94,7 +94,7 @@ public final class DropInHandler {
 			if(player.isCreative() && !stack.isEmpty())
 				held = stack;
 
-			ItemStack result = dropin.dropItemIn(target, stack);
+			ItemStack result = dropin.dropItemIn(target, held);
 			player.inventory.setInventorySlotContents(slot, result);
 			player.inventory.setItemStack(ItemStack.EMPTY);
 		}
