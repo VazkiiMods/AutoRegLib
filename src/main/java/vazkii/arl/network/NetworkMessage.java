@@ -211,11 +211,11 @@ public abstract class NetworkMessage<REQ extends NetworkMessage> implements Seri
 	}
 
 	private static ItemStack readItemStack(ByteBuf buf) {
-		return ByteBufUtils.readItemStack(buf);
+		return new ItemStack(readNBT(buf));
 	}
 
 	private static void writeItemStack(ItemStack stack, ByteBuf buf) {
-		ByteBufUtils.writeItemStack(buf, stack);
+		writeNBT(stack.serializeNBT(), buf);
 	}
 
 	private static BlockPos readBlockPos(ByteBuf buf) {
