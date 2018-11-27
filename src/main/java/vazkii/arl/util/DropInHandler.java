@@ -9,6 +9,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
@@ -39,9 +40,6 @@ public final class DropInHandler {
 			if(!held.isEmpty()) {
 				Slot under = container.getSlotUnderMouse();
 				for(Slot s : container.inventorySlots.inventorySlots) {
-					if(s.inventory != mc.player.inventory)
-						continue;
-
 					ItemStack stack = s.getStack();
 					IDropInItem dropin = getDropInHandler(stack);
 					if(dropin != null && dropin.canDropItemIn(mc.player, stack, held)) {
@@ -72,12 +70,12 @@ public final class DropInHandler {
 			Slot under = container.getSlotUnderMouse();
 			ItemStack held = mc.player.inventory.getItemStack();
 
-			if(under != null && !held.isEmpty() && under.inventory == mc.player.inventory) {
+			if(under != null && !held.isEmpty()) {
 				ItemStack stack = under.getStack();
 				IDropInItem dropin = getDropInHandler(stack);
 				if(dropin != null && dropin.canDropItemIn(mc.player, stack, held)) {
 					mc.player.inventory.setItemStack(ItemStack.EMPTY);
-					NetworkHandler.INSTANCE.sendToServer(new MessageDropIn(under.getSlotIndex(), held));
+					NetworkHandler.INSTANCE.sendToServer(new MessageDropIn(under.slotNumber, held));
 					event.setCanceled(true);
 				}
 			}
@@ -85,7 +83,9 @@ public final class DropInHandler {
 	}
 	
 	public static void executeDropIn(EntityPlayer player, int slot, ItemStack stack) {
-		ItemStack target = player.inventory.getStackInSlot(Math.min(player.inventory.getSizeInventory() - 1, slot));
+		Container container = player.openContainer;
+		Slot slotObj = container.inventorySlots.get(slot);
+		ItemStack target = slotObj.getStack();
 		IDropInItem dropin = getDropInHandler(target);
 		
 		if(dropin != null && dropin.canDropItemIn(player, target, stack)) {
@@ -95,7 +95,7 @@ public final class DropInHandler {
 				held = stack;
 
 			ItemStack result = dropin.dropItemIn(player, target, held);
-			player.inventory.setInventorySlotContents(slot, result);
+			slotObj.putStack(result);
 			player.inventory.setItemStack(ItemStack.EMPTY);
 		}
 	}
