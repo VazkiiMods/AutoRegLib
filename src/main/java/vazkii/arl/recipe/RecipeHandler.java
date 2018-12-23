@@ -10,18 +10,8 @@
  ******************************************************************************/
 package vazkii.arl.recipe;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -37,9 +27,12 @@ import net.minecraftforge.oredict.OreIngredient;
 import vazkii.arl.interf.IRecipeGrouped;
 import vazkii.arl.util.ProxyRegistry;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
 public final class RecipeHandler {
 	
-	private static final List<ResourceLocation> usedNames = new ArrayList();
+	private static final List<ResourceLocation> usedNames = new ArrayList<>();
 	
 	// Many bridge methods for backwards compatibility
 	
@@ -116,8 +109,8 @@ public final class RecipeHandler {
 
 		try {
 			key.put(" ", Ingredient.EMPTY);
-			Object ingredients = prepareMaterials(pattern.toArray(new String[pattern.size()]), key, width, height);
-			ShapedRecipes recipe = new ShapedRecipes(outputGroup(namespace, output), width, height, (NonNullList<Ingredient>) ingredients, output);
+			NonNullList<Ingredient> ingredients = prepareMaterials(pattern.toArray(new String[0]), key, width, height);
+			ShapedRecipes recipe = new ShapedRecipes(outputGroup(namespace, output), width, height, ingredients, output);
 			if(multi != null)
 				multi.addRecipe(recipe);
 			else addRecipe(unusedLocForOutput(namespace, output), recipe);
@@ -129,15 +122,12 @@ public final class RecipeHandler {
 	// copy from vanilla
 	private static NonNullList<Ingredient> prepareMaterials(String[] p_192402_0_, Map<String, Ingredient> p_192402_1_, int p_192402_2_, int p_192402_3_) {
 		NonNullList<Ingredient> nonnulllist = NonNullList.<Ingredient>withSize(p_192402_2_ * p_192402_3_, Ingredient.EMPTY);
-		Set<String> set = Sets.newHashSet(p_192402_1_.keySet());
-		set.remove(" ");
 
 		for(int i = 0; i < p_192402_0_.length; ++i)
 			for (int j = 0; j < p_192402_0_[i].length(); ++j) {
 				String s = p_192402_0_[i].substring(j, j + 1);
 				Ingredient ingredient = p_192402_1_.get(s);
 
-				set.remove(s);
 				nonnulllist.set(j + p_192402_2_ * i, ingredient);
 			}
 
@@ -154,7 +144,7 @@ public final class RecipeHandler {
 	}
 	
 	public static Ingredient compound(Object... objects) {
-		List<Ingredient> ingredients = Arrays.asList(objects).stream().map(RecipeHandler::asIngredient).collect(Collectors.toList());
+		List<Ingredient> ingredients = Arrays.stream(objects).map(RecipeHandler::asIngredient).collect(Collectors.toList());
 		return new PublicCompoundIngredient(ingredients);
 	}
 
@@ -179,7 +169,7 @@ public final class RecipeHandler {
 	}
 
 	private static ResourceLocation unusedLocForOutput(String namespace, ItemStack output) {
-		ResourceLocation baseLoc = new ResourceLocation(namespace, output.getItem().getRegistryName().getResourcePath());
+		ResourceLocation baseLoc = new ResourceLocation(namespace, Objects.requireNonNull(output.getItem().getRegistryName()).getResourcePath());
 		ResourceLocation recipeLoc = baseLoc;
 		int index = 0;
 
@@ -202,11 +192,11 @@ public final class RecipeHandler {
 				return namespace + ":" + ((IRecipeGrouped) block).getRecipeGroup();
 		}
 
-		return output.getItem().getRegistryName().toString();
+		return Objects.requireNonNull(output.getItem().getRegistryName()).toString();
 	}
 	
 	private static String getNamespace() {
-		return Loader.instance().activeModContainer().getModId();
+		return Objects.requireNonNull(Loader.instance().activeModContainer()).getModId();
 	}
 
 

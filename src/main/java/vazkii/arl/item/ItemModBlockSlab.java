@@ -19,9 +19,13 @@ import net.minecraft.item.ItemSlab;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import vazkii.arl.block.BlockModSlab;
 import vazkii.arl.interf.IModBlock;
 import vazkii.arl.interf.IVariantHolder;
+
+import javax.annotation.Nonnull;
 
 public class ItemModBlockSlab extends ItemSlab implements IVariantHolder {
 
@@ -31,7 +35,6 @@ public class ItemModBlockSlab extends ItemSlab implements IVariantHolder {
 		super(block, ((BlockModSlab) block).getSingleBlock(), ((BlockModSlab) block).getFullBlock());
 		modBlock = (IModBlock) block;
 
-		ItemMod.variantHolders.add(this);
 		if(getVariants().length > 1)
 			setHasSubtypes(true);
 		setRegistryName(res);
@@ -42,11 +45,13 @@ public class ItemModBlockSlab extends ItemSlab implements IVariantHolder {
 		return damage;
 	}
 
+	@Nonnull
 	@Override
-	public ItemBlock setUnlocalizedName(String par1Str) {
+	public ItemBlock setUnlocalizedName(@Nonnull String par1Str) {
 		return (ItemBlock) super.setUnlocalizedName(par1Str);
 	}
 
+	@Nonnull
 	@Override
 	public String getUnlocalizedName(ItemStack par1ItemStack) {
 		int dmg = par1ItemStack.getItemDamage();
@@ -61,7 +66,7 @@ public class ItemModBlockSlab extends ItemSlab implements IVariantHolder {
 	}
 
 	@Override
-	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
+	public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems) {
 		String[] variants = getVariants();
 		if(isInCreativeTab(tab))
 			for(int i = 0; i < variants.length; i++)
@@ -74,10 +79,12 @@ public class ItemModBlockSlab extends ItemSlab implements IVariantHolder {
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public ItemMeshDefinition getCustomMeshDefinition() {
 		return modBlock.getCustomMeshDefinition();
 	}
 
+	@Nonnull
 	@Override
 	public EnumRarity getRarity(ItemStack stack) {
 		return modBlock.getBlockRarity(stack);

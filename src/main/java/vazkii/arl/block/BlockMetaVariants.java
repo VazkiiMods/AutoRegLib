@@ -10,8 +10,6 @@
  */
 package vazkii.arl.block;
 
-import java.util.Locale;
-
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
@@ -25,6 +23,10 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import vazkii.arl.interf.IVariantEnumHolder;
 
+import javax.annotation.Nonnull;
+import java.util.Locale;
+
+@SuppressWarnings("unchecked")
 public abstract class BlockMetaVariants<T extends Enum<T> & IStringSerializable> extends BlockMod {
 
 	public static Class temporaryVariantsEnum; // This is a massive hack, but such is life with constructors
@@ -48,6 +50,7 @@ public abstract class BlockMetaVariants<T extends Enum<T> & IStringSerializable>
 		return false;
 	}
 	
+	@Nonnull
 	@Override
 	public BlockStateContainer createBlockState() {
 		return new BlockStateContainer(this, temporaryVariantProp);
@@ -58,6 +61,7 @@ public abstract class BlockMetaVariants<T extends Enum<T> & IStringSerializable>
 		return ((Enum<T>) state.getValue(variantProp == null ? temporaryVariantProp : variantProp)).ordinal();
 	}
 
+	@Nonnull
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
 		if(meta >= variantsEnum.getEnumConstants().length)
@@ -71,8 +75,9 @@ public abstract class BlockMetaVariants<T extends Enum<T> & IStringSerializable>
 		return getMetaFromState(state);
 	}
 
+	@Nonnull
 	@Override
-	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+	public ItemStack getPickBlock(@Nonnull IBlockState state, RayTraceResult target, @Nonnull World world, @Nonnull BlockPos pos, EntityPlayer player) {
 		return new ItemStack(this, 1, getMetaFromState(world.getBlockState(pos)));
 	}
 
@@ -97,10 +102,11 @@ public abstract class BlockMetaVariants<T extends Enum<T> & IStringSerializable>
 		return variants;
 	}
 
-	public static interface EnumBase extends IStringSerializable {
+	public interface EnumBase extends IStringSerializable {
 
+		@Nonnull
 		@Override
-		public default String getName() {
+		default String getName() {
 			return ((Enum) this).name().toLowerCase(Locale.ENGLISH);
 		}
 

@@ -1,10 +1,5 @@
 package vazkii.arl.recipe;
 
-import java.util.function.Predicate;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntComparators;
 import it.unimi.dsi.fastutil.ints.IntList;
@@ -14,6 +9,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.oredict.OreDictionary;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.function.Predicate;
 
 // Basically a copy of OreIngredient with a blacklist
 public class BlacklistOreIngredient extends Ingredient {
@@ -46,7 +45,7 @@ public class BlacklistOreIngredient extends Ingredient {
 					lst.add(itemstack);
 			}
 			
-			this.array = lst.toArray(new ItemStack[lst.size()]);
+			this.array = lst.toArray(new ItemStack[0]);
 			this.lastSizeA = ores.size();
 		}
 		return this.array;

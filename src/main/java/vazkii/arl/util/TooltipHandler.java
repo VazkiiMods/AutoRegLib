@@ -10,12 +10,12 @@
  */
 package vazkii.arl.util;
 
-import java.util.List;
-
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.List;
 
 public final class TooltipHandler {
 
@@ -34,7 +34,7 @@ public final class TooltipHandler {
 		for(int i = 0; i < format.length; i++)
 			formatVals[i] = local(format[i].toString()).replaceAll("&", "\u00a7");
 
-		if(formatVals != null && formatVals.length > 0)
+		if(formatVals.length > 0)
 			s = String.format(s, formatVals);
 
 		tooltip.add(s);

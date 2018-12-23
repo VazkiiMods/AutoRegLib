@@ -23,6 +23,8 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
 
+import javax.annotation.Nonnull;
+
 public abstract class TileSimpleInventory extends TileMod implements ISidedInventory {
 
 	protected NonNullList<ItemStack> inventorySlots = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
@@ -64,11 +66,13 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 		return true;
 	}
 	
+	@Nonnull
 	@Override
 	public ItemStack getStackInSlot(int i) {
 		return inventorySlots.get(i);
 	}
 
+	@Nonnull
 	@Override
 	public ItemStack decrStackSize(int i, int j) {
 		if (!inventorySlots.get(i).isEmpty()) {
@@ -93,6 +97,7 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 		return ItemStack.EMPTY;
 	}
 
+	@Nonnull
 	@Override
 	public ItemStack removeStackFromSlot(int i) {
 		ItemStack stack = getStackInSlot(i);
@@ -102,7 +107,7 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 	}
 
 	@Override
-	public void setInventorySlotContents(int i, ItemStack itemstack) {
+	public void setInventorySlotContents(int i, @Nonnull ItemStack itemstack) {
 		inventorySlots.set(i, itemstack);
 		inventoryChanged(i);
 	}
@@ -124,25 +129,25 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 	}
 
 	@Override
-	public boolean isUsableByPlayer(EntityPlayer entityplayer) {
+	public boolean isUsableByPlayer(@Nonnull EntityPlayer entityplayer) {
 		return getWorld().getTileEntity(getPos()) == this && entityplayer.getDistanceSq(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) <= 64;
 	}
 	
 	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+	public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
 		return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 	}
 	
 	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+	public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
 		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-			return (T) new SidedInvWrapper(this, facing);
+			return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(new SidedInvWrapper(this, facing));
 		
 		return null;
 	}
 
 	@Override
-	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
+	public boolean isItemValidForSlot(int i, @Nonnull ItemStack itemstack) {
 		return true;
 	}
 
@@ -152,12 +157,12 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 	}
 
 	@Override
-	public void openInventory(EntityPlayer player) {
+	public void openInventory(@Nonnull EntityPlayer player) {
 		// NO-OP
 	}
 
 	@Override
-	public void closeInventory(EntityPlayer player) {
+	public void closeInventory(@Nonnull EntityPlayer player) {
 		// NO-OP
 	}
 
@@ -181,11 +186,13 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 		inventorySlots = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
 	}
 
+	@Nonnull
 	@Override
 	public ITextComponent getDisplayName() {
 		return new TextComponentTranslation(getName());
 	}
 	
+	@Nonnull
 	@Override
 	public String getName() {
 		if(name == null)
@@ -202,17 +209,18 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 	}
 
 	@Override
-	public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
+	public boolean canExtractItem(int index, @Nonnull ItemStack stack, @Nonnull EnumFacing direction) {
 		return isAutomationEnabled();
 	}
 
 	@Override
-	public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
+	public boolean canInsertItem(int index, @Nonnull ItemStack itemStackIn, @Nonnull EnumFacing direction) {
 		return isAutomationEnabled();
 	}
 
+	@Nonnull
 	@Override
-	public int[] getSlotsForFace(EnumFacing side) {
+	public int[] getSlotsForFace(@Nonnull EnumFacing side) {
 		if(isAutomationEnabled()) {
 			int[] slots = new int[getSizeInventory()];
 			for(int i = 0; i < slots.length; i++)

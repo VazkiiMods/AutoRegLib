@@ -17,6 +17,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public interface IBlockColorProvider extends IItemColorProvider {
 
 	@SideOnly(Side.CLIENT)
-	public IBlockColor getBlockColor();
+	IBlockColor getBlockColor();
 
 }

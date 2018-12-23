@@ -10,10 +10,6 @@
  */
 package vazkii.arl.item;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -25,9 +21,13 @@ import vazkii.arl.interf.IVariantHolder;
 import vazkii.arl.util.ProxyRegistry;
 import vazkii.arl.util.TooltipHandler;
 
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class ItemMod extends Item implements IVariantHolder {
 
-	public static final List<IVariantHolder> variantHolders = new ArrayList();
+	public static final List<IVariantHolder> variantHolders = new ArrayList<>();
 
 	private final String[] variants;
 	private final String bareName;
@@ -42,11 +42,11 @@ public abstract class ItemMod extends Item implements IVariantHolder {
 
 		bareName = name;
 		this.variants = variants;
-		variantHolders.add(this);
 	}
 
+	@Nonnull
 	@Override
-	public Item setUnlocalizedName(String name) {
+	public Item setUnlocalizedName(@Nonnull String name) {
 		super.setUnlocalizedName(name);
 		setRegistryName(new ResourceLocation(getPrefix() + name));
 		ProxyRegistry.register(this);
@@ -54,6 +54,7 @@ public abstract class ItemMod extends Item implements IVariantHolder {
 		return this;
 	}
 
+	@Nonnull
 	@Override
 	public String getUnlocalizedName(ItemStack par1ItemStack) {
 		int dmg = par1ItemStack.getItemDamage();
@@ -68,7 +69,7 @@ public abstract class ItemMod extends Item implements IVariantHolder {
 	}
 
 	@Override
-	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
+	public void getSubItems(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems) {
 		if(isInCreativeTab(tab))
 			for(int i = 0; i < getVariants().length; i++)
 				subItems.add(new ItemStack(this, 1, i));
@@ -77,11 +78,6 @@ public abstract class ItemMod extends Item implements IVariantHolder {
 	@Override
 	public String[] getVariants() {
 		return variants;
-	}
-
-	@Override
-	public ItemMeshDefinition getCustomMeshDefinition() {
-		return null;
 	}
 
 	@SideOnly(Side.CLIENT)

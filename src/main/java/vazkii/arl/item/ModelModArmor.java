@@ -23,13 +23,15 @@ import net.minecraft.util.EnumHandSide;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
+
 @SideOnly(Side.CLIENT)
 public abstract class ModelModArmor extends ModelBiped {
 
 	public abstract void setModelParts();
 
 	@Override
-	public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5) {
+	public void render(@Nonnull Entity entity, float f, float f1, float f2, float f3, float f4, float f5) {
 		setModelParts();
 
 		GlStateManager.pushMatrix();
@@ -45,9 +47,9 @@ public abstract class ModelModArmor extends ModelBiped {
 
 	public void prepareForRender(Entity entity, float pticks) {
 		EntityLivingBase living = (EntityLivingBase) entity;
-		isSneak = living != null ? living.isSneaking() : false;
-		isChild = living != null ? living.isChild() : false;
-		if(living != null && living instanceof EntityPlayer) {
+		isSneak = living != null && living.isSneaking();
+		isChild = living != null && living.isChild();
+		if(living instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) living;
 
 			swingProgress = player.getSwingProgress(pticks);

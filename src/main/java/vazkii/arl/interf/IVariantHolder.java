@@ -16,18 +16,20 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public interface IVariantHolder {
 
-	public String[] getVariants();
+	String[] getVariants();
 
 	@SideOnly(Side.CLIENT)
-	public ItemMeshDefinition getCustomMeshDefinition();
+	default ItemMeshDefinition getCustomMeshDefinition() {
+		return null;
+	}
 
-	public default String getUniqueModel() {
+	default String getUniqueModel() {
 		return null;
 	}
 	
-	public String getModNamespace();
+	String getModNamespace();
 
-	public default String getPrefix() {
+	default String getPrefix() {
 		return getModNamespace() + ":";
 	}
 }
