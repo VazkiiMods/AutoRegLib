@@ -1,13 +1,8 @@
 package vazkii.arl.block;
 
-import java.util.Random;
-
-import javax.annotation.Nullable;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
@@ -29,6 +24,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import vazkii.arl.block.BlockMetaVariants.EnumBase;
 import vazkii.arl.interf.IBlockColorProvider;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Random;
 
 public abstract class BlockModDust extends BlockMod implements IBlockColorProvider {
 
@@ -68,6 +67,7 @@ public abstract class BlockModDust extends BlockMod implements IBlockColorProvid
 		setSoundType(SoundType.STONE);
 	}
 
+	@Nonnull
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
 		return WIRE_AABB[getAABBIndex(state.getActualState(source, pos))];
@@ -80,23 +80,24 @@ public abstract class BlockModDust extends BlockMod implements IBlockColorProvid
 		boolean south = state.getValue(SOUTH) != EnumAttachPosition.NONE;
 		boolean west = state.getValue(WEST) != EnumAttachPosition.NONE;
 
-		if(north || south && !north && !east && !west)
+		if(north || south && !east && !west)
 			i |= 1 << EnumFacing.NORTH.getHorizontalIndex();
 
-		if(east || west && !north && !east && !south)
+		if(east || west && !north && !south)
 			i |= 1 << EnumFacing.EAST.getHorizontalIndex();
 
-		if(south || north && !east && !south && !west)
+		if(south || north && !east && !west)
 			i |= 1 << EnumFacing.SOUTH.getHorizontalIndex();
 
-		if(west || east && !north && !south && !west)
+		if(west || east && !north && !south)
 			i |= 1 << EnumFacing.WEST.getHorizontalIndex();
 
 		return i;
 	}
 
+	@Nonnull
 	@Override
-	public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
+	public IBlockState getActualState(@Nonnull IBlockState state, IBlockAccess worldIn, BlockPos pos) {
 		state = state.withProperty(WEST, getAttachPosition(worldIn, pos, EnumFacing.WEST));
 		state = state.withProperty(EAST, getAttachPosition(worldIn, pos, EnumFacing.EAST));
 		state = state.withProperty(NORTH, getAttachPosition(worldIn, pos, EnumFacing.NORTH));
@@ -131,7 +132,7 @@ public abstract class BlockModDust extends BlockMod implements IBlockColorProvid
 	}
 
 	@Override
-	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
+	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, @Nonnull IBlockAccess worldIn, @Nonnull BlockPos pos) {
 		return null;
 	}
 
@@ -146,7 +147,7 @@ public abstract class BlockModDust extends BlockMod implements IBlockColorProvid
 	}
 
 	@Override
-	public boolean canPlaceBlockAt(World worldIn, BlockPos pos) {
+	public boolean canPlaceBlockAt(World worldIn, @Nonnull BlockPos pos) {
 		return worldIn.getBlockState(pos.down()).isTopSolid() || worldIn.getBlockState(pos.down()).getBlock() == Blocks.GLOWSTONE;
 	}
 
@@ -167,11 +168,13 @@ public abstract class BlockModDust extends BlockMod implements IBlockColorProvid
 		return block == this;
 	}
 
+	@Nonnull
 	@Override
-	public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state) {
+	public ItemStack getItem(World worldIn, BlockPos pos, @Nonnull IBlockState state) {
 		return new ItemStack(getItemDropped(state, worldIn.rand, 0));
 	}
 
+	@Nonnull
 	@Override
 	public IBlockState getStateFromMeta(int meta)  {
 		return getDefaultState();
@@ -182,13 +185,15 @@ public abstract class BlockModDust extends BlockMod implements IBlockColorProvid
 		return 0;
 	}
 
+	@Nonnull
 	@SideOnly(Side.CLIENT)
 	public BlockRenderLayer getBlockLayer() {
 		return BlockRenderLayer.CUTOUT;
 	}
 
+	@Nonnull
 	@Override
-	public IBlockState withRotation(IBlockState state, Rotation rot) {
+	public IBlockState withRotation(@Nonnull IBlockState state, Rotation rot) {
 		switch(rot) {
 		case CLOCKWISE_180:
 			return state.withProperty(NORTH, state.getValue(SOUTH)).withProperty(EAST, state.getValue(WEST)).withProperty(SOUTH, state.getValue(NORTH)).withProperty(WEST, state.getValue(EAST));
@@ -201,8 +206,9 @@ public abstract class BlockModDust extends BlockMod implements IBlockColorProvid
 		}
 	}
 
+	@Nonnull
 	@Override
-	public IBlockState withMirror(IBlockState state, Mirror mirrorIn) {
+	public IBlockState withMirror(@Nonnull IBlockState state, Mirror mirrorIn) {
 		switch(mirrorIn) {
 		case LEFT_RIGHT:
 			return state.withProperty(NORTH, state.getValue(SOUTH)).withProperty(SOUTH, state.getValue(NORTH));
@@ -213,16 +219,19 @@ public abstract class BlockModDust extends BlockMod implements IBlockColorProvid
 		}
 	}
 
+	@Nonnull
 	@Override
 	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, new IProperty[] { NORTH, EAST, SOUTH, WEST });
+		return new BlockStateContainer(this, NORTH, EAST, SOUTH, WEST);
 	}
 
+	@Nonnull
 	@Override
 	public BlockFaceShape getBlockFaceShape(IBlockAccess p_193383_1_, IBlockState p_193383_2_, BlockPos p_193383_3_, EnumFacing p_193383_4_) {
 		return BlockFaceShape.UNDEFINED;
 	}
 
+	@Nonnull
 	@Override
 	public Item getItemDropped(IBlockState state, Random rand, int fortune) {
 		return Item.getItemFromBlock(this);
@@ -236,11 +245,12 @@ public abstract class BlockModDust extends BlockMod implements IBlockColorProvid
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public IItemColor getItemColor() {
 		return (stack, tint) -> 0xFFFFFF;
 	}
 
-	protected static enum EnumAttachPosition implements EnumBase {
+	protected enum EnumAttachPosition implements EnumBase {
 
 		UP,
 		SIDE,

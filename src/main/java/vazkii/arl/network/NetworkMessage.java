@@ -10,14 +10,6 @@
  */
 package vazkii.arl.network;
 
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.HashMap;
-
-import org.apache.commons.lang3.tuple.Pair;
-
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -26,11 +18,19 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
 
 public abstract class NetworkMessage<REQ extends NetworkMessage> implements Serializable, IMessage, IMessageHandler<REQ, IMessage> {
 
-	private static final HashMap<Class, Pair<Reader, Writer>> handlers = new HashMap();
-	private static final HashMap<Class, Field[]> fieldCache = new HashMap();
+	private static final HashMap<Class, Pair<Reader, Writer>> handlers = new HashMap<>();
+	private static final HashMap<Class, Field[]> fieldCache = new HashMap<>();
 
 	static {
 		mapHandler(byte.class, NetworkMessage::readByte, NetworkMessage::writeByte);
@@ -87,26 +87,24 @@ public abstract class NetworkMessage<REQ extends NetworkMessage> implements Seri
 		}
 	}
 
-	@SuppressWarnings("unlikely-arg-type")
 	private static Field[] getClassFields(Class<?> clazz) {
-		if(fieldCache.containsValue(clazz))
+		if(fieldCache.containsKey(clazz))
 			return fieldCache.get(clazz);
 		else {
 			Field[] fields = clazz.getFields();
-			Arrays.sort(fields, (Field f1, Field f2) -> {
-				return f1.getName().compareTo(f2.getName());
-			});
+			Arrays.sort(fields, Comparator.comparing(Field::getName));
 			fieldCache.put(clazz, fields);
 			return fields;
 		}
 	}
 
-	private final void writeField(Field f, Class clazz, ByteBuf buf) throws IllegalArgumentException, IllegalAccessException {
+	@SuppressWarnings("unchecked")
+	private void writeField(Field f, Class clazz, ByteBuf buf) throws IllegalArgumentException, IllegalAccessException {
 		Pair<Reader, Writer> handler = getHandler(clazz);
 		handler.getRight().write(f.get(this), buf);
 	}
 
-	private final void readField(Field f, Class clazz, ByteBuf buf) throws IllegalArgumentException, IllegalAccessException {
+	private void readField(Field f, Class clazz, ByteBuf buf) throws IllegalArgumentException, IllegalAccessException {
 		Pair<Reader, Writer> handler = getHandler(clazz);
 		f.set(this, handler.getLeft().read(buf));
 	}
@@ -126,7 +124,7 @@ public abstract class NetworkMessage<REQ extends NetworkMessage> implements Seri
 		return  handlers.containsKey(type);
 	}
 
-	public static <T extends Object>void mapHandler(Class<T> type, Reader<T> reader, Writer<T> writer) {
+	public static <T> void mapHandler(Class<T> type, Reader<T> reader, Writer<T> writer) {
 		handlers.put(type, Pair.of(reader, writer));
 	}
 
@@ -227,12 +225,12 @@ public abstract class NetworkMessage<REQ extends NetworkMessage> implements Seri
 	}
 
 	// Functional interfaces
-	public static interface Writer<T extends Object> {
-		public void write(T t, ByteBuf buf);
+	public interface Writer<T> {
+		void write(T t, ByteBuf buf);
 	}
 
-	public static interface Reader<T extends Object> {
-		public T read(ByteBuf buf);
+	public interface Reader<T> {
+		T read(ByteBuf buf);
 	}
 
 }

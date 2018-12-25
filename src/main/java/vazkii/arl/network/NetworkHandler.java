@@ -22,7 +22,7 @@ public class NetworkHandler {
 
 	private static int i = 0;
 
-	public static void register(Class clazz, Side handlerSide) {
+	public static <T extends NetworkMessage<T>> void register(Class<T> clazz, Side handlerSide) {
 		INSTANCE.registerMessage(clazz, clazz, i++, handlerSide);
 	}
 	

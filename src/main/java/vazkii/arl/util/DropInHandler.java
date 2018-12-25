@@ -1,9 +1,5 @@
 package vazkii.arl.util;
 
-import java.util.concurrent.Callable;
-
-import org.lwjgl.input.Mouse;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -15,22 +11,29 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.input.Mouse;
+import vazkii.arl.AutoRegLib;
 import vazkii.arl.interf.IDropInItem;
 import vazkii.arl.network.NetworkHandler;
 import vazkii.arl.network.message.MessageDropIn;
 
+import java.util.concurrent.Callable;
+
+@Mod.EventBusSubscriber(value = Side.CLIENT, modid = AutoRegLib.MOD_ID)
 public final class DropInHandler {
 
 	public static void register() {
-		MinecraftForge.EVENT_BUS.register(DropInHandler.class);
 		CapabilityManager.INSTANCE.register(IDropInItem.class, CapabilityFactory.INSTANCE, CapabilityFactory.INSTANCE);
 	}
 	
 	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
 	public static void onDrawScreen(GuiScreenEvent.DrawScreenEvent.Post event) {
 		Minecraft mc = Minecraft.getMinecraft();
 		GuiScreen gui = mc.currentScreen;
@@ -62,6 +65,7 @@ public final class DropInHandler {
 	}
 
 	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
 	public static void onRightClick(GuiScreenEvent.MouseInputEvent.Pre event) {
 		Minecraft mc = Minecraft.getMinecraft();
 		GuiScreen gui = mc.currentScreen;
@@ -128,7 +132,7 @@ public final class DropInHandler {
 		}
 
 		@Override
-		public IDropInItem call() throws Exception {
+		public IDropInItem call() {
 			return new DefaultImpl();
 		}
 		

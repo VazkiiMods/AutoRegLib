@@ -1,15 +1,21 @@
 package vazkii.arl.util;
 
-import java.util.ArrayDeque;
-import java.util.Queue;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.RenderTickEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import vazkii.arl.AutoRegLib;
 
+import java.util.ArrayDeque;
+import java.util.Queue;
+
+@SideOnly(Side.CLIENT)
+@Mod.EventBusSubscriber(value = Side.CLIENT, modid = AutoRegLib.MOD_ID)
 public final class ClientTicker {
 
 	public static int ticksInGame = 0;

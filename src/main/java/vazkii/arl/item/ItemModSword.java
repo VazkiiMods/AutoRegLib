@@ -10,13 +10,14 @@
  */
 package vazkii.arl.item;
 
-import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.util.ResourceLocation;
 import vazkii.arl.interf.IVariantHolder;
 import vazkii.arl.util.ProxyRegistry;
+
+import javax.annotation.Nonnull;
 
 public abstract class ItemModSword extends ItemSword implements IVariantHolder {
 
@@ -34,11 +35,11 @@ public abstract class ItemModSword extends ItemSword implements IVariantHolder {
 
 		bareName = name;
 		this.variants = variants;
-		ItemMod.variantHolders.add(this);
 	}
 
+	@Nonnull
 	@Override
-	public Item setUnlocalizedName(String name) {
+	public Item setUnlocalizedName(@Nonnull String name) {
 		super.setUnlocalizedName(name);
 		setRegistryName(new ResourceLocation(getPrefix() + name));
 		ProxyRegistry.register(this);
@@ -46,6 +47,7 @@ public abstract class ItemModSword extends ItemSword implements IVariantHolder {
 		return this;
 	}
 
+	@Nonnull
 	@Override
 	public String getUnlocalizedName(ItemStack par1ItemStack) {
 		int dmg = par1ItemStack.getItemDamage();
@@ -62,11 +64,6 @@ public abstract class ItemModSword extends ItemSword implements IVariantHolder {
 	@Override
 	public String[] getVariants() {
 		return variants;
-	}
-
-	@Override
-	public ItemMeshDefinition getCustomMeshDefinition() {
-		return null;
 	}
 
 }

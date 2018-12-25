@@ -19,21 +19,21 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public interface IModBlock extends IVariantHolder, IVariantEnumHolder, IStateMapperProvider {
 
-	public String getBareName();
+	String getBareName();
 
-	public IProperty getVariantProp();
+	IProperty getVariantProp();
 
-	public IProperty[] getIgnoredProperties();
+	IProperty[] getIgnoredProperties();
 
-	public EnumRarity getBlockRarity(ItemStack stack);
+	EnumRarity getBlockRarity(ItemStack stack);
 
-	public default boolean shouldDisplayVariant(int variant) {
+	default boolean shouldDisplayVariant(int variant) {
 		return true;
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public default IStateMapper getStateMapper() {
+	default IStateMapper getStateMapper() {
 		return null;
 	}
 

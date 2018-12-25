@@ -17,9 +17,9 @@ import vazkii.arl.block.property.PropertyString;
 
 public interface IStateMapperProvider {
 
-	public static final PropertyString TEXTURE = new PropertyString("texture");
+	PropertyString TEXTURE = new PropertyString("texture");
 	
 	@SideOnly(Side.CLIENT)
-	public IStateMapper getStateMapper();
+	IStateMapper getStateMapper();
 
 }
