@@ -108,7 +108,6 @@ public final class ModelHandler {
 
 	public static void registerBlock(Block block) {
 		IModBlock quarkBlock = (IModBlock) block;
-		IProperty variantProp = quarkBlock.getVariantProp();
 
 		IStateMapper mapper = quarkBlock.getStateMapper();
 		IProperty[] ignored = quarkBlock.getIgnoredProperties();

@@ -78,7 +78,7 @@ public abstract class BlockModSlab extends BlockSlab implements IModBlock {
 	}
 
 	public ItemBlock createItemBlock(ResourceLocation res) {
-		if (isDouble())
+		if (!isDouble())
 			return new ItemModBlockSlab(this, res);
 		return null;
 	}
