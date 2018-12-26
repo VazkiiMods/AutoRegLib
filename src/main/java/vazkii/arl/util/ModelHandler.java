@@ -108,7 +108,6 @@ public final class ModelHandler {
 
 	public static void registerBlock(Block block) {
 		IModBlock quarkBlock = (IModBlock) block;
-		IProperty variantProp = quarkBlock.getVariantProp();
 
 		IStateMapper mapper = quarkBlock.getStateMapper();
 		IProperty[] ignored = quarkBlock.getIgnoredProperties();
@@ -128,18 +127,22 @@ public final class ModelHandler {
 
 			if (clazz != null) {
 				IProperty variantProp = quarkBlock.getVariantProp();
+				boolean variantIgnored = false;
 
 				IStateMapper mapper = quarkBlock.getStateMapper();
 				IProperty[] ignored = quarkBlock.getIgnoredProperties();
-				if (mapper != null || ignored != null && ignored.length > 0) {
-					if (mapper == null) {
-						for (IProperty p : ignored) {
-							if (p == variantProp) {
-								registerVariantsDefaulted(item, (Block) quarkBlock, clazz, variantProp.getName());
-								return;
-							}
+				if (mapper == null && ignored != null && ignored.length > 0) {
+					for (IProperty p : ignored) {
+						if (p == variantProp) {
+							variantIgnored = true;
+							break;
 						}
 					}
+				}
+
+				if (!variantIgnored) {
+					registerVariantsDefaulted(item, (Block) quarkBlock, clazz, variantProp.getName());
+					return;
 				}
 			}
 		}
