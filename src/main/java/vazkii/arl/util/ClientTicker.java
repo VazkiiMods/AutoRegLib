@@ -2,6 +2,7 @@ package vazkii.arl.util;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
@@ -14,7 +15,6 @@ import vazkii.arl.AutoRegLib;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
-@SideOnly(Side.CLIENT)
 @Mod.EventBusSubscriber(value = Side.CLIENT, modid = AutoRegLib.MOD_ID)
 public final class ClientTicker {
 
@@ -26,9 +26,11 @@ public final class ClientTicker {
 	private static Queue<Runnable> pendingActions = new ArrayDeque<>();
 
 	public static void addAction(Runnable action) {
-		pendingActions.add(action);
+		if (FMLCommonHandler.instance().getSide().isClient())
+			pendingActions.add(action);
 	}
-	
+
+	@SideOnly(Side.CLIENT)
 	private static void calcDelta() {
 		float oldTotal = total;
 		total = ticksInGame + partialTicks;
@@ -36,6 +38,7 @@ public final class ClientTicker {
 	}
 
 	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
 	public static void renderTick(RenderTickEvent event) {
 		if(event.phase == Phase.START)
 			partialTicks = event.renderTickTime;
@@ -43,6 +46,7 @@ public final class ClientTicker {
 	}
 
 	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
 	public static void clientTickEnd(ClientTickEvent event) {
 		if(event.phase == Phase.END) {
 			GuiScreen gui = Minecraft.getMinecraft().currentScreen;
