@@ -169,14 +169,14 @@ public final class RecipeHandler {
 	}
 
 	private static ResourceLocation unusedLocForOutput(String namespace, ItemStack output) {
-		ResourceLocation baseLoc = new ResourceLocation(namespace, Objects.requireNonNull(output.getItem().getRegistryName()).getResourcePath());
+		ResourceLocation baseLoc = new ResourceLocation(namespace, Objects.requireNonNull(output.getItem().getRegistryName()).getPath());
 		ResourceLocation recipeLoc = baseLoc;
 		int index = 0;
 
 		// find unused recipe name
 		while(usedNames.contains(recipeLoc)) {
 			index++;
-			recipeLoc = new ResourceLocation(namespace, baseLoc.getResourcePath() + "_" + index);
+			recipeLoc = new ResourceLocation(namespace, baseLoc.getPath() + "_" + index);
 		}
 
 		return recipeLoc;

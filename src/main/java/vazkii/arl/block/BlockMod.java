@@ -36,12 +36,12 @@ public abstract class BlockMod extends Block implements IModBlock {
 		this.variants = variants;
 
 		if(registerInConstruction())
-			setUnlocalizedName(name);
+			setTranslationKey(name);
 	}
 
 	@Override
-	public Block setUnlocalizedName(String name) {
-		super.setUnlocalizedName(name);
+	public Block setTranslationKey(String name) {
+		super.setTranslationKey(name);
 		setRegistryName(getPrefix() + name);
 		ProxyRegistry.register(this);
 		ProxyRegistry.register(createItemBlock(new ResourceLocation(getPrefix() + name)));

@@ -28,7 +28,7 @@ public abstract class ItemModTool extends ItemTool implements IVariantHolder {
 
 	protected ItemModTool(String name, float attackDamage, float speed, ToolMaterial material, Set<Block> effectiveBlocks, String... variants) {
 		super(attackDamage, speed, material, effectiveBlocks);
-		setUnlocalizedName(name);
+		setTranslationKey(name);
 		if(variants.length > 1)
 			setHasSubtypes(true);
 
@@ -41,8 +41,8 @@ public abstract class ItemModTool extends ItemTool implements IVariantHolder {
 
 	@Nonnull
 	@Override
-	public Item setUnlocalizedName(@Nonnull String name) {
-		super.setUnlocalizedName(name);
+	public Item setTranslationKey(@Nonnull String name) {
+		super.setTranslationKey(name);
 		setRegistryName(new ResourceLocation(getPrefix() + name));
 		ProxyRegistry.register(this);
 
@@ -51,7 +51,7 @@ public abstract class ItemModTool extends ItemTool implements IVariantHolder {
 
 	@Nonnull
 	@Override
-	public String getUnlocalizedName(ItemStack par1ItemStack) {
+	public String getTranslationKey(ItemStack par1ItemStack) {
 		int dmg = par1ItemStack.getItemDamage();
 		String[] variants = getVariants();
 

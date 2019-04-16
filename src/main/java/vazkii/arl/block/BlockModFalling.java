@@ -26,13 +26,13 @@ public abstract class BlockModFalling extends BlockFalling implements IModBlock 
 		this.variants = variants;
 
 		if(registerInConstruction())
-			setUnlocalizedName(name);
+			setTranslationKey(name);
 	}
 
 	@Nonnull
 	@Override
-	public Block setUnlocalizedName(@Nonnull String name) {
-		super.setUnlocalizedName(name);
+	public Block setTranslationKey(@Nonnull String name) {
+		super.setTranslationKey(name);
 		setRegistryName(getPrefix() + name);
 		ProxyRegistry.register(this);
 		ProxyRegistry.register(createItemBlock(new ResourceLocation(getPrefix() + name)));

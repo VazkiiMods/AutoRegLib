@@ -45,7 +45,7 @@ public final class DropInHandler {
 				for(Slot s : container.inventorySlots.inventorySlots) {
 					ItemStack stack = s.getStack();
 					IDropInItem dropin = getDropInHandler(stack);
-					if(dropin != null && dropin.canDropItemIn(mc.player, stack, held)) {
+					if(dropin != null) {
 						if(s == under) {
 							int x = event.getMouseX();
 							int y = event.getMouseY();
@@ -77,8 +77,7 @@ public final class DropInHandler {
 			if(under != null && !held.isEmpty()) {
 				ItemStack stack = under.getStack();
 				IDropInItem dropin = getDropInHandler(stack);
-				if(dropin != null && dropin.canDropItemIn(mc.player, stack, held)) {
-					mc.player.inventory.setItemStack(ItemStack.EMPTY);
+				if(dropin != null) {
 					NetworkHandler.INSTANCE.sendToServer(new MessageDropIn(under.slotNumber, held));
 					event.setCanceled(true);
 				}
@@ -101,6 +100,7 @@ public final class DropInHandler {
 			ItemStack result = dropin.dropItemIn(player, target, held);
 			slotObj.putStack(result);
 			player.inventory.setItemStack(ItemStack.EMPTY);
+			player.inventory.markDirty();
 		}
 	}
 	

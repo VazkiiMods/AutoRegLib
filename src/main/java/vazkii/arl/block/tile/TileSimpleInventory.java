@@ -196,7 +196,7 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 	@Override
 	public String getName() {
 		if(name == null)
-			name = new ItemStack(world.getBlockState(getPos()).getBlock()).getUnlocalizedName() + ".name";
+			name = new ItemStack(world.getBlockState(getPos()).getBlock()).getTranslationKey() + ".name";
 		return name;
 	}
 

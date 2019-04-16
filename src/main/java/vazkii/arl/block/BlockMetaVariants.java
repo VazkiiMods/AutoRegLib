@@ -42,7 +42,7 @@ public abstract class BlockMetaVariants<T extends Enum<T> & IStringSerializable>
 		this.variantProp = temporaryVariantProp;
 		setDefaultState(blockState.getBaseState().withProperty(variantProp, variantsEnum.getEnumConstants()[0]));
 		
-		setUnlocalizedName(name);
+		setTranslationKey(name);
 	}
 
 	@Override

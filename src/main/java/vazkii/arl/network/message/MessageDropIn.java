@@ -26,7 +26,7 @@ public class MessageDropIn extends NetworkMessage<MessageDropIn> {
 	@Override
 	public IMessage handleMessage(MessageContext context) {
 		EntityPlayerMP player = context.getServerHandler().player;
-		player.mcServer.addScheduledTask(() -> DropInHandler.executeDropIn(player, slot, stack));
+		player.server.addScheduledTask(() -> DropInHandler.executeDropIn(player, slot, stack));
 		
 		return null;
 	}

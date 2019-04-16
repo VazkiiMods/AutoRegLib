@@ -16,7 +16,7 @@ public abstract class ItemModPickaxe extends ItemPickaxe implements IVariantHold
 
 	public ItemModPickaxe(String name, ToolMaterial material, String... variants) {
 		super(material);
-		setUnlocalizedName(name);
+		setTranslationKey(name);
 		if(variants.length > 1)
 			setHasSubtypes(true);
 
@@ -29,8 +29,8 @@ public abstract class ItemModPickaxe extends ItemPickaxe implements IVariantHold
 
 	@Nonnull
 	@Override
-	public Item setUnlocalizedName(@Nonnull String name) {
-		super.setUnlocalizedName(name);
+	public Item setTranslationKey(@Nonnull String name) {
+		super.setTranslationKey(name);
 		setRegistryName(new ResourceLocation(getPrefix() + name));
 		ProxyRegistry.register(this);
 
@@ -39,7 +39,7 @@ public abstract class ItemModPickaxe extends ItemPickaxe implements IVariantHold
 
 	@Nonnull
 	@Override
-	public String getUnlocalizedName(ItemStack par1ItemStack) {
+	public String getTranslationKey(ItemStack par1ItemStack) {
 		int dmg = par1ItemStack.getItemDamage();
 		String[] variants = getVariants();
 

@@ -36,7 +36,7 @@ public abstract class BlockModStairs extends BlockStairs implements IModBlock {
 		variants = new String[] { name };
 		bareName = name;
 
-		setUnlocalizedName(name);
+		setTranslationKey(name);
 		useNeighborBrightness = true;
 	}
 
@@ -47,8 +47,8 @@ public abstract class BlockModStairs extends BlockStairs implements IModBlock {
 
 	@Nonnull
 	@Override
-	public Block setUnlocalizedName(@Nonnull String name) {
-		super.setUnlocalizedName(name);
+	public Block setTranslationKey(@Nonnull String name) {
+		super.setTranslationKey(name);
 		setRegistryName(getPrefix() + name);
 		ProxyRegistry.register(this);
 		ProxyRegistry.register(createItemBlock(getRegistryName()));

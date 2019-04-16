@@ -28,15 +28,15 @@ public abstract class ItemModArmor extends ItemArmor implements IVariantHolder {
 	public ItemModArmor(String name, ItemArmor.ArmorMaterial materialIn, int renderIndexIn, EntityEquipmentSlot equipmentSlotIn) {
 		super(materialIn, renderIndexIn, equipmentSlotIn);
 
-		setUnlocalizedName(name);
+		setTranslationKey(name);
 		bareName = name;
 		setCreativeTab(CreativeTabs.COMBAT);
 	}
 
 	@Nonnull
 	@Override
-	public Item setUnlocalizedName(@Nonnull String name) {
-		super.setUnlocalizedName(name);
+	public Item setTranslationKey(@Nonnull String name) {
+		super.setTranslationKey(name);
 		setRegistryName(new ResourceLocation(getPrefix() + name));
 		ProxyRegistry.register(this);
 
@@ -45,7 +45,7 @@ public abstract class ItemModArmor extends ItemArmor implements IVariantHolder {
 
 	@Nonnull
 	@Override
-	public String getUnlocalizedName(ItemStack par1ItemStack) {
+	public String getTranslationKey(ItemStack par1ItemStack) {
 		par1ItemStack.getItemDamage();
 
 		return "item." + getPrefix() + bareName;

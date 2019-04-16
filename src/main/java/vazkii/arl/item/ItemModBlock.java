@@ -45,13 +45,13 @@ public class ItemModBlock extends ItemBlock implements IVariantHolder {
 
 	@Nonnull
 	@Override
-	public ItemBlock setUnlocalizedName(@Nonnull String par1Str) {
-		return (ItemBlock) super.setUnlocalizedName(par1Str);
+	public ItemBlock setTranslationKey(@Nonnull String par1Str) {
+		return (ItemBlock) super.setTranslationKey(par1Str);
 	}
 
 	@Nonnull
 	@Override
-	public String getUnlocalizedName(ItemStack par1ItemStack) {
+	public String getTranslationKey(ItemStack par1ItemStack) {
 		int dmg = par1ItemStack.getItemDamage();
 		String[] variants = getVariants();
 

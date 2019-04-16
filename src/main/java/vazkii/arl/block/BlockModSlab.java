@@ -62,7 +62,7 @@ public abstract class BlockModSlab extends BlockSlab implements IModBlock {
 		variants = new String[] { name };
 		bareName = name;
 
-		setUnlocalizedName(name);
+		setTranslationKey(name);
 		if(!doubleSlab) {
 			useNeighborBrightness = true;
 			setDefaultState(blockState.getBaseState().withProperty(HALF, EnumBlockHalf.BOTTOM).withProperty(prop, DummyEnum.BLARG));
@@ -157,8 +157,8 @@ public abstract class BlockModSlab extends BlockSlab implements IModBlock {
 
 	@Nonnull
 	@Override
-	public String getUnlocalizedName(int meta) {
-		return getUnlocalizedName();
+	public String getTranslationKey(int meta) {
+		return getTranslationKey();
 	}
 
 	@Override

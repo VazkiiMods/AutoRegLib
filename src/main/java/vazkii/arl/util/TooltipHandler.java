@@ -11,7 +11,7 @@
 package vazkii.arl.util;
 
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.util.text.translation.I18n;
+import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -42,7 +42,7 @@ public final class TooltipHandler {
 
 	@SideOnly(Side.CLIENT)
 	public static String local(String s) {
-		return I18n.translateToLocal(s);
+		return I18n.format(s);
 	}
 	
 }

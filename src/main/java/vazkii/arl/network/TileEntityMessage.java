@@ -17,7 +17,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public abstract class TileEntityMessage<T extends TileEntity> extends NetworkMessage {
+public abstract class TileEntityMessage<T extends TileEntity> extends NetworkMessage<TileEntityMessage<T>> {
 
 	public BlockPos pos;
 	public transient T tile;
