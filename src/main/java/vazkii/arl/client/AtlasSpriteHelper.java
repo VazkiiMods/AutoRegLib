@@ -28,22 +28,22 @@ public final class AtlasSpriteHelper {
 	 * Renders a sprite from the spritesheet with depth, like a "builtin/generated" item model.
 	 * Adapted from ItemRenderer.renderItemIn2D, 1.7.10
 	 */
-	public static void renderIconThicc(Tessellator tess, float p_78439_1_, float p_78439_2_, float p_78439_3_, float p_78439_4_, int width, int height, float thickness) {
+	public static void renderIconThicc(Tessellator tess, float maxU, float maxV, float minU, float minV, int width, int height, float thickness) {
 		BufferBuilder wr = tess.getBuffer();
 		wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_NORMAL);
-		wr.pos(0.0D, 0.0D, 0.0D).tex(p_78439_1_, p_78439_4_).normal(0, 0, 1).endVertex();
-		wr.pos(1.0D, 0.0D, 0.0D).tex(p_78439_3_, p_78439_4_).normal(0, 0, 1).endVertex();
-		wr.pos(1.0D, 1.0D, 0.0D).tex(p_78439_3_, p_78439_2_).normal(0, 0, 1).endVertex();
-		wr.pos(0.0D, 1.0D, 0.0D).tex(p_78439_1_, p_78439_2_).normal(0, 0, 1).endVertex();
+		wr.pos(0.0D, 0.0D, 0.0D).tex(maxU, minV).normal(0, 0, 1).endVertex();
+		wr.pos(1.0D, 0.0D, 0.0D).tex(minU, minV).normal(0, 0, 1).endVertex();
+		wr.pos(1.0D, 1.0D, 0.0D).tex(minU, maxV).normal(0, 0, 1).endVertex();
+		wr.pos(0.0D, 1.0D, 0.0D).tex(maxU, maxV).normal(0, 0, 1).endVertex();
 		tess.draw();
 		wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_NORMAL);
-		wr.pos(0.0D, 1.0D, 0.0F - thickness).tex(p_78439_1_, p_78439_2_).normal(0, 0, -1).endVertex();
-		wr.pos(1.0D, 1.0D, 0.0F - thickness).tex(p_78439_3_, p_78439_2_).normal(0, 0, -1).endVertex();
-		wr.pos(1.0D, 0.0D, 0.0F - thickness).tex(p_78439_3_, p_78439_4_).normal(0, 0, -1).endVertex();
-		wr.pos(0.0D, 0.0D, 0.0F - thickness).tex(p_78439_1_, p_78439_4_).normal(0, 0, -1).endVertex();
+		wr.pos(0.0D, 1.0D, 0.0F - thickness).tex(maxU, maxV).normal(0, 0, -1).endVertex();
+		wr.pos(1.0D, 1.0D, 0.0F - thickness).tex(minU, maxV).normal(0, 0, -1).endVertex();
+		wr.pos(1.0D, 0.0D, 0.0F - thickness).tex(minU, minV).normal(0, 0, -1).endVertex();
+		wr.pos(0.0D, 0.0D, 0.0F - thickness).tex(maxU, minV).normal(0, 0, -1).endVertex();
 		tess.draw();
-		float f5 = 0.5F * (p_78439_1_ - p_78439_3_) / width;
-		float f6 = 0.5F * (p_78439_4_ - p_78439_2_) / height;
+		float f5 = 0.5F * (maxU - minU) / width;
+		float f6 = 0.5F * (minV - maxV) / height;
 		wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_NORMAL);
 		int k;
 		float f7;
@@ -52,11 +52,11 @@ public final class AtlasSpriteHelper {
 		for (k = 0; k < width; ++k)
 		{
 			f7 = (float)k / (float)width;
-			f8 = p_78439_1_ + (p_78439_3_ - p_78439_1_) * f7 - f5;
-			wr.pos(f7, 0.0D, 0.0F - thickness).tex(f8, p_78439_4_).normal(-1, 0, 0).endVertex();
-			wr.pos(f7, 0.0D, 0.0D).tex(f8, p_78439_4_).normal(-1, 0, 0).endVertex();
-			wr.pos(f7, 1.0D, 0.0D).tex(f8, p_78439_2_).normal(-1, 0, 0).endVertex();
-			wr.pos(f7, 1.0D, 0.0F - thickness).tex(f8, p_78439_2_).normal(-1, 0, 0).endVertex();
+			f8 = maxU + (minU - maxU) * f7 - f5;
+			wr.pos(f7, 0.0D, 0.0F - thickness).tex(f8, minV).normal(-1, 0, 0).endVertex();
+			wr.pos(f7, 0.0D, 0.0D).tex(f8, minV).normal(-1, 0, 0).endVertex();
+			wr.pos(f7, 1.0D, 0.0D).tex(f8, maxV).normal(-1, 0, 0).endVertex();
+			wr.pos(f7, 1.0D, 0.0F - thickness).tex(f8, maxV).normal(-1, 0, 0).endVertex();
 		}
 
 		tess.draw();
@@ -66,12 +66,12 @@ public final class AtlasSpriteHelper {
 		for (k = 0; k < width; ++k)
 		{
 			f7 = (float)k / (float)width;
-			f8 = p_78439_1_ + (p_78439_3_ - p_78439_1_) * f7 - f5;
+			f8 = maxU + (minU - maxU) * f7 - f5;
 			f9 = f7 + 1.0F / width;
-			wr.pos(f9, 1.0D, 0.0F - thickness).tex(f8, p_78439_2_).normal(1, 0, 0).endVertex();
-			wr.pos(f9, 1.0D, 0.0D).tex(f8, p_78439_2_).normal(1, 0, 0).endVertex();
-			wr.pos(f9, 0.0D, 0.0D).tex(f8, p_78439_4_).normal(1, 0, 0).endVertex();
-			wr.pos(f9, 0.0D, 0.0F - thickness).tex(f8, p_78439_4_).normal(1, 0, 0).endVertex();
+			wr.pos(f9, 1.0D, 0.0F - thickness).tex(f8, maxV).normal(1, 0, 0).endVertex();
+			wr.pos(f9, 1.0D, 0.0D).tex(f8, maxV).normal(1, 0, 0).endVertex();
+			wr.pos(f9, 0.0D, 0.0D).tex(f8, minV).normal(1, 0, 0).endVertex();
+			wr.pos(f9, 0.0D, 0.0F - thickness).tex(f8, minV).normal(1, 0, 0).endVertex();
 		}
 
 		tess.draw();
@@ -80,12 +80,12 @@ public final class AtlasSpriteHelper {
 		for (k = 0; k < height; ++k)
 		{
 			f7 = (float)k / (float)height;
-			f8 = p_78439_4_ + (p_78439_2_ - p_78439_4_) * f7 - f6;
+			f8 = minV + (maxV - minV) * f7 - f6;
 			f9 = f7 + 1.0F / height;
-			wr.pos(0.0D, f9, 0.0D).tex(p_78439_1_, f8).normal(0, 1, 0).endVertex();
-			wr.pos(1.0D, f9, 0.0D).tex(p_78439_3_, f8).normal(0, 1, 0).endVertex();
-			wr.pos(1.0D, f9, 0.0F - thickness).tex(p_78439_3_, f8).normal(0, 1, 0).endVertex();
-			wr.pos(0.0D, f9, 0.0F - thickness).tex(p_78439_1_, f8).normal(0, 1, 0).endVertex();
+			wr.pos(0.0D, f9, 0.0D).tex(maxU, f8).normal(0, 1, 0).endVertex();
+			wr.pos(1.0D, f9, 0.0D).tex(minU, f8).normal(0, 1, 0).endVertex();
+			wr.pos(1.0D, f9, 0.0F - thickness).tex(minU, f8).normal(0, 1, 0).endVertex();
+			wr.pos(0.0D, f9, 0.0F - thickness).tex(maxU, f8).normal(0, 1, 0).endVertex();
 		}
 
 		tess.draw();
@@ -94,11 +94,11 @@ public final class AtlasSpriteHelper {
 		for (k = 0; k < height; ++k)
 		{
 			f7 = (float)k / (float)height;
-			f8 = p_78439_4_ + (p_78439_2_ - p_78439_4_) * f7 - f6;
-			wr.pos(1.0D, f7, 0.0D).tex(p_78439_3_, f8).normal(0, -1, 0).endVertex();
-			wr.pos(0.0D, f7, 0.0D).tex(p_78439_1_, f8).normal(0, -1, 0).endVertex();
-			wr.pos(0.0D, f7, 0.0F - thickness).tex(p_78439_1_, f8).normal(0, -1, 0).endVertex();
-			wr.pos(1.0D, f7, 0.0F - thickness).tex(p_78439_3_, f8).normal(0, -1, 0).endVertex();
+			f8 = minV + (maxV - minV) * f7 - f6;
+			wr.pos(1.0D, f7, 0.0D).tex(minU, f8).normal(0, -1, 0).endVertex();
+			wr.pos(0.0D, f7, 0.0D).tex(maxU, f8).normal(0, -1, 0).endVertex();
+			wr.pos(0.0D, f7, 0.0F - thickness).tex(maxU, f8).normal(0, -1, 0).endVertex();
+			wr.pos(1.0D, f7, 0.0F - thickness).tex(minU, f8).normal(0, -1, 0).endVertex();
 		}
 
 		tess.draw();

@@ -1,30 +1,20 @@
-/**
- * This class was created by <Vazkii>. It's distributed as
- * part of the Psi Mod. Get the Source Code in github:
- * https://github.com/Vazkii/Psi
- *
- * Psi is Open Source and distributed under the
- * Psi License: http://psi.vazkii.us/license.php
- *
- * File Created @ [06/02/2016, 21:16:37 (GMT)]
- */
 package vazkii.arl.item;
 
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
 import net.minecraft.util.ResourceLocation;
 import vazkii.arl.interf.IVariantHolder;
 import vazkii.arl.util.ProxyRegistry;
 
 import javax.annotation.Nonnull;
 
-public abstract class ItemModSword extends ItemSword implements IVariantHolder {
+public abstract class ItemModPickaxe extends ItemPickaxe implements IVariantHolder {
 
 	private final String[] variants;
 	private final String bareName;
 
-	protected ItemModSword(String name, ToolMaterial material, String... variants) {
+	public ItemModPickaxe(String name, ToolMaterial material, String... variants) {
 		super(material);
 		setUnlocalizedName(name);
 		if(variants.length > 1)
@@ -65,5 +55,4 @@ public abstract class ItemModSword extends ItemSword implements IVariantHolder {
 	public String[] getVariants() {
 		return variants;
 	}
-
 }

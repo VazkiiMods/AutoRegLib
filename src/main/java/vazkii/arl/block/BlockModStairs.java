@@ -14,16 +14,16 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.item.EnumRarity;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import vazkii.arl.interf.IModBlock;
 import vazkii.arl.item.ItemModBlock;
 import vazkii.arl.recipe.RecipeHandler;
 import vazkii.arl.util.ProxyRegistry;
+
+import javax.annotation.Nonnull;
 
 public abstract class BlockModStairs extends BlockStairs implements IModBlock {
 
@@ -40,12 +40,18 @@ public abstract class BlockModStairs extends BlockStairs implements IModBlock {
 		useNeighborBrightness = true;
 	}
 
+
+	public ItemBlock createItemBlock(ResourceLocation res) {
+		return new ItemModBlock(this, res);
+	}
+
+	@Nonnull
 	@Override
-	public Block setUnlocalizedName(String name) {
+	public Block setUnlocalizedName(@Nonnull String name) {
 		super.setUnlocalizedName(name);
 		setRegistryName(getPrefix() + name);
 		ProxyRegistry.register(this);
-		ProxyRegistry.register(new ItemModBlock(this, new ResourceLocation(getPrefix() + name)));
+		ProxyRegistry.register(createItemBlock(getRegistryName()));
 		return this;
 	}
 
@@ -57,12 +63,6 @@ public abstract class BlockModStairs extends BlockStairs implements IModBlock {
 	@Override
 	public String[] getVariants() {
 		return variants;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public ItemMeshDefinition getCustomMeshDefinition() {
-		return null;
 	}
 
 	@Override

@@ -3,16 +3,15 @@ package vazkii.arl.block;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import vazkii.arl.interf.IModBlock;
 import vazkii.arl.item.ItemModBlock;
 import vazkii.arl.util.ProxyRegistry;
+
+import javax.annotation.Nonnull;
 
 public abstract class BlockModFalling extends BlockFalling implements IModBlock {
 
@@ -30,8 +29,9 @@ public abstract class BlockModFalling extends BlockFalling implements IModBlock 
 			setUnlocalizedName(name);
 	}
 
+	@Nonnull
 	@Override
-	public Block setUnlocalizedName(String name) {
+	public Block setUnlocalizedName(@Nonnull String name) {
 		super.setUnlocalizedName(name);
 		setRegistryName(getPrefix() + name);
 		ProxyRegistry.register(this);
@@ -55,12 +55,6 @@ public abstract class BlockModFalling extends BlockFalling implements IModBlock 
 	@Override
 	public String[] getVariants() {
 		return variants;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public ItemMeshDefinition getCustomMeshDefinition() {
-		return null;
 	}
 
 	@Override

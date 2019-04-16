@@ -4,28 +4,19 @@
  */
 package vazkii.arl;
 
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import vazkii.arl.util.ClientTicker;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import vazkii.arl.util.DropInHandler;
-import vazkii.arl.util.ModelHandler;
 
+@SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy {
 
 	@Override
 	public void preInit(FMLPreInitializationEvent event) {
 		super.preInit(event);
-		MinecraftForge.EVENT_BUS.register(ModelHandler.class);
-		MinecraftForge.EVENT_BUS.register(ClientTicker.class);
 
 		DropInHandler.register();
-	}
-
-	@Override
-	public void init(FMLInitializationEvent event) {
-		super.init(event);
-		ModelHandler.init();
 	}
 	
 }

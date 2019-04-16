@@ -4,8 +4,6 @@
  */
 package vazkii.arl;
 
-import java.lang.invoke.MethodHandle;
-
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;

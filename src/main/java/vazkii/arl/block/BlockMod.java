@@ -13,13 +13,10 @@ package vazkii.arl.block;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import vazkii.arl.interf.IModBlock;
 import vazkii.arl.item.ItemModBlock;
 import vazkii.arl.util.ProxyRegistry;
@@ -67,12 +64,6 @@ public abstract class BlockMod extends Block implements IModBlock {
 	@Override
 	public String[] getVariants() {
 		return variants;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public ItemMeshDefinition getCustomMeshDefinition() {
-		return null;
 	}
 
 	@Override

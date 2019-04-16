@@ -1,6 +1,6 @@
 package vazkii.arl.network.message;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -25,8 +25,8 @@ public class MessageDropIn extends NetworkMessage<MessageDropIn> {
 	
 	@Override
 	public IMessage handleMessage(MessageContext context) {
-		EntityPlayer player = context.getServerHandler().player;
-		player.getServer().addScheduledTask(() -> DropInHandler.executeDropIn(player, slot, stack)); 
+		EntityPlayerMP player = context.getServerHandler().player;
+		player.mcServer.addScheduledTask(() -> DropInHandler.executeDropIn(player, slot, stack));
 		
 		return null;
 	}

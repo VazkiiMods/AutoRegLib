@@ -10,35 +10,37 @@
  */
 package vazkii.arl.util;
 
-import java.util.HashMap;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
 import net.minecraft.client.renderer.block.statemap.StateMap;
-import net.minecraft.client.renderer.color.BlockColors;
-import net.minecraft.client.renderer.color.ItemColors;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
+import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import vazkii.arl.interf.IBlockColorProvider;
-import vazkii.arl.interf.IExtraVariantHolder;
-import vazkii.arl.interf.IItemColorProvider;
-import vazkii.arl.interf.IModBlock;
-import vazkii.arl.interf.IVariantHolder;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import vazkii.arl.AutoRegLib;
+import vazkii.arl.interf.*;
 import vazkii.arl.item.ItemMod;
 
+import java.util.HashMap;
+import java.util.Objects;
+
+@SideOnly(Side.CLIENT)
+@Mod.EventBusSubscriber(value = Side.CLIENT, modid = AutoRegLib.MOD_ID)
 public final class ModelHandler {
 
-	public static final HashMap<String, ModelResourceLocation> resourceLocations = new HashMap();
+	public static final HashMap<String, ModelResourceLocation> resourceLocations = new HashMap<>();
 
 	@SubscribeEvent
 	public static void onRegister(ModelRegistryEvent event) {
@@ -46,66 +48,102 @@ public final class ModelHandler {
 			registerModels(holder);
 	}
 
-	public static void init() {
-		ItemColors itemColors = Minecraft.getMinecraft().getItemColors();
-		BlockColors blockColors = Minecraft.getMinecraft().getBlockColors();
+	@SubscribeEvent
+	public static void onItemColorRegister(ColorHandlerEvent.Item event) {
+		for(IVariantHolder holder : ItemMod.variantHolders)
+			if (holder instanceof IItemColorProvider) {
 
-		for(IVariantHolder holder : ItemMod.variantHolders) {
-			if(holder instanceof IItemColorProvider)
-				itemColors.registerItemColorHandler(((IItemColorProvider) holder).getItemColor(), (Item) holder);
+				Item item;
+				if (holder instanceof Block)
+					item = Item.getItemFromBlock((Block) holder);
+				else if (holder instanceof Item)
+					item = (Item) holder;
+				else
+					continue;
 
-			if(holder instanceof ItemBlock && ((ItemBlock) holder).getBlock() instanceof IBlockColorProvider) {
-				Block block = ((ItemBlock) holder).getBlock();
-				blockColors.registerBlockColorHandler(((IBlockColorProvider) block).getBlockColor(), block);
-				itemColors.registerItemColorHandler(((IBlockColorProvider) block).getItemColor(), block);
+				if (item == Items.AIR)
+					continue;
+
+				event.getItemColors().registerItemColorHandler(((IItemColorProvider) holder).getItemColor(), item);
 			}
-		}
+	}
+
+	@SubscribeEvent
+	public static void onBlockColorRegister(ColorHandlerEvent.Block event) {
+		for(IVariantHolder holder : ItemMod.variantHolders)
+			if (holder instanceof IBlockColorProvider) {
+				Block block;
+				if (holder instanceof ItemBlock)
+					block = ((ItemBlock) holder).getBlock();
+				else if (holder instanceof Block)
+					block = (Block) holder;
+				else
+					continue;
+
+				event.getBlockColors().registerBlockColorHandler(((IBlockColorProvider) block).getBlockColor(), block);
+			}
 	}
 
 	public static void registerModels(IVariantHolder holder) {
-		String unique = holder.getUniqueModel();
-		String prefix = holder.getPrefix();
-		Item i = (Item) holder;
+		if (holder instanceof Item) {
+			String unique = holder.getUniqueModel();
+			String prefix = holder.getPrefix();
+			Item i = (Item) holder;
 
-		ItemMeshDefinition def = holder.getCustomMeshDefinition();
-		if(def != null)
-			ModelLoader.setCustomMeshDefinition((Item) holder, def);
-		else registerModels(i, prefix, holder.getVariants(), unique, false);
+			ItemMeshDefinition def = holder.getCustomMeshDefinition();
+			if (def != null)
+				ModelLoader.setCustomMeshDefinition((Item) holder, def);
+			else registerModels(i, prefix, holder.getVariants(), unique, false);
 
-		if(holder instanceof IExtraVariantHolder) {
-			IExtraVariantHolder extra = (IExtraVariantHolder) holder;
-			registerModels(i, prefix, extra.getExtraVariants(), unique, true);
+
+			if (holder instanceof IExtraVariantHolder) {
+				IExtraVariantHolder extra = (IExtraVariantHolder) holder;
+				registerModels(i, prefix, extra.getExtraVariants(), unique, true);
+			}
+		} else if (holder instanceof Block) {
+			// Set IStateMapper for blocks without items.
+			registerBlock((Block) holder);
 		}
 	}
 
+	public static void registerBlock(Block block) {
+		IModBlock quarkBlock = (IModBlock) block;
+
+		IStateMapper mapper = quarkBlock.getStateMapper();
+		IProperty[] ignored = quarkBlock.getIgnoredProperties();
+		if(mapper != null || ignored != null && ignored.length > 0) {
+			if(mapper != null)
+				ModelLoader.setCustomStateMapper(block, mapper);
+			else
+				ModelLoader.setCustomStateMapper(block, new StateMap.Builder().ignore(ignored).build());
+		}
+	}
+
+	@SuppressWarnings("unchecked")
 	public static void registerModels(Item item, String prefix, String[] variants, String uniqueVariant, boolean extra) {
 		if(item instanceof ItemBlock && ((ItemBlock) item).getBlock() instanceof IModBlock) {
 			IModBlock quarkBlock = (IModBlock) ((ItemBlock) item).getBlock();
 			Class clazz = quarkBlock.getVariantEnum();
 
-			IProperty variantProp = quarkBlock.getVariantProp();
-			boolean ignoresVariant = false;
+			if (clazz != null) {
+				IProperty variantProp = quarkBlock.getVariantProp();
+				boolean variantIgnored = false;
 
-			IStateMapper mapper = quarkBlock.getStateMapper();
-			IProperty[] ignored = quarkBlock.getIgnoredProperties();
-			if(mapper != null || ignored != null && ignored.length > 0) {
-				if(mapper != null)
-					ModelLoader.setCustomStateMapper((Block) quarkBlock, mapper);
-				else {
-					StateMap.Builder builder = new StateMap.Builder();
-					for(IProperty p : ignored) {
-						if(p == variantProp)
-							ignoresVariant = true;
-						builder.ignore(p);
+				IStateMapper mapper = quarkBlock.getStateMapper();
+				IProperty[] ignored = quarkBlock.getIgnoredProperties();
+				if (mapper == null && ignored != null && ignored.length > 0) {
+					for (IProperty p : ignored) {
+						if (p == variantProp) {
+							variantIgnored = true;
+							break;
+						}
 					}
-
-					ModelLoader.setCustomStateMapper((Block) quarkBlock, builder.build());
 				}
-			}
 
-			if(clazz != null && !ignoresVariant) {
-				registerVariantsDefaulted(item, (Block) quarkBlock, clazz, variantProp.getName());
-				return;
+				if (!variantIgnored) {
+					registerVariantsDefaulted(item, (Block) quarkBlock, clazz, variantProp.getName());
+					return;
+				}
 			}
 		}
 
@@ -127,7 +165,7 @@ public final class ModelHandler {
 	}
 
 	private static <T extends Enum<T> & IStringSerializable> void registerVariantsDefaulted(Item item, Block b, Class<T> enumclazz, String variantHeader) {
-		String baseName = b.getRegistryName().toString();
+		String baseName = Objects.requireNonNull(b.getRegistryName()).toString();
 		for(T e : enumclazz.getEnumConstants()) {
 			String variantName = variantHeader + "=" + e.getName();
 			ModelResourceLocation loc = new ModelResourceLocation(baseName, variantName);

@@ -30,16 +30,16 @@ public abstract class TileEntityMessage<T extends TileEntity> extends NetworkMes
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public final IMessage handleMessage(MessageContext context) {
 		this.context = context;
 		World world = context.getServerHandler().player.getEntityWorld();
 		TileEntity tile = world.getTileEntity(pos);
 		if(tile != null)
 			try {
-				T castTile = (T) tile;
-				this.tile = castTile;
+				this.tile = (T) tile;
 				((WorldServer) world).addScheduledTask(getAction());
-			} catch(ClassCastException e) { }
+			} catch(ClassCastException ignored) { }
 
 		return super.handleMessage(context);
 	}

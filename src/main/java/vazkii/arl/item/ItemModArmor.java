@@ -10,7 +10,6 @@
  */
 package vazkii.arl.item;
 
-import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
@@ -19,6 +18,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import vazkii.arl.interf.IVariantHolder;
 import vazkii.arl.util.ProxyRegistry;
+
+import javax.annotation.Nonnull;
 
 public abstract class ItemModArmor extends ItemArmor implements IVariantHolder {
 
@@ -29,12 +30,12 @@ public abstract class ItemModArmor extends ItemArmor implements IVariantHolder {
 
 		setUnlocalizedName(name);
 		bareName = name;
-		ItemMod.variantHolders.add(this);
 		setCreativeTab(CreativeTabs.COMBAT);
 	}
 
+	@Nonnull
 	@Override
-	public Item setUnlocalizedName(String name) {
+	public Item setUnlocalizedName(@Nonnull String name) {
 		super.setUnlocalizedName(name);
 		setRegistryName(new ResourceLocation(getPrefix() + name));
 		ProxyRegistry.register(this);
@@ -42,6 +43,7 @@ public abstract class ItemModArmor extends ItemArmor implements IVariantHolder {
 		return this;
 	}
 
+	@Nonnull
 	@Override
 	public String getUnlocalizedName(ItemStack par1ItemStack) {
 		par1ItemStack.getItemDamage();
@@ -52,11 +54,6 @@ public abstract class ItemModArmor extends ItemArmor implements IVariantHolder {
 	@Override
 	public String[] getVariants() {
 		return new String[] { bareName };
-	}
-
-	@Override
-	public ItemMeshDefinition getCustomMeshDefinition() {
-		return null;
 	}
 
 }
