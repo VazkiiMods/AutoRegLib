@@ -78,7 +78,7 @@ public abstract class BlockMetaVariants<T extends Enum<T> & IStringSerializable>
 	@Nonnull
 	@Override
 	public ItemStack getPickBlock(@Nonnull IBlockState state, RayTraceResult target, @Nonnull World world, @Nonnull BlockPos pos, EntityPlayer player) {
-		return new ItemStack(this, 1, getMetaFromState(world.getBlockState(pos)));
+		return new ItemStack(this, 1, getMetaFromState(state));
 	}
 
 	@Override
