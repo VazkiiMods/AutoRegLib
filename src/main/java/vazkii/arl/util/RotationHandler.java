@@ -19,7 +19,11 @@ public final class RotationHandler {
 	}
 	
 	public static EnumFacing rotateFacing(EnumFacing facing, EnumFacing rot) {
-		return rotateFacing(facing, FACING_TO_ROTATION[rot.ordinal()]);
+		return rotateFacing(facing, getRotationFromFacing(rot));
+	}
+	
+	public static Rotation getRotationFromFacing(EnumFacing facing) {
+		return FACING_TO_ROTATION[facing.ordinal()];
 	}
 	
 }
