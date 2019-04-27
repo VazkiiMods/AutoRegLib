@@ -68,6 +68,7 @@ public abstract class BlockFacing extends BlockModContainer {
 
 	@Nonnull
 	@Override
+	@SuppressWarnings("deprecation")
 	public IBlockState getStateFromMeta(int meta) {
 		EnumFacing enumfacing = EnumFacing.byIndex(meta);
 

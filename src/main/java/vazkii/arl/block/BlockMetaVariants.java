@@ -63,6 +63,7 @@ public abstract class BlockMetaVariants<T extends Enum<T> & IStringSerializable>
 
 	@Nonnull
 	@Override
+	@SuppressWarnings("deprecation")
 	public IBlockState getStateFromMeta(int meta) {
 		if(meta >= variantsEnum.getEnumConstants().length)
 			meta = 0;

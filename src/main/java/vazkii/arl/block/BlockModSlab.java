@@ -91,6 +91,7 @@ public abstract class BlockModSlab extends BlockSlab implements IModBlock {
 
 	@Nonnull
 	@Override
+	@SuppressWarnings("deprecation")
 	public IBlockState getStateFromMeta(int meta) {
 		if(doubleSlab)
 			return getDefaultState();
@@ -120,7 +121,7 @@ public abstract class BlockModSlab extends BlockSlab implements IModBlock {
 
 	@Nonnull
 	@Override
-	public Item getItemDropped(IBlockState p_149650_1_, Random p_149650_2_, int p_149650_3_) {
+	public Item getItemDropped(IBlockState state, Random rand, int fortune) {
 		return Item.getItemFromBlock(getSingleBlock());
 	}
 
@@ -167,11 +168,13 @@ public abstract class BlockModSlab extends BlockSlab implements IModBlock {
 	}
 	
 	@Override
+	@SuppressWarnings("deprecation")
 	public boolean isFullBlock(IBlockState state) {
 		return isDouble();
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public boolean isSideSolid(IBlockState base_state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, EnumFacing side) {
 		IBlockState state = getActualState(base_state, world, pos);
 		return isDouble()

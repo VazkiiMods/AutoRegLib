@@ -31,10 +31,10 @@ import java.util.Random;
 
 public abstract class BlockModDust extends BlockMod implements IBlockColorProvider {
 
-	public static final PropertyEnum<EnumAttachPosition> NORTH = PropertyEnum.<EnumAttachPosition>create("north", EnumAttachPosition.class);
-	public static final PropertyEnum<EnumAttachPosition> EAST = PropertyEnum.<EnumAttachPosition>create("east", EnumAttachPosition.class);
-	public static final PropertyEnum<EnumAttachPosition> SOUTH = PropertyEnum.<EnumAttachPosition>create("south", EnumAttachPosition.class);
-	public static final PropertyEnum<EnumAttachPosition> WEST = PropertyEnum.<EnumAttachPosition>create("west", EnumAttachPosition.class);	
+	public static final PropertyEnum<EnumAttachPosition> NORTH = PropertyEnum.create("north", EnumAttachPosition.class);
+	public static final PropertyEnum<EnumAttachPosition> EAST = PropertyEnum.create("east", EnumAttachPosition.class);
+	public static final PropertyEnum<EnumAttachPosition> SOUTH = PropertyEnum.create("south", EnumAttachPosition.class);
+	public static final PropertyEnum<EnumAttachPosition> WEST = PropertyEnum.create("west", EnumAttachPosition.class);
 
 	protected static final AxisAlignedBB[] WIRE_AABB = new AxisAlignedBB[] {
 			new AxisAlignedBB(0.1875D, 0.0D, 0.1875D, 0.8125D, 0.0625D, 0.8125D), 
@@ -69,6 +69,7 @@ public abstract class BlockModDust extends BlockMod implements IBlockColorProvid
 
 	@Nonnull
 	@Override
+	@SuppressWarnings("deprecation")
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
 		return WIRE_AABB[getAABBIndex(state.getActualState(source, pos))];
 	}
@@ -97,6 +98,7 @@ public abstract class BlockModDust extends BlockMod implements IBlockColorProvid
 
 	@Nonnull
 	@Override
+	@SuppressWarnings("deprecation")
 	public IBlockState getActualState(@Nonnull IBlockState state, IBlockAccess worldIn, BlockPos pos) {
 		state = state.withProperty(WEST, getAttachPosition(worldIn, pos, EnumFacing.WEST));
 		state = state.withProperty(EAST, getAttachPosition(worldIn, pos, EnumFacing.EAST));
@@ -132,26 +134,30 @@ public abstract class BlockModDust extends BlockMod implements IBlockColorProvid
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, @Nonnull IBlockAccess worldIn, @Nonnull BlockPos pos) {
 		return null;
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public boolean isOpaqueCube(IBlockState state) {
 		return false;
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public boolean isFullCube(IBlockState state) {
 		return false;
 	}
 
 	@Override
 	public boolean canPlaceBlockAt(World worldIn, @Nonnull BlockPos pos) {
-		return worldIn.getBlockState(pos.down()).isTopSolid() || worldIn.getBlockState(pos.down()).getBlock() == Blocks.GLOWSTONE;
+		return worldIn.getBlockState(pos.down()).isSideSolid(worldIn, pos.down(), EnumFacing.UP) || worldIn.getBlockState(pos.down()).getBlock() == Blocks.GLOWSTONE;
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
 		if(!worldIn.isRemote && !canPlaceBlockAt(worldIn, pos)) {
 			dropBlockAsItem(worldIn, pos, state, 0);
@@ -170,12 +176,14 @@ public abstract class BlockModDust extends BlockMod implements IBlockColorProvid
 
 	@Nonnull
 	@Override
+	@SuppressWarnings("deprecation")
 	public ItemStack getItem(World worldIn, BlockPos pos, @Nonnull IBlockState state) {
 		return new ItemStack(getItemDropped(state, worldIn.rand, 0));
 	}
 
 	@Nonnull
 	@Override
+	@SuppressWarnings("deprecation")
 	public IBlockState getStateFromMeta(int meta)  {
 		return getDefaultState();
 	}
@@ -186,13 +194,15 @@ public abstract class BlockModDust extends BlockMod implements IBlockColorProvid
 	}
 
 	@Nonnull
+	@Override
 	@SideOnly(Side.CLIENT)
-	public BlockRenderLayer getBlockLayer() {
+	public BlockRenderLayer getRenderLayer() {
 		return BlockRenderLayer.CUTOUT;
 	}
 
 	@Nonnull
 	@Override
+	@SuppressWarnings("deprecation")
 	public IBlockState withRotation(@Nonnull IBlockState state, Rotation rot) {
 		switch(rot) {
 		case CLOCKWISE_180:
@@ -208,6 +218,7 @@ public abstract class BlockModDust extends BlockMod implements IBlockColorProvid
 
 	@Nonnull
 	@Override
+	@SuppressWarnings("deprecation")
 	public IBlockState withMirror(@Nonnull IBlockState state, Mirror mirrorIn) {
 		switch(mirrorIn) {
 		case LEFT_RIGHT:
@@ -227,7 +238,8 @@ public abstract class BlockModDust extends BlockMod implements IBlockColorProvid
 
 	@Nonnull
 	@Override
-	public BlockFaceShape getBlockFaceShape(IBlockAccess p_193383_1_, IBlockState p_193383_2_, BlockPos p_193383_3_, EnumFacing p_193383_4_) {
+	@SuppressWarnings("deprecation")
+	public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos blockPos, EnumFacing face) {
 		return BlockFaceShape.UNDEFINED;
 	}
 

@@ -120,18 +120,18 @@ public final class RecipeHandler {
 	}
 
 	// copy from vanilla
-	private static NonNullList<Ingredient> prepareMaterials(String[] p_192402_0_, Map<String, Ingredient> p_192402_1_, int p_192402_2_, int p_192402_3_) {
-		NonNullList<Ingredient> nonnulllist = NonNullList.<Ingredient>withSize(p_192402_2_ * p_192402_3_, Ingredient.EMPTY);
+	private static NonNullList<Ingredient> prepareMaterials(String[] ingredientKeys, Map<String, Ingredient> ingredients, int width, int height) {
+		NonNullList<Ingredient> ingredientList = NonNullList.withSize(width * height, Ingredient.EMPTY);
 
-		for(int i = 0; i < p_192402_0_.length; ++i)
-			for (int j = 0; j < p_192402_0_[i].length(); ++j) {
-				String s = p_192402_0_[i].substring(j, j + 1);
-				Ingredient ingredient = p_192402_1_.get(s);
+		for(int i = 0; i < ingredientKeys.length; ++i)
+			for (int j = 0; j < ingredientKeys[i].length(); ++j) {
+				String s = ingredientKeys[i].substring(j, j + 1);
+				Ingredient ingredient = ingredients.get(s);
 
-				nonnulllist.set(j + p_192402_2_ * i, ingredient);
+				ingredientList.set(j + width * i, ingredient);
 			}
 
-		return nonnulllist;
+		return ingredientList;
 	}
 
 	public static void addRecipe(ResourceLocation res, IRecipe recipe) {
