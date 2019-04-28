@@ -13,8 +13,8 @@ import java.util.List;
 public class MultiRecipe extends ModRecipe {
 
 	private List<IRecipe> subRecipes = new LinkedList<>();
-	IRecipe matched;
-	
+	private ThreadLocal<IRecipe> matched = new ThreadLocal<>();
+
 	public MultiRecipe(ResourceLocation res) {
 		super(res);
 	}
@@ -25,10 +25,10 @@ public class MultiRecipe extends ModRecipe {
 
 	@Override
 	public boolean matches(@Nonnull InventoryCrafting inv, @Nonnull World worldIn) {
-		matched = null;
+		matched.set(null);
 		for(IRecipe recipe : subRecipes)
 			if(recipe.matches(inv, worldIn)) {
-				matched = recipe;
+				matched.set(recipe);
 				return true;
 			}
 		
@@ -38,15 +38,25 @@ public class MultiRecipe extends ModRecipe {
 	@Nonnull
 	@Override
 	public ItemStack getCraftingResult(@Nonnull InventoryCrafting inv) {
-		if(matched == null)
+		IRecipe match = matched.get();
+
+		if(match == null)
 			return ItemStack.EMPTY;
-		
-		return matched.getCraftingResult(inv);
+
+		return match.getCraftingResult(inv);
 	}
 
 	@Override
 	public boolean canFit(int width, int height) {
+		for (IRecipe recipe : subRecipes)
+			if (recipe.canFit(width, height))
+				return true;
 		return false;
+	}
+
+	@Override
+	public boolean isDynamic() {
+		return true;
 	}
 
 	@Nonnull
