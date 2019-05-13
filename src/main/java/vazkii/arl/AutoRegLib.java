@@ -17,8 +17,8 @@ public class AutoRegLib {
 
 	public static final String MOD_ID = "autoreglib";
 	public static final String MOD_NAME = "AutoRegLib";
-	public static final String BUILD = "GRADLE:BUILD";
-	public static final String VERSION = "GRADLE:VERSION-" + BUILD;
+	public static final String BUILD = "GRADLE.BUILD";
+	public static final String VERSION = "GRADLE.VERSION-" + BUILD;
 	public static final String DEPENDENCIES = "required-after:forge@[14.21.1.2387,)";
 	
 	public static final String PROXY_COMMON = "vazkii.arl.CommonProxy";

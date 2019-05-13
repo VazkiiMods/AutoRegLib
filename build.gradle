@@ -40,8 +40,8 @@ minecraft {
     runDir = "eclipse/assets"
 
     mappings = config.mc_mappings
-    replace 'GRADLE:BUILD', config.build_number
-    replace 'GRADLE:VERSION', config.version
+    replace 'GRADLE.BUILD', config.build_number
+    replace 'GRADLE.VERSION', config.version
 
     replaceIn 'AutoRegLib.java'
     makeObfSourceJar = false
