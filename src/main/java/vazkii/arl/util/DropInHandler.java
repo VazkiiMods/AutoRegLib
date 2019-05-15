@@ -5,6 +5,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -100,7 +101,10 @@ public final class DropInHandler {
 			ItemStack result = dropin.dropItemIn(player, target, held);
 			slotObj.putStack(result);
 			player.inventory.setItemStack(ItemStack.EMPTY);
-			player.inventory.markDirty();
+			if (player instanceof EntityPlayerMP) {
+				((EntityPlayerMP) player).isChangingQuantityOnly = false;
+				((EntityPlayerMP) player).updateHeldItem();
+			}
 		}
 	}
 	
