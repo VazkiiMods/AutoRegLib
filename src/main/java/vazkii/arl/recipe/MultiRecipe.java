@@ -1,5 +1,6 @@
 package vazkii.arl.recipe;
 
+import com.google.common.collect.ImmutableList;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -63,6 +64,10 @@ public class MultiRecipe extends ModRecipe {
 	@Override
 	public ItemStack getRecipeOutput() {
 		return ItemStack.EMPTY;
+	}
+
+	public ImmutableList<IRecipe> getRecipes() {
+		return ImmutableList.copyOf(subRecipes);
 	}
 
 }

@@ -68,6 +68,18 @@ processResources {
     }
 }
 
+repositories {
+    maven {
+        // for JEI
+        name = "promwml16"
+        url "http://dvs1.progwml6.com/files/maven"
+    }
+}
+
+dependencies {
+    deobfCompile "mezz.jei:jei_${config.mc_version}:${config.jei_version}"
+}
+
 task deobfJar(type: Jar) {
     from(sourceSets.main.output)
     archiveName = "${baseName}-${version}-deobf.${extension}"
