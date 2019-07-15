@@ -121,16 +121,19 @@ public final class ModelHandler {
 
 	@SuppressWarnings("unchecked")
 	public static void registerModels(Item item, String prefix, String[] variants, String uniqueVariant, boolean extra) {
-		if(item instanceof ItemBlock && ((ItemBlock) item).getBlock() instanceof IModBlock) {
-			IModBlock quarkBlock = (IModBlock) ((ItemBlock) item).getBlock();
-			Class clazz = quarkBlock.getVariantEnum();
+		block: if(item instanceof ItemBlock && ((ItemBlock) item).getBlock() instanceof IModBlock) {
+			IModBlock modBlock = (IModBlock) ((ItemBlock) item).getBlock();
+			if(!modBlock.useBlockstateForItem())
+				break block;
 
+			Class clazz = modBlock.getVariantEnum();
+			
 			if (clazz != null) {
-				IProperty variantProp = quarkBlock.getVariantProp();
+				IProperty variantProp = modBlock.getVariantProp();
 				boolean variantIgnored = false;
 
-				IStateMapper mapper = quarkBlock.getStateMapper();
-				IProperty[] ignored = quarkBlock.getIgnoredProperties();
+				IStateMapper mapper = modBlock.getStateMapper();
+				IProperty[] ignored = modBlock.getIgnoredProperties();
 				if (mapper == null && ignored != null && ignored.length > 0) {
 					for (IProperty p : ignored) {
 						if (p == variantProp) {
@@ -141,7 +144,7 @@ public final class ModelHandler {
 				}
 
 				if (!variantIgnored) {
-					registerVariantsDefaulted(item, (Block) quarkBlock, clazz, variantProp.getName());
+					registerVariantsDefaulted(item, (Block) modBlock, clazz, variantProp.getName());
 					return;
 				}
 			}

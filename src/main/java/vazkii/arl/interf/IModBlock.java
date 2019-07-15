@@ -30,6 +30,10 @@ public interface IModBlock extends IVariantHolder, IVariantEnumHolder, IStateMap
 	default boolean shouldDisplayVariant(int variant) {
 		return true;
 	}
+	
+	default boolean useBlockstateForItem() {
+		return true;
+	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
