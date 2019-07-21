@@ -55,8 +55,10 @@ public final class ClientTicker {
 				partialTicks = 0;
 			}
 			
-			while(!pendingActions.isEmpty())
-				pendingActions.poll().run();
+			while(!pendingActions.isEmpty()) {
+				Runnable action = pendingActions.poll();
+				if (action != null) action.run();
+			}
 
 			calcDelta();
 		}
