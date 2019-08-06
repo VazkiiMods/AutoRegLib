@@ -1,0 +1,12 @@
+modLoader="javafml"
+loaderVersion="[25,)"
+issueTrackerURL="https://github.com/Vazkii/AutoRegLib"
+
+[[mods]]
+modId="arl"
+displayName="AutoRegLib"
+version="${version}"
+authors="Vazkii"
+description='''
+Automatically item, block, and model registration for mods.
+'''

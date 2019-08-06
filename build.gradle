@@ -1,104 +1,98 @@
 buildscript {
     repositories {
+        maven { url = 'https://files.minecraftforge.net/maven' }
+        jcenter()
         mavenCentral()
-        maven {
-            name = "forge"
-            url = "http://files.minecraftforge.net/maven"
-        }
-        maven {
-            name = "sonatype"
-            url = "https://oss.sonatype.org/content/repositories/snapshots/"
-        }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
     }
 }
-
-apply plugin: "maven"
-apply plugin: 'net.minecraftforge.gradle.forge'
-
-
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
 
 ext.configFile = file('build.properties')
-
 ext.config = parseConfig(configFile)
 
 version = "${config.version}-${config.build_number}"
-group = "vazkii.autoreglib" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = "vazkii.${config.mod_id}" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = config.mod_name
 
-if (System.getenv().BUILD_NUMBER != null) { 
-    //adds the build number to the end of the version string if on a build server
-    version += ".${System.getenv().BUILD_NUMBER}"
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+
+if (System.getenv('BUILD_NUMBER') != null) {
+    version += "." + System.getenv('BUILD_NUMBER')
 }
 
 minecraft {
-    version = "${config.mc_version}-${config.forge_version}"
-    runDir = "eclipse/assets"
+    // The mappings can be changed at any time, and must be in the following format.
+    // snapshot_YYYYMMDD   Snapshot are built nightly.
+    // stable_#            Stables are built at the discretion of the MCP team.
+    // Use non-default mappings at your own risk. they may not always work.
+    // Simply re-run your setup task after changing the mappings to update your workspace.
 
-    mappings = config.mc_mappings
-    replace 'GRADLE.BUILD', config.build_number
-    replace 'GRADLE.VERSION', config.version
+    mappings channel: "${config.mapping_channel}", version: "${config.mapping_version}"
+    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
+    
+    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
-    replaceIn 'AutoRegLib.java'
-    makeObfSourceJar = false
+    // Default run configurations.
+    // These can be tweaked, removed, or duplicated as needed.
+    runs {
+        client {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                examplemod {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                examplemod {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
 }
 
-jar {
-    exclude "**/*.bat"
-    exclude "**/*.psd"
-    exclude "**/unused"
+dependencies {
+    minecraft "net.minecraftforge:forge:${config.mc_version}-${config.forge_version}"
 }
 
 processResources {
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
+        include 'META-INF/mods.toml'
 
         // replace version and mcversion
-        expand 'version': project.version, 'mcversion': config.mc_version
+        expand 'version': project.version
     }
 
-    // copy everything else, thats not the mcmod.info
+    // copy everything else, thats not the mods.toml
     from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info', '**/psd/**'
+        exclude 'META-INF/mods.toml', '**/psd/**'
     }
 }
 
-repositories {
-    maven {
-        // for JEI
-        name = "promwml16"
-        url "http://dvs1.progwml6.com/files/maven"
-    }
-}
-
-dependencies {
-    deobfCompile "mezz.jei:jei_${config.mc_version}:${config.jei_version}"
-}
-
-task deobfJar(type: Jar) {
-    from(sourceSets.main.output)
-    archiveName = "${baseName}-${version}-deobf.${extension}"
-}
-task srcJar(type: Jar) {
-    from(sourceSets.main.java)
-    classifier = 'sources'
-    archiveName = "${baseName}-${version}-sources.${extension}"
-}
-
-artifacts {
-    archives srcJar
-}
-/**
- * Increments the buildnumber in your config file, and saves it
- * Note: The doFirst is important, without it the build number
- * will be incremented every time tasks are configured, i.e every
- * time gradle is run on this project. 
- */
 task incrementBuildNumber {
     doFirst {
         config.build_number = (config.build_number.toString().toInteger()) + 1
@@ -106,6 +100,9 @@ task incrementBuildNumber {
             config.toProperties().store(it, "")
         }
     }
+
+    //file('web/versions.ini').append("\n${version}=${minecraft.version}")
+    //file("${config.dir_repo}/version/${minecraft.version}.txt").write("${version}")
 }
 
 import java.util.regex.Pattern
@@ -135,10 +132,49 @@ def parseConfig(File config) {
     }
 }
 
-uploadArchives {
+jar {
+    //rename the default output, for some better... sanity with scipts
+    archiveName = "${baseName} ${version}.${extension}"
+
+     manifest {
+        attributes([
+            "Specification-Title": "${config.mod_id}",
+            "Specification-Vendor": "vazkii",
+            "Specification-Version": "1", // We are version 1 of ourselves
+            "Implementation-Title": "${config.mod_id}",
+            "Implementation-Version": "${version}",
+            "Implementation-Vendor" :"vazkii",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+
+    exclude "**/*.bat"
+    exclude "**/*.psd"
+    exclude "**/*.exe"
+    exclude "**/unused"
+}
+
+//artifacts {
+//    archives deobfJar
+//}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId project.group
+            artifactId project.archivesBaseName
+            version project.version
+            from components.java
+
+//            artifact deobfJar {
+//                classifier 'deobf'
+//            }
+        }
+    }
+
     repositories {
-        mavenDeployer {
-            repository(url: "file://" + (System.getenv("local_maven") != null ? System.getenv("local_maven") : System.getenv("bamboo_local_maven")))
+        maven {
+            url "file://" + System.getenv("local_maven")
         }
     }
 }
