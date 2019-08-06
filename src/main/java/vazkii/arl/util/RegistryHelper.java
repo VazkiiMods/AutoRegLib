@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 
+import com.mojang.datafixers.util.Pair;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.color.BlockColors;
@@ -34,8 +36,8 @@ public final class RegistryHelper {
 	private static Map<ResourceLocation, ItemGroup> groups = new HashMap<>();
 	private static Queue<Block> blocksNeedingItemBlock = new ArrayDeque<>();
 	
-	private static Queue<Item> itemColors = new ArrayDeque<>();
-	private static Queue<Block> blockColors = new ArrayDeque<>();
+	private static Queue<Pair<Item, IItemColorProvider>> itemColors = new ArrayDeque<>();
+	private static Queue<Pair<Block, IBlockColorProvider>> blockColors = new ArrayDeque<>();
 
 	public static void registerBlock(RegistryEvent.Register<Block> event, Block block) {
 		registerBlock(event, block, true);
@@ -48,14 +50,14 @@ public final class RegistryHelper {
 			blocksNeedingItemBlock.add(block);
 		
 		if(block instanceof IBlockColorProvider)
-			blockColors.add(block);
+			blockColors.add(Pair.of(block, (IBlockColorProvider) block));
 	}
 	
 	public static void registerItem(RegistryEvent.Register<Item> event, Item item) {
 		event.getRegistry().register(item);
 		
 		if(item instanceof IItemColorProvider)
-			itemColors.add(item);
+			itemColors.add(Pair.of(item, (IItemColorProvider) item));
 	}
 	
 	public static void setCreativeTab(Block block, ItemGroup group) {
@@ -86,6 +88,9 @@ public final class RegistryHelper {
 				blockitem = ((IBlockItemProvider) block).provideItemBlock(block, props);
 			else blockitem = new BlockItem(block, props);
 			
+			if(block instanceof IItemColorProvider)
+				itemColors.add(Pair.of(blockitem, (IItemColorProvider) block));
+			
 			event.getRegistry().register(blockitem.setRegistryName(registryName));
 		}
 	}
@@ -105,17 +110,17 @@ public final class RegistryHelper {
 		ItemColors icolors = mc.getItemColors();
 		
 		while(!blockColors.isEmpty()) {
-			Block block = blockColors.poll();
-			IBlockColor color = ((IBlockColorProvider) block).getBlockColor();
+			Pair<Block, IBlockColorProvider> pair = blockColors.poll();
+			IBlockColor color = pair.getSecond().getBlockColor();
 			
-			bcolors.register(color, block);
+			bcolors.register(color, pair.getFirst());
 		}
 		
 		while(!itemColors.isEmpty()) {
-			Item item = itemColors.poll();
-			IItemColor color = ((IItemColorProvider) item).getItemColor();
+			Pair<Item, IItemColorProvider> pair = itemColors.poll();
+			IItemColor color = pair.getSecond().getItemColor();
 			
-			icolors.register(color, item);
+			icolors.register(color, pair.getFirst());
 		}
 		
 		return true;
