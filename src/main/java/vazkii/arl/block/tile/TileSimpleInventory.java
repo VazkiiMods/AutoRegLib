@@ -8,7 +8,7 @@
  *
  * File Created @ [10/01/2016, 15:13:46 (GMT)]
  */
-package vazkii.arl.tile;
+package vazkii.arl.block.tile;
 
 import javax.annotation.Nonnull;
 

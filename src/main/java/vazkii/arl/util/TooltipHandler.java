@@ -28,21 +28,16 @@ public final class TooltipHandler {
 
 	@OnlyIn(Dist.CLIENT)
 	public static void addToTooltip(List<String> tooltip, String s, Object... format) {
-		s = local(s).replaceAll("&", "\u00a7");
+		s = I18n.format(s).replaceAll("&", "\u00a7");
 
 		Object[] formatVals = new String[format.length];
 		for(int i = 0; i < format.length; i++)
-			formatVals[i] = local(format[i].toString()).replaceAll("&", "\u00a7");
+			formatVals[i] = I18n.format(format[i].toString()).replaceAll("&", "\u00a7");
 
 		if(formatVals.length > 0)
 			s = String.format(s, formatVals);
 
 		tooltip.add(s);
-	}
-
-	@OnlyIn(Dist.CLIENT)
-	public static String local(String s) {
-		return I18n.format(s);
 	}
 	
 }
