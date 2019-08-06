@@ -1,8 +1,6 @@
 package vazkii.arl.container.slot;
 
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
 
 public class SlotType extends SlotFiltered {
 

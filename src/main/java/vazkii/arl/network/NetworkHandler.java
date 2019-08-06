@@ -10,24 +10,70 @@
  */
 package vazkii.arl.network;
 
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import net.minecraftforge.fml.relauncher.Side;
-import vazkii.arl.AutoRegLib;
-import vazkii.arl.network.message.MessageDropIn;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fml.network.NetworkRegistry;
+import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 public class NetworkHandler {
-
-	public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(AutoRegLib.MOD_ID);
-
+	
+	public final SimpleChannel channel;
+	
 	private static int i = 0;
-
-	public static <T extends NetworkMessage<T>> void register(Class<T> clazz, Side handlerSide) {
-		INSTANCE.registerMessage(clazz, clazz, i++, handlerSide);
+	
+	public NetworkHandler(String modid, int protocol) {
+		this(modid, "main", protocol);
 	}
 	
-	public static void initARLMessages() {
-		register(MessageDropIn.class, Side.SERVER);
+	public NetworkHandler(String modid, String channelName, int protocol) {
+		String protocolStr = Integer.toString(protocol);
+		
+		channel = NetworkRegistry.ChannelBuilder
+				.named(new ResourceLocation(modid, channelName))
+				.networkProtocolVersion(() -> protocolStr)
+				.clientAcceptedVersions(protocolStr::equals)
+				.serverAcceptedVersions(protocolStr::equals)
+				.simpleChannel();
+	}
+	
+	public <T extends IMessage> void register(Class<T> clazz, NetworkDirection dir) {
+		BiConsumer<T, PacketBuffer> encoder = (msg, buf) -> MessageSerializer.writeObject(msg, buf);
+		
+		Function<PacketBuffer, T> decoder = (buf) -> {
+			try {
+				T msg = clazz.newInstance();
+				MessageSerializer.readObject(msg, buf);
+				return msg;
+			} catch (InstantiationException | IllegalAccessException e) {
+				throw new RuntimeException(e);
+			} 
+		};
+		
+		BiConsumer<T, Supplier<NetworkEvent.Context>> consumer = (msg, supp) -> {
+			NetworkEvent.Context context = supp.get();
+			if(context.getDirection() != dir)
+				return;
+			
+			context.setPacketHandled(msg.receive(context));
+		};
+		
+		channel.registerMessage(i, clazz, encoder, decoder, consumer);
+		i++;
 	}
 
+	public void sendToPlayer(IMessage msg, ServerPlayerEntity player) {
+		channel.sendTo(msg, player.connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
+	}
+	
+	public void sendToServer(IMessage msg) {
+		channel.sendToServer(msg);
+	}
+	
 }

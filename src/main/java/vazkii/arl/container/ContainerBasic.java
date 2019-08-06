@@ -1,41 +1,43 @@
 package vazkii.arl.container;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
-
 import javax.annotation.Nonnull;
+
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.ItemStack;
 
 public abstract class ContainerBasic<T extends IInventory> extends Container {
 
 	protected final T tile;
 	protected final int tileSlots;
 
-	public ContainerBasic(InventoryPlayer playerInv, T tile) {
+	public ContainerBasic(ContainerType<?> type, int windowId, PlayerInventory playerInv, T tile) {
+		super(type, windowId);
 		this.tile = tile;
 		tileSlots = addSlots();
 
 		for(int i = 0; i < 3; ++i)
 			for(int j = 0; j < 9; ++j)
-				addSlotToContainer(new Slot(playerInv, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+				addSlot(new Slot(playerInv, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
 
 		for(int k = 0; k < 9; ++k)
-			addSlotToContainer(new Slot(playerInv, k, 8 + k * 18, 142));
+			addSlot(new Slot(playerInv, k, 8 + k * 18, 142));
 	}
 
 	public abstract int addSlots(); 
 
 	@Override
-	public boolean canInteractWith(@Nonnull EntityPlayer playerIn) {
+	public boolean canInteractWith(@Nonnull PlayerEntity playerIn) {
 		return tile.isUsableByPlayer(playerIn);
 	}
 
 	@Nonnull
 	@Override
-	public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
+	public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
 		ItemStack itemstack = ItemStack.EMPTY;
 		Slot slot = inventorySlots.get(index);
 
@@ -81,7 +83,7 @@ public abstract class ContainerBasic<T extends IInventory> extends Container {
 					int maxStack = Math.min(stack.getMaxStackSize(), slot.getSlotStackLimit());
 					int rmv = Math.min(maxStack, stack.getCount());
 
-					if(slot.isItemValid(cloneStack(stack, rmv)) && existingStack.getItem().equals(stack.getItem()) && (!stack.getHasSubtypes() || stack.getItemDamage() == existingStack.getItemDamage()) && ItemStack.areItemStackTagsEqual(stack, existingStack)) {
+					if(slot.isItemValid(cloneStack(stack, rmv)) && existingStack.getItem().equals(stack.getItem()) && ItemStack.areItemStackTagsEqual(stack, existingStack)) {
 						int existingSize = existingStack.getCount() + stack.getCount();
 
 						if(existingSize <= maxStack) {
@@ -111,7 +113,7 @@ public abstract class ContainerBasic<T extends IInventory> extends Container {
 					int rmv = Math.min(maxStack, stack.getCount());
 
 					if(slot.isItemValid(cloneStack(stack, rmv))) {
-						existingStack = stack.splitStack(rmv);
+						existingStack = stack.split(rmv);
 						slot.putStack(existingStack);
 						successful = true;
 					}

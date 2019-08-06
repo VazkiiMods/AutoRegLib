@@ -1,21 +1,17 @@
 package vazkii.arl.util;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.RenderTickEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import vazkii.arl.AutoRegLib;
 
-import java.util.ArrayDeque;
-import java.util.Queue;
-
-@Mod.EventBusSubscriber(value = Side.CLIENT, modid = AutoRegLib.MOD_ID)
+@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = AutoRegLib.MOD_ID)
 public final class ClientTicker {
 
 	public static int ticksInGame = 0;
@@ -23,14 +19,7 @@ public final class ClientTicker {
 	public static float delta = 0;
 	public static float total = 0;
 	
-	private static Queue<Runnable> pendingActions = new ArrayDeque<>();
-
-	public static void addAction(Runnable action) {
-		if (FMLCommonHandler.instance().getSide().isClient())
-			pendingActions.add(action);
-	}
-
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	private static void calcDelta() {
 		float oldTotal = total;
 		total = ticksInGame + partialTicks;
@@ -38,7 +27,7 @@ public final class ClientTicker {
 	}
 
 	@SubscribeEvent
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public static void renderTick(RenderTickEvent event) {
 		if(event.phase == Phase.START)
 			partialTicks = event.renderTickTime;
@@ -46,20 +35,15 @@ public final class ClientTicker {
 	}
 
 	@SubscribeEvent
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public static void clientTickEnd(ClientTickEvent event) {
 		if(event.phase == Phase.END) {
-			GuiScreen gui = Minecraft.getMinecraft().currentScreen;
-			if(gui == null || !gui.doesGuiPauseGame()) {
+			Screen gui = Minecraft.getInstance().currentScreen;
+			if(gui == null || !gui.isPauseScreen()) {
 				ticksInGame++;
 				partialTicks = 0;
 			}
 			
-			while(!pendingActions.isEmpty()) {
-				Runnable action = pendingActions.poll();
-				if (action != null) action.run();
-			}
-
 			calcDelta();
 		}
 	}

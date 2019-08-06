@@ -48,4 +48,9 @@ public class InventoryIIH implements IItemHandlerModifiable {
 	public int getSlotLimit(int slot) {
 		return iih.getSlotLimit(slot);
 	}
+
+	@Override
+	public boolean isItemValid(int slot, ItemStack stack) {
+		return iih.isItemValid(slot, stack);
+	}
 }

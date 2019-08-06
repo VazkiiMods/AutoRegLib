@@ -5,44 +5,29 @@
 package vazkii.arl;
 
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.Mod.Instance;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.network.NetworkDirection;
+import vazkii.arl.network.NetworkHandler;
+import vazkii.arl.network.message.MessageDropIn;
+import vazkii.arl.util.DropInHandler;
 
-@Mod(modid = AutoRegLib.MOD_ID, name = AutoRegLib.MOD_NAME, version = AutoRegLib.VERSION, dependencies = AutoRegLib.DEPENDENCIES)
+@Mod(AutoRegLib.MOD_ID)
 public class AutoRegLib {
 
-	public static final String MOD_ID = "autoreglib";
-	public static final String MOD_NAME = "AutoRegLib";
-	public static final String BUILD = "GRADLE.BUILD";
-	public static final String VERSION = "GRADLE.VERSION-" + BUILD;
-	public static final String DEPENDENCIES = "required-after:forge@[14.21.1.2387,)";
+	public static final String MOD_ID = "arl";
 	
-	public static final String PROXY_COMMON = "vazkii.arl.CommonProxy";
-	public static final String PROXY_CLIENT = "vazkii.arl.ClientProxy";
+	public static NetworkHandler network;
+
+	public AutoRegLib() {
+		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+	}
 	
-	@Instance(MOD_ID)
-	public static AutoRegLib instance;
-
-	@SidedProxy(serverSide = PROXY_COMMON, clientSide = PROXY_CLIENT)
-	public static CommonProxy proxy;
-
-	@EventHandler
-	public void preInit(FMLPreInitializationEvent event) {
-		proxy.preInit(event);
-	}
-
-	@EventHandler
-	public void init(FMLInitializationEvent event) {
-		proxy.init(event);
-	}
-
-	@EventHandler
-	public void postInit(FMLPostInitializationEvent event) {
-		proxy.postInit(event);
+	public void setup(FMLCommonSetupEvent event) {
+		DropInHandler.register();
+		
+		network = new NetworkHandler(MOD_ID, 1);
+		network.register(MessageDropIn.class, NetworkDirection.PLAY_TO_SERVER);
 	}
 	
 }

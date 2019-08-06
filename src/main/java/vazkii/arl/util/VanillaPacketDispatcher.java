@@ -10,22 +10,25 @@
  */
 package vazkii.arl.util;
 
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
-import net.minecraft.server.management.PlayerChunkMapEntry;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.server.ServerWorld;
 
 public final class VanillaPacketDispatcher {
 
 	public static void dispatchTEToNearbyPlayers(TileEntity tile) {
-		SPacketUpdateTileEntity packet = tile.getUpdatePacket();
-
-		if(packet != null && tile.getWorld() instanceof WorldServer) {
-			PlayerChunkMapEntry chunk = ((WorldServer) tile.getWorld()).getPlayerChunkMap().getEntry(tile.getPos().getX() >> 4, tile.getPos().getZ() >> 4);
-			if(chunk != null) {
-				chunk.sendPacket(packet);
+		World world = tile.getWorld();
+		if(world instanceof ServerWorld) {
+			SUpdateTileEntityPacket packet = tile.getUpdatePacket();
+			BlockPos pos = tile.getPos();
+			
+			for(PlayerEntity player : world.getPlayers()) {
+				if(player instanceof ServerPlayerEntity && pointDistancePlane(player.posX, player.posZ, pos.getX(), pos.getZ()) < 64)
+					((ServerPlayerEntity) player).connection.sendPacket(packet);
 			}
 		}
 	}

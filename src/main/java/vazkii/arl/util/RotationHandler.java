@@ -1,6 +1,6 @@
 package vazkii.arl.util;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Rotation;
 
 public final class RotationHandler {
@@ -14,15 +14,15 @@ public final class RotationHandler {
 			Rotation.CLOCKWISE_90
 	};
 
-	public static EnumFacing rotateFacing(EnumFacing facing, Rotation rot) {
+	public static Direction rotateFacing(Direction facing, Rotation rot) {
 		return rot.rotate(facing);
 	}
 
-	public static EnumFacing rotateFacing(EnumFacing facing, EnumFacing rot) {
+	public static Direction rotateFacing(Direction facing, Direction rot) {
 		return rotateFacing(facing, getRotationFromFacing(rot));
 	}
 
-	public static Rotation getRotationFromFacing(EnumFacing facing) {
+	public static Rotation getRotationFromFacing(Direction facing) {
 		return FACING_TO_ROTATION[facing.ordinal()];
 	}
 

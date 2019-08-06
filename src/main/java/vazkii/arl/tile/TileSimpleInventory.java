@@ -8,58 +8,61 @@
  *
  * File Created @ [10/01/2016, 15:13:46 (GMT)]
  */
-package vazkii.arl.block.tile;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.wrapper.SidedInvWrapper;
+package vazkii.arl.tile;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.Direction;
+import net.minecraft.util.NonNullList;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.wrapper.SidedInvWrapper;
+
 public abstract class TileSimpleInventory extends TileMod implements ISidedInventory {
 
+	public TileSimpleInventory(TileEntityType<?> tileEntityTypeIn) {
+		super(tileEntityTypeIn);
+	}
+
 	protected NonNullList<ItemStack> inventorySlots = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
-	private String name = null;
 	
 	@Override
-	public void readSharedNBT(NBTTagCompound par1NBTTagCompound) {
+	public void readSharedNBT(CompoundNBT par1NBTTagCompound) {
 		if(!needsToSyncInventory())
 			return;
 		
-		NBTTagList var2 = par1NBTTagCompound.getTagList("Items", 10);
+		ListNBT var2 = par1NBTTagCompound.getList("Items", 10);
 		clear();
-		for(int var3 = 0; var3 < var2.tagCount(); ++var3) {
-			NBTTagCompound var4 = var2.getCompoundTagAt(var3);
+		for(int var3 = 0; var3 < var2.size(); ++var3) {
+			CompoundNBT var4 = var2.getCompound(var3);
 			byte var5 = var4.getByte("Slot");
 			if (var5 >= 0 && var5 < inventorySlots.size())
-				inventorySlots.set(var5, new ItemStack(var4));
+				inventorySlots.set(var5, ItemStack.read(var4));
 		}
 	}
 
 	@Override
-	public void writeSharedNBT(NBTTagCompound par1NBTTagCompound) {
+	public void writeSharedNBT(CompoundNBT par1NBTTagCompound) {
 		if(!needsToSyncInventory())
 			return;
 		
-		NBTTagList var2 = new NBTTagList();
+		ListNBT var2 = new ListNBT();
 		for (int var3 = 0; var3 < inventorySlots.size(); ++var3) {
 			if(!inventorySlots.get(var3).isEmpty()) {
-				NBTTagCompound var4 = new NBTTagCompound();
-				var4.setByte("Slot", (byte)var3);
-				inventorySlots.get(var3).writeToNBT(var4);
-				var2.appendTag(var4);
+				CompoundNBT var4 = new CompoundNBT();
+				var4.putByte("Slot", (byte)var3);
+				inventorySlots.get(var3).write(var4);
+				var2.add(var4);
 			}
 		}
-		par1NBTTagCompound.setTag("Items", var2);
+		par1NBTTagCompound.put("Items", var2);
 	}
 	
 	protected boolean needsToSyncInventory() {
@@ -84,7 +87,7 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 				inventoryChanged(i);
 				return stackAt;
 			} else {
-				stackAt = inventorySlots.get(i).splitStack(j);
+				stackAt = inventorySlots.get(i).split(j);
 
 				if (inventorySlots.get(i).getCount() == 0)
 					inventorySlots.set(i, ItemStack.EMPTY);
@@ -129,21 +132,17 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 	}
 
 	@Override
-	public boolean isUsableByPlayer(@Nonnull EntityPlayer entityplayer) {
+	public boolean isUsableByPlayer(@Nonnull PlayerEntity entityplayer) {
 		return getWorld().getTileEntity(getPos()) == this && entityplayer.getDistanceSq(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) <= 64;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
-	public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
-		return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
-	}
-	
-	@Override
-	public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
+	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, Direction facing) {
 		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-			return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(new SidedInvWrapper(this, facing));
+			return (LazyOptional<T>) LazyOptional.of(() -> new SidedInvWrapper(this, facing));
 		
-		return null;
+		return LazyOptional.empty();
 	}
 
 	@Override
@@ -152,52 +151,18 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 	}
 
 	@Override
-	public boolean hasCustomName() {
-		return false;
-	}
-
-	@Override
-	public void openInventory(@Nonnull EntityPlayer player) {
+	public void openInventory(@Nonnull PlayerEntity player) {
 		// NO-OP
 	}
 
 	@Override
-	public void closeInventory(@Nonnull EntityPlayer player) {
+	public void closeInventory(@Nonnull PlayerEntity player) {
 		// NO-OP
-	}
-
-	@Override
-	public int getField(int id) {
-		return 0;
-	}
-
-	@Override
-	public void setField(int id, int value) {
-		// NO-OP
-	}
-
-	@Override
-	public int getFieldCount() {
-		return 0;
 	}
 
 	@Override
 	public void clear() {
 		inventorySlots = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
-	}
-
-	@Nonnull
-	@Override
-	public ITextComponent getDisplayName() {
-		return new TextComponentTranslation(getName());
-	}
-	
-	@Nonnull
-	@Override
-	public String getName() {
-		if(name == null)
-			name = new ItemStack(world.getBlockState(getPos()).getBlock()).getTranslationKey() + ".name";
-		return name;
 	}
 
 	public void inventoryChanged(int i) {
@@ -209,18 +174,18 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 	}
 
 	@Override
-	public boolean canExtractItem(int index, @Nonnull ItemStack stack, @Nonnull EnumFacing direction) {
+	public boolean canExtractItem(int index, @Nonnull ItemStack stack, @Nonnull Direction direction) {
 		return isAutomationEnabled();
 	}
 
 	@Override
-	public boolean canInsertItem(int index, @Nonnull ItemStack itemStackIn, @Nonnull EnumFacing direction) {
+	public boolean canInsertItem(int index, @Nonnull ItemStack itemStackIn, @Nonnull Direction direction) {
 		return isAutomationEnabled();
 	}
 
 	@Nonnull
 	@Override
-	public int[] getSlotsForFace(@Nonnull EnumFacing side) {
+	public int[] getSlotsForFace(@Nonnull Direction side) {
 		if(isAutomationEnabled()) {
 			int[] slots = new int[getSizeInventory()];
 			for(int i = 0; i < slots.length; i++)

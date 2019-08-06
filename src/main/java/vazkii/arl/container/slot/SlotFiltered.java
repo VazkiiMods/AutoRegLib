@@ -3,7 +3,7 @@ package vazkii.arl.container.slot;
 import java.util.function.Predicate;
 
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 
 public class SlotFiltered extends Slot {

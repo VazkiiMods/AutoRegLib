@@ -13,21 +13,21 @@ package vazkii.arl.util;
 import java.util.List;
 import java.util.Random;
 
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
+import com.mojang.blaze3d.platform.GlStateManager;
+
+import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.settings.KeyBinding;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-@SideOnly(Side.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public final class RenderHelper {
 
 	public static void renderTooltip(int x, int y, List<String> tooltipData) {
@@ -60,7 +60,7 @@ public final class RenderHelper {
 			int var5 = 0;
 			int var6;
 			int var7;
-			FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+			FontRenderer fontRenderer = Minecraft.getInstance().fontRenderer;
 			for (var6 = 0; var6 < tooltipData.size(); ++var6) {
 				var7 = fontRenderer.getStringWidth(tooltipData.get(var6));
 				if (var7 > var5)
@@ -72,7 +72,7 @@ public final class RenderHelper {
 			if (tooltipData.size() > 1)
 				var9 += 2 + (tooltipData.size() - 1) * 10;
 
-			ScaledResolution res = new ScaledResolution(Minecraft.getMinecraft());
+			MainWindow res = Minecraft.getInstance().mainWindow;
 			int right = var6 + var5 + 5;
 			int swidth = res.getScaledWidth();
 			if(right > swidth) {
@@ -99,7 +99,7 @@ public final class RenderHelper {
 			drawGradientRect(var6 - 3, var7 - 3, z, var6 + var5 + 3, var7 - 3 + 1, color, color);
 			drawGradientRect(var6 - 3, var7 + var9 + 2, z, var6 + var5 + 3, var7 + var9 + 3, var12, var12);
 
-			GlStateManager.disableDepth();
+			GlStateManager.disableDepthTest();
 			for (int var13 = 0; var13 < tooltipData.size(); ++var13) {
 				String var14 = tooltipData.get(var13);
 				fontRenderer.drawStringWithShadow(var14, var6, var7, -1);
@@ -107,11 +107,11 @@ public final class RenderHelper {
 					var7 += 2;
 				var7 += 10;
 			}
-			GlStateManager.enableDepth();
+			GlStateManager.enableDepthTest();
 		}
 		if(!lighting)
 			net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
-		GlStateManager.color(1F, 1F, 1F, 1F);
+		GlStateManager.color4f(1F, 1F, 1F, 1F);
 	}
 
 	public static void drawGradientRect(int par1, int par2, float z, int par3, int par4, int par5, int par6) {
@@ -123,9 +123,9 @@ public final class RenderHelper {
 		float var12 = (par6 >> 16 & 255) / 255F;
 		float var13 = (par6 >> 8 & 255) / 255F;
 		float var14 = (par6 & 255) / 255F;
-		GlStateManager.disableTexture2D();
+		GlStateManager.disableTexture();
 		GlStateManager.enableBlend();
-		GlStateManager.disableAlpha();
+		GlStateManager.disableAlphaTest();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GlStateManager.shadeModel(GL11.GL_SMOOTH);
 		Tessellator var15 = Tessellator.getInstance();
@@ -138,8 +138,8 @@ public final class RenderHelper {
 		var15.draw();
 		GlStateManager.shadeModel(GL11.GL_FLAT);
 		GlStateManager.disableBlend();
-		GlStateManager.enableAlpha();
-		GlStateManager.enableTexture2D();
+		GlStateManager.enableAlphaTest();
+		GlStateManager.enableTexture();
 	}
 
 	public static void drawTexturedModalRect(int par1, int par2, float z, int par3, int par4, int par5, int par6) {
@@ -175,22 +175,22 @@ public final class RenderHelper {
 		Random random = new Random(seed);
 
 		GlStateManager.pushMatrix();
-		GlStateManager.disableTexture2D();
+		GlStateManager.disableTexture();
 		GlStateManager.shadeModel(GL11.GL_SMOOTH);
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-		GlStateManager.disableAlpha();
+		GlStateManager.disableAlphaTest();
 		GlStateManager.enableCull();
 		GlStateManager.depthMask(false);
-		GlStateManager.scale(xScale, yScale, zScale);
+		GlStateManager.scalef(xScale, yScale, zScale);
 
 		for (int i = 0; i < (f1 + f1 * f1) / 2F * 90F + 30F; i++) {
-			GlStateManager.rotate(random.nextFloat() * 360F, 1F, 0F, 0F);
-			GlStateManager.rotate(random.nextFloat() * 360F, 0F, 1F, 0F);
-			GlStateManager.rotate(random.nextFloat() * 360F, 0F, 0F, 1F);
-			GlStateManager.rotate(random.nextFloat() * 360F, 1F, 0F, 0F);
-			GlStateManager.rotate(random.nextFloat() * 360F, 0F, 1F, 0F);
-			GlStateManager.rotate(random.nextFloat() * 360F + f1 * 90F, 0F, 0F, 1F);
+			GlStateManager.rotatef(random.nextFloat() * 360F, 1F, 0F, 0F);
+			GlStateManager.rotatef(random.nextFloat() * 360F, 0F, 1F, 0F);
+			GlStateManager.rotatef(random.nextFloat() * 360F, 0F, 0F, 1F);
+			GlStateManager.rotatef(random.nextFloat() * 360F, 1F, 0F, 0F);
+			GlStateManager.rotatef(random.nextFloat() * 360F, 0F, 1F, 0F);
+			GlStateManager.rotatef(random.nextFloat() * 360F + f1 * 90F, 0F, 0F, 1F);
 			tessellator.getBuffer().begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION_COLOR);
 			float f3 = random.nextFloat() * 20F + 5F + f2 * 10F;
 			float f4 = random.nextFloat() * 2F + 1F + f2 * 2F;
@@ -209,18 +209,18 @@ public final class RenderHelper {
 		GlStateManager.disableCull();
 		GlStateManager.disableBlend();
 		GlStateManager.shadeModel(GL11.GL_FLAT);
-		GlStateManager.color(1F, 1F, 1F, 1F);
-		GlStateManager.enableTexture2D();
-		GlStateManager.enableAlpha();
+		GlStateManager.color4f(1F, 1F, 1F, 1F);
+		GlStateManager.enableTexture();
+		GlStateManager.enableAlphaTest();
 		GlStateManager.popMatrix();
 	}
 
 	public static String getKeyDisplayString(String keyName) {
 		String key = null;
-		KeyBinding[] keys = Minecraft.getMinecraft().gameSettings.keyBindings;
+		KeyBinding[] keys = Minecraft.getInstance().gameSettings.keyBindings;
 		for(KeyBinding otherKey : keys)
 			if(otherKey.getKeyDescription().equals(keyName)) {
-				key = Keyboard.getKeyName(otherKey.getKeyCode());
+				key = otherKey.getLocalizedName();
 				break;
 			}
 

@@ -10,34 +10,36 @@
  */
 package vazkii.arl.item;
 
-import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.EnumAction;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHandSide;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import javax.annotation.Nonnull;
 
-@SideOnly(Side.CLIENT)
-public abstract class ModelModArmor extends ModelBiped {
+import com.mojang.blaze3d.platform.GlStateManager;
+
+import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
+import net.minecraft.client.renderer.entity.model.BipedModel;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.item.ArmorStandEntity;
+import net.minecraft.item.CrossbowItem;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.item.UseAction;
+import net.minecraft.util.Hand;
+import net.minecraft.util.HandSide;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
+@OnlyIn(Dist.CLIENT)
+public abstract class ModelModArmor<T extends LivingEntity> extends BipedModel<T> {
 
 	public abstract void setModelParts();
 
 	@Override
-	public void render(@Nonnull Entity entity, float f, float f1, float f2, float f3, float f4, float f5) {
+	public void render(@Nonnull T entity, float f, float f1, float f2, float f3, float f4, float f5) {
 		setModelParts();
 
 		GlStateManager.pushMatrix();
-		if(entity instanceof EntityArmorStand) { // Fixes rendering on armor stands
+		if(entity instanceof ArmorStandEntity) { // Fixes rendering on armor stands
 			f3 = 0;
-			GlStateManager.translate(0F, 0.15F, 0F);
+			GlStateManager.translatef(0F, 0.15F, 0F);
 		}
 
 		prepareForRender(entity, f5);
@@ -45,58 +47,66 @@ public abstract class ModelModArmor extends ModelBiped {
 		GlStateManager.popMatrix();
 	}
 
-	public void prepareForRender(Entity entity, float pticks) {
-		EntityLivingBase living = (EntityLivingBase) entity;
+	public void prepareForRender(T entity, float pticks) {
+		LivingEntity living = (LivingEntity) entity;
 		isSneak = living != null && living.isSneaking();
 		isChild = living != null && living.isChild();
-		if(living instanceof EntityPlayer) {
-			EntityPlayer player = (EntityPlayer) living;
+		if(living instanceof AbstractClientPlayerEntity) {
+			AbstractClientPlayerEntity player = (AbstractClientPlayerEntity) living;
 
 			swingProgress = player.getSwingProgress(pticks);
 
-			ModelBiped.ArmPose modelbiped$armpose = ModelBiped.ArmPose.EMPTY;
-			ModelBiped.ArmPose modelbiped$armpose1 = ModelBiped.ArmPose.EMPTY;
+			BipedModel.ArmPose leftPose = BipedModel.ArmPose.EMPTY;
+			BipedModel.ArmPose rightPose = BipedModel.ArmPose.EMPTY;
 			ItemStack itemstack = player.getHeldItemMainhand();
 			ItemStack itemstack1 = player.getHeldItemOffhand();
 
-			if(!itemstack.isEmpty()) {
-				modelbiped$armpose = ModelBiped.ArmPose.ITEM;
-
-				if(player.getItemInUseCount() > 0) {
-					EnumAction enumaction = itemstack.getItemUseAction();
-
-					if(enumaction == EnumAction.BLOCK)
-						modelbiped$armpose = ModelBiped.ArmPose.BLOCK;
-					else if(enumaction == EnumAction.BOW)
-						modelbiped$armpose = ModelBiped.ArmPose.BOW_AND_ARROW;
-				}
-			}
-
-			if(!itemstack1.isEmpty()) {
-				modelbiped$armpose1 = ModelBiped.ArmPose.ITEM;
-
-				if(player.getItemInUseCount() > 0) {
-					EnumAction enumaction1 = itemstack1.getItemUseAction();
-
-					if(enumaction1 == EnumAction.BLOCK)
-						modelbiped$armpose1 = ModelBiped.ArmPose.BLOCK;
-				}
-			}
-
-			if(player.getPrimaryHand() == EnumHandSide.RIGHT) {
-				rightArmPose = modelbiped$armpose;
-				leftArmPose = modelbiped$armpose1;
+			leftPose = getArmPose(player, itemstack, itemstack1, Hand.MAIN_HAND);
+			rightPose = getArmPose(player, itemstack, itemstack1, Hand.MAIN_HAND);
+			
+			if(player.getPrimaryHand() == HandSide.RIGHT) {
+				rightArmPose = leftPose;
+				leftArmPose = rightPose;
 			} else {
-				rightArmPose = modelbiped$armpose1;
-				leftArmPose = modelbiped$armpose;
+				rightArmPose = rightPose;
+				leftArmPose = leftPose;
 			}
 		}
 	}
 
-	public void setRotateAngle(ModelRenderer modelRenderer, float x, float y, float z) {
-		modelRenderer.rotateAngleX = x;
-		modelRenderer.rotateAngleY = y;
-		modelRenderer.rotateAngleZ = z;
+	// vanilla copy
+	private BipedModel.ArmPose getArmPose(AbstractClientPlayerEntity p_217766_1_, ItemStack p_217766_2_, ItemStack p_217766_3_, Hand p_217766_4_) {
+		BipedModel.ArmPose bipedmodel$armpose = BipedModel.ArmPose.EMPTY;
+		ItemStack itemstack = p_217766_4_ == Hand.MAIN_HAND ? p_217766_2_ : p_217766_3_;
+		if (!itemstack.isEmpty()) {
+			bipedmodel$armpose = BipedModel.ArmPose.ITEM;
+			if (p_217766_1_.getItemInUseCount() > 0) {
+				UseAction useaction = itemstack.getUseAction();
+				if (useaction == UseAction.BLOCK) {
+					bipedmodel$armpose = BipedModel.ArmPose.BLOCK;
+				} else if (useaction == UseAction.BOW) {
+					bipedmodel$armpose = BipedModel.ArmPose.BOW_AND_ARROW;
+				} else if (useaction == UseAction.SPEAR) {
+					bipedmodel$armpose = BipedModel.ArmPose.THROW_SPEAR;
+				} else if (useaction == UseAction.CROSSBOW && p_217766_4_ == p_217766_1_.getActiveHand()) {
+					bipedmodel$armpose = BipedModel.ArmPose.CROSSBOW_CHARGE;
+				}
+			} else {
+				boolean flag3 = p_217766_2_.getItem() == Items.CROSSBOW;
+				boolean flag = CrossbowItem.isCharged(p_217766_2_);
+				boolean flag1 = p_217766_3_.getItem() == Items.CROSSBOW;
+				boolean flag2 = CrossbowItem.isCharged(p_217766_3_);
+				if (flag3 && flag) {
+					bipedmodel$armpose = BipedModel.ArmPose.CROSSBOW_HOLD;
+				}
+
+				if (flag1 && flag2 && p_217766_2_.getItem().getUseAction(p_217766_2_) == UseAction.NONE) {
+					bipedmodel$armpose = BipedModel.ArmPose.CROSSBOW_HOLD;
+				}
+			}
+		}
+
+		return bipedmodel$armpose;
 	}
 
 }

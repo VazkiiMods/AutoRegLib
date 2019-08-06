@@ -10,23 +10,23 @@
  */
 package vazkii.arl.util;
 
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.resources.I18n;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import java.util.List;
+
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.resources.I18n;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public final class TooltipHandler {
 
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public static void tooltipIfShift(List<String> tooltip, Runnable r) {
-		if(GuiScreen.isShiftKeyDown())
+		if(Screen.hasShiftDown())
 			r.run();
 		else addToTooltip(tooltip, "arl.misc.shiftForInfo");
 	}
 
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public static void addToTooltip(List<String> tooltip, String s, Object... format) {
 		s = local(s).replaceAll("&", "\u00a7");
 
@@ -40,7 +40,7 @@ public final class TooltipHandler {
 		tooltip.add(s);
 	}
 
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public static String local(String s) {
 		return I18n.format(s);
 	}
