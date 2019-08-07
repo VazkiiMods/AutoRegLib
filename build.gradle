@@ -10,7 +10,7 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
+apply plugin: 'maven'
 
 ext.configFile = file('build.properties')
 ext.config = parseConfig(configFile)
@@ -157,27 +157,6 @@ jar {
 //artifacts {
 //    archives deobfJar
 //}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            groupId project.group
-            artifactId project.archivesBaseName
-            version project.version
-            from components.java
-
-//            artifact deobfJar {
-//                classifier 'deobf'
-//            }
-        }
-    }
-
-    repositories {
-        maven {
-            url "file://" + System.getenv("local_maven")
-        }
-    }
-}
 
 uploadArchives {
     repositories {
