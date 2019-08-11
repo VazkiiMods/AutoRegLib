@@ -157,12 +157,11 @@ jar {
 task sourcesJar(type: Jar) {
     classifier = "sources"
     from sourceSets.main.allJava
-    from sourceSets.api.allJava
 }
 
 task deobfJar(type: Jar) {
-    from sourceSets.main.output
     classifier = "deobf"
+    from sourceSets.main.output
 }
 
 artifacts {
