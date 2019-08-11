@@ -154,9 +154,21 @@ jar {
     exclude "**/unused"
 }
 
-//artifacts {
-//    archives deobfJar
-//}
+task sourcesJar(type: Jar) {
+    classifier = "sources"
+    from sourceSets.main.allJava
+    from sourceSets.api.allJava
+}
+
+task deobfJar(type: Jar) {
+    from sourceSets.main.output
+    classifier = "deobf"
+}
+
+artifacts {
+    archives sourcesJar
+    archives deobfJar
+}
 
 uploadArchives {
     repositories {
