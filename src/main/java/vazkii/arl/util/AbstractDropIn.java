@@ -12,8 +12,8 @@ public abstract class AbstractDropIn implements ICapabilityProvider, IDropInItem
 
 	@Override
 	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, Direction facing) {
-		if(capability == DROP_IN_CAPABILITY)
-			return LazyOptional.of(() -> DROP_IN_CAPABILITY).cast();
+		if(capability == DropInHandler.DROP_IN_CAPABILITY)
+			return LazyOptional.of(() -> DropInHandler.DROP_IN_CAPABILITY).cast();
 		else return LazyOptional.empty();
 	}
 

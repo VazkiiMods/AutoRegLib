@@ -8,13 +8,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
 
 public interface IDropInItem {
-
-	@CapabilityInject(IDropInItem.class)
-	Capability<IDropInItem> DROP_IN_CAPABILITY = null;
 
 	boolean canDropItemIn(PlayerEntity player, ItemStack stack, ItemStack incoming);
 

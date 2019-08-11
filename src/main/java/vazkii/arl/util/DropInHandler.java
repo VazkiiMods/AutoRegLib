@@ -18,6 +18,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -28,6 +29,9 @@ import vazkii.arl.network.message.MessageDropIn;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = AutoRegLib.MOD_ID)
 public final class DropInHandler {
+	
+	@CapabilityInject(IDropInItem.class)
+	public static Capability<IDropInItem> DROP_IN_CAPABILITY = null;
 
 	public static void register() {
 		CapabilityManager.INSTANCE.register(IDropInItem.class, CapabilityFactory.INSTANCE, CapabilityFactory.INSTANCE);
@@ -112,7 +116,7 @@ public final class DropInHandler {
 	}
 
 	public static IDropInItem getDropInHandler(ItemStack stack) {
-		LazyOptional<IDropInItem> opt = stack.getCapability(IDropInItem.DROP_IN_CAPABILITY, null).cast();
+		LazyOptional<IDropInItem> opt = stack.getCapability(DROP_IN_CAPABILITY, null).cast();
 		if(opt.isPresent())
 			return opt.orElse(null);
 

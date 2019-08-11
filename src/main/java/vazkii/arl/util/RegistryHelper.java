@@ -26,17 +26,17 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
-import vazkii.arl.AutoRegLib;
 import vazkii.arl.interf.IBlockColorProvider;
 import vazkii.arl.interf.IBlockItemProvider;
 import vazkii.arl.interf.IItemColorProvider;
 import vazkii.arl.interf.IItemPropertiesFiller;
 
-@EventBusSubscriber(modid = AutoRegLib.MOD_ID)
+@EventBusSubscriber(bus = Bus.MOD)
 public final class RegistryHelper {
 
 	private static Map<ResourceLocation, ItemGroup> groups = new HashMap<>();
@@ -89,11 +89,14 @@ public final class RegistryHelper {
 	public static void onRegistryEvent(RegistryEvent.Register event) {
 		IForgeRegistry registry = event.getRegistry();
 		Class<?> type = registry.getRegistrySuperType();
+		System.out.println("REGISTY EVENT " + type);
 
 		if(defers.containsKey(type)) {
 			Collection<IForgeRegistryEntry<?>> ourEntries = defers.get(type);
-			for(IForgeRegistryEntry<?> entry : ourEntries)
+			for(IForgeRegistryEntry<?> entry : ourEntries) {
+				System.out.println("Registering " + entry);
 				registry.register(entry);
+			}
 
 			defers.removeAll(type);
 		}
