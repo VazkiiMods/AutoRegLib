@@ -26,7 +26,7 @@ public class NetworkHandler {
 	
 	public final SimpleChannel channel;
 	
-	private static int i = 0;
+	private int i = 0;
 	
 	public NetworkHandler(String modid, int protocol) {
 		this(modid, "main", protocol);
