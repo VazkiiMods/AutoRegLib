@@ -23,11 +23,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -36,17 +35,29 @@ import vazkii.arl.interf.IBlockItemProvider;
 import vazkii.arl.interf.IItemColorProvider;
 import vazkii.arl.interf.IItemPropertiesFiller;
 
-@EventBusSubscriber(bus = Bus.MOD)
 public final class RegistryHelper {
 
-	private static Map<ResourceLocation, ItemGroup> groups = new HashMap<>();
-	private static Queue<Block> blocksNeedingItemBlock = new ArrayDeque<>();
-
+	private static final Map<String, ModData> modData = new HashMap<>();
+	
 	private static Queue<Pair<Item, IItemColorProvider>> itemColors = new ArrayDeque<>();
 	private static Queue<Pair<Block, IBlockColorProvider>> blockColors = new ArrayDeque<>();
-
-	private static Multimap<Class<?>, IForgeRegistryEntry<?>> defers = MultimapBuilder.hashKeys().arrayListValues().build();
-
+	
+	private static ModData getCurrentModData() {
+		return getModData(ModLoadingContext.get().getActiveNamespace());
+	}
+	
+	private static ModData getModData(String modid) {
+		ModData data = modData.get(modid);
+		if(data == null) {
+			data = new ModData();
+			modData.put(modid, data);
+			
+			FMLJavaModLoadingContext.get().getModEventBus().addListener(RegistryHelper::onRegistryEvent);
+		}
+		
+		return data;
+	}
+	
 	public static void registerBlock(Block block, String resloc) {
 		registerBlock(block, resloc, true);
 	}
@@ -55,7 +66,7 @@ public final class RegistryHelper {
 		register(block, resloc);
 
 		if(hasBlockItem)
-			blocksNeedingItemBlock.add(block);
+			getCurrentModData().blocksNeedingItemBlock.add(block);
 
 		if(block instanceof IBlockColorProvider)
 			blockColors.add(Pair.of(block, (IBlockColorProvider) block));
@@ -73,7 +84,7 @@ public final class RegistryHelper {
 			throw new IllegalArgumentException("Can't register null object.");
 
 		obj.setRegistryName(GameData.checkPrefix(resloc, false));
-		defers.put(obj.getRegistryType(), obj);
+		getCurrentModData().defers.put(obj.getRegistryType(), obj);
 	}
 
 	public static void setCreativeTab(Block block, ItemGroup group) {
@@ -81,50 +92,11 @@ public final class RegistryHelper {
 		if(res == null)
 			throw new IllegalArgumentException("Can't set the creative tab for a block without a registry name yet");
 
-		groups.put(block.getRegistryName(), group);
+		getCurrentModData().groups.put(block.getRegistryName(), group);
 	}
 
-	@SubscribeEvent
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static void onRegistryEvent(RegistryEvent.Register event) {
-		IForgeRegistry registry = event.getRegistry();
-		Class<?> type = registry.getRegistrySuperType();
-		System.out.println("REGISTY EVENT " + type);
-
-		if(defers.containsKey(type)) {
-			Collection<IForgeRegistryEntry<?>> ourEntries = defers.get(type);
-			for(IForgeRegistryEntry<?> entry : ourEntries) {
-				System.out.println("Registering " + entry);
-				registry.register(entry);
-			}
-
-			defers.removeAll(type);
-		}
-
-		if(type == Item.class)
-			while(!blocksNeedingItemBlock.isEmpty()) {
-				Block block = blocksNeedingItemBlock.poll();
-
-				Item.Properties props = new Item.Properties();
-				ResourceLocation registryName = block.getRegistryName();
-
-				ItemGroup group = groups.get(registryName);
-				if(group != null)
-					props = props.group(group);
-
-				if(block instanceof IItemPropertiesFiller)
-					((IItemPropertiesFiller) block).fillItemProperties(props);
-
-				BlockItem blockitem;
-				if(block instanceof IBlockItemProvider)
-					blockitem = ((IBlockItemProvider) block).provideItemBlock(block, props);
-				else blockitem = new BlockItem(block, props);
-
-				if(block instanceof IItemColorProvider)
-					itemColors.add(Pair.of(blockitem, (IItemColorProvider) block));
-
-				registry.register(blockitem.setRegistryName(registryName));
-			}
+	public static void onRegistryEvent(RegistryEvent.Register<?> event) {
+		getCurrentModData().register(event.getRegistry());
 	}
 
 	public static void loadComplete(FMLLoadCompleteEvent event) {
@@ -157,5 +129,54 @@ public final class RegistryHelper {
 
 		return true;
 	}
+	
+	private static class ModData {
+		
+		private Map<ResourceLocation, ItemGroup> groups = new HashMap<>();
+		private Queue<Block> blocksNeedingItemBlock = new ArrayDeque<>();
+
+		private Multimap<Class<?>, IForgeRegistryEntry<?>> defers = MultimapBuilder.hashKeys().arrayListValues().build();
+		
+		@SuppressWarnings({ "rawtypes", "unchecked" }) 
+		private void register(IForgeRegistry registry) {
+			Class<?> type = registry.getRegistrySuperType();
+
+			if(defers.containsKey(type)) {
+				Collection<IForgeRegistryEntry<?>> ourEntries = defers.get(type);
+				for(IForgeRegistryEntry<?> entry : ourEntries) {
+					registry.register(entry);
+				}
+
+				defers.removeAll(type);
+			}
+
+			if(type == Item.class)
+				while(!blocksNeedingItemBlock.isEmpty()) {
+					Block block = blocksNeedingItemBlock.poll();
+
+					Item.Properties props = new Item.Properties();
+					ResourceLocation registryName = block.getRegistryName();
+
+					ItemGroup group = groups.get(registryName);
+					if(group != null)
+						props = props.group(group);
+
+					if(block instanceof IItemPropertiesFiller)
+						((IItemPropertiesFiller) block).fillItemProperties(props);
+
+					BlockItem blockitem;
+					if(block instanceof IBlockItemProvider)
+						blockitem = ((IBlockItemProvider) block).provideItemBlock(block, props);
+					else blockitem = new BlockItem(block, props);
+
+					if(block instanceof IItemColorProvider)
+						itemColors.add(Pair.of(blockitem, (IItemColorProvider) block));
+
+					registry.register(blockitem.setRegistryName(registryName));
+				}
+		}
+		
+	}
+	
 
 }
