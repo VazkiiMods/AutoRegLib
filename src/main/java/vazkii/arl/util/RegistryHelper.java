@@ -1,15 +1,8 @@
 package vazkii.arl.util;
 
-import java.util.ArrayDeque;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Queue;
-
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import com.mojang.datafixers.util.Pair;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.color.BlockColors;
@@ -34,6 +27,8 @@ import vazkii.arl.interf.IBlockColorProvider;
 import vazkii.arl.interf.IBlockItemProvider;
 import vazkii.arl.interf.IItemColorProvider;
 import vazkii.arl.interf.IItemPropertiesFiller;
+
+import java.util.*;
 
 public final class RegistryHelper {
 
@@ -132,7 +127,7 @@ public final class RegistryHelper {
 	
 	private static class ModData {
 		
-		private Map<ResourceLocation, ItemGroup> groups = new HashMap<>();
+		private Map<ResourceLocation, ItemGroup> groups = new LinkedHashMap<>();
 		private Queue<Block> blocksNeedingItemBlock = new ArrayDeque<>();
 
 		private Multimap<Class<?>, IForgeRegistryEntry<?>> defers = MultimapBuilder.hashKeys().arrayListValues().build();
