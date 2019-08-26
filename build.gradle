@@ -134,7 +134,7 @@ def parseConfig(File config) {
 
 jar {
     //rename the default output, for some better... sanity with scipts
-    archiveName = "${baseName} ${version}.${extension}"
+    archiveName = "${baseName}-${version}.${extension}"
 
      manifest {
         attributes([
