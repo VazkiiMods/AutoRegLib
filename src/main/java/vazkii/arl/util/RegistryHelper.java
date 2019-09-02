@@ -82,6 +82,15 @@ public final class RegistryHelper {
 		getCurrentModData().defers.put(obj.getRegistryType(), obj);
 	}
 
+	public static <T extends IForgeRegistryEntry<T>> void register(IForgeRegistryEntry<T> obj) {
+		if(obj == null)
+			throw new IllegalArgumentException("Can't register null object.");
+		if(obj.getRegistryName() == null)
+			throw new IllegalArgumentException("Can't register object without registry name.");
+
+		getCurrentModData().defers.put(obj.getRegistryType(), obj);
+	}
+
 	public static void setCreativeTab(Block block, ItemGroup group) {
 		ResourceLocation res = block.getRegistryName();
 		if(res == null)
