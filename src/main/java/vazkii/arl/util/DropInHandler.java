@@ -83,24 +83,24 @@ public final class DropInHandler {
 				ItemStack stack = under.getStack();
 				IDropInItem dropin = getDropInHandler(stack);
 				if(dropin != null) {
-					AutoRegLib.network.sendToServer(new MessageDropIn(under.getSlotIndex(), held));
+					AutoRegLib.network.sendToServer(new MessageDropIn(under.getSlotIndex()));
 					event.setCanceled(true);
 				}
 			}
 		}
 	}
 
-	public static void executeDropIn(PlayerEntity player, int slot, ItemStack stack) {
+	public static void executeDropIn(PlayerEntity player, int slot) {
+		if (player == null)
+			return;
+
 		Container container = player.openContainer;
 		Slot slotObj = container.inventorySlots.get(slot);
 		ItemStack target = slotObj.getStack();
 		IDropInItem dropin = getDropInHandler(target);
+		ItemStack held = player.inventory.getItemStack();
 
-		if(dropin != null && dropin.canDropItemIn(player, target, stack)) {
-			ItemStack held = player.inventory.getItemStack();
-
-			if(player.isCreative() && !stack.isEmpty())
-				held = stack;
+		if(dropin != null && dropin.canDropItemIn(player, target, held)) {
 
 			ItemStack result = dropin.dropItemIn(player, target, held);
 			slotObj.putStack(result);
