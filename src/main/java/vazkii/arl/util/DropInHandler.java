@@ -103,10 +103,10 @@ public final class DropInHandler {
 				held = stack;
 
 			ItemStack result = dropin.dropItemIn(player, target, held);
-			slotObj.putStack(target);
-			player.inventory.setItemStack(result);
+			slotObj.putStack(result);
+			player.inventory.setItemStack(held);
 			if (player instanceof ServerPlayerEntity) {
-				((ServerPlayerEntity) player).isChangingQuantityOnly = !result.isEmpty();
+				((ServerPlayerEntity) player).isChangingQuantityOnly = !held.isEmpty();
 				((ServerPlayerEntity) player).updateHeldItem();
 			}
 		}
