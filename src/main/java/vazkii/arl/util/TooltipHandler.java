@@ -10,12 +10,12 @@
  */
 package vazkii.arl.util;
 
-import java.util.List;
-
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+
+import java.util.List;
 
 public final class TooltipHandler {
 
@@ -23,7 +23,7 @@ public final class TooltipHandler {
 	public static void tooltipIfShift(List<String> tooltip, Runnable r) {
 		if(Screen.hasShiftDown())
 			r.run();
-		else addToTooltip(tooltip, "arl.misc.shiftForInfo");
+		else addToTooltip(tooltip, "arl.misc.shift_for_info");
 	}
 
 	@OnlyIn(Dist.CLIENT)

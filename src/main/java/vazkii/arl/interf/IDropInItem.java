@@ -17,7 +17,7 @@ public interface IDropInItem {
 
 	@OnlyIn(Dist.CLIENT)
 	default List<String> getDropInTooltip(ItemStack stack) {
-		return Collections.singletonList(I18n.format("arl.misc.rightClickAdd"));
+		return Collections.singletonList(I18n.format("arl.misc.right_click_add"));
 	}
 
 }

@@ -1,9 +1,6 @@
 package vazkii.arl.util;
 
-import java.util.concurrent.Callable;
-
 import com.mojang.blaze3d.platform.GlStateManager;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -27,6 +24,8 @@ import vazkii.arl.AutoRegLib;
 import vazkii.arl.interf.IDropInItem;
 import vazkii.arl.network.message.MessageDropIn;
 
+import java.util.concurrent.Callable;
+
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = AutoRegLib.MOD_ID)
 public final class DropInHandler {
 	
@@ -39,7 +38,6 @@ public final class DropInHandler {
 
 	@SubscribeEvent
 	@OnlyIn(Dist.CLIENT)
-	@SuppressWarnings("rawtypes")
 	public static void onDrawScreen(GuiScreenEvent.DrawScreenEvent.Post event) {
 		Minecraft mc = Minecraft.getInstance();
 		Screen gui = mc.currentScreen;
@@ -73,7 +71,6 @@ public final class DropInHandler {
 
 	@SubscribeEvent
 	@OnlyIn(Dist.CLIENT)
-	@SuppressWarnings("rawtypes")
 	public static void onRightClick(GuiScreenEvent.MouseClickedEvent event) {
 		Minecraft mc = Minecraft.getInstance();
 		Screen gui = mc.currentScreen;
@@ -106,19 +103,19 @@ public final class DropInHandler {
 				held = stack;
 
 			ItemStack result = dropin.dropItemIn(player, target, held);
-			slotObj.putStack(result);
-			player.inventory.setItemStack(ItemStack.EMPTY);
+			slotObj.putStack(target);
+			player.inventory.setItemStack(result);
 			if (player instanceof ServerPlayerEntity) {
-				((ServerPlayerEntity) player).isChangingQuantityOnly = false;
+				((ServerPlayerEntity) player).isChangingQuantityOnly = !result.isEmpty();
 				((ServerPlayerEntity) player).updateHeldItem();
 			}
 		}
 	}
 
 	public static IDropInItem getDropInHandler(ItemStack stack) {
-		LazyOptional<IDropInItem> opt = stack.getCapability(DROP_IN_CAPABILITY, null).cast();
+		LazyOptional<IDropInItem> opt = stack.getCapability(DROP_IN_CAPABILITY, null);
 		if(opt.isPresent())
-			return opt.orElse(null);
+			return opt.orElseGet(CapabilityFactory.DefaultImpl::new);
 
 		if(stack.getItem() instanceof IDropInItem)
 			return (IDropInItem) stack.getItem();
