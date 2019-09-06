@@ -87,14 +87,14 @@ public final class DropInHandler {
 					int slotNumber = under.slotNumber;
 					if (under instanceof CreativeScreen.CreativeSlot)
 						slotNumber = ((CreativeScreen.CreativeSlot) under).slot.slotNumber;
-					AutoRegLib.network.sendToServer(new MessageDropIn(slotNumber));
+					AutoRegLib.network.sendToServer(new MessageDropIn(slotNumber, held));
 					event.setCanceled(true);
 				}
 			}
 		}
 	}
 
-	public static void executeDropIn(PlayerEntity player, int slot) {
+	public static void executeDropIn(PlayerEntity player, int slot, ItemStack stack) {
 		if (player == null)
 			return;
 
@@ -103,6 +103,8 @@ public final class DropInHandler {
 		ItemStack target = slotObj.getStack();
 		IDropInItem dropin = getDropInHandler(target);
 		ItemStack held = player.inventory.getItemStack();
+		if (container instanceof CreativeScreen.CreativeContainer)
+			held = stack;
 
 		if(dropin != null && dropin.canDropItemIn(player, target, held)) {
 
