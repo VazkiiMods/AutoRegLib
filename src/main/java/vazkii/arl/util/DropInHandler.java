@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.gui.screen.inventory.CreativeScreen;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
@@ -83,7 +84,10 @@ public final class DropInHandler {
 				ItemStack stack = under.getStack();
 				IDropInItem dropin = getDropInHandler(stack);
 				if(dropin != null) {
-					AutoRegLib.network.sendToServer(new MessageDropIn(under.slotNumber));
+					int slotNumber = under.slotNumber;
+					if (under instanceof CreativeScreen.CreativeSlot)
+						slotNumber = ((CreativeScreen.CreativeSlot) under).slot.slotNumber;
+					AutoRegLib.network.sendToServer(new MessageDropIn(slotNumber));
 					event.setCanceled(true);
 				}
 			}
