@@ -50,7 +50,7 @@ public final class DropInHandler {
 				for(Slot s : container.inventorySlots) {
 					ItemStack stack = s.getStack();
 					IDropInItem dropin = getDropInHandler(stack);
-					if(dropin != null) {
+					if(dropin != null && dropin.canDropItemIn(mc.player, stack, held)) {
 						if(s == under) {
 							int x = event.getMouseX();
 							int y = event.getMouseY();
