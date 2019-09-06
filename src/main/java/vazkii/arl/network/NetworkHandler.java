@@ -10,10 +10,6 @@
  */
 package vazkii.arl.network;
 
-import java.util.function.BiConsumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
-
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
@@ -21,6 +17,10 @@ import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
+
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class NetworkHandler {
 	
@@ -44,7 +44,7 @@ public class NetworkHandler {
 	}
 	
 	public <T extends IMessage> void register(Class<T> clazz, NetworkDirection dir) {
-		BiConsumer<T, PacketBuffer> encoder = (msg, buf) -> MessageSerializer.writeObject(msg, buf);
+		BiConsumer<T, PacketBuffer> encoder = MessageSerializer::writeObject;
 		
 		Function<PacketBuffer, T> decoder = (buf) -> {
 			try {

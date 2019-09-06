@@ -12,6 +12,8 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.network.NetworkDirection;
 import vazkii.arl.network.NetworkHandler;
 import vazkii.arl.network.message.MessageDropIn;
+import vazkii.arl.network.message.MessageDropInCreative;
+import vazkii.arl.network.message.MessageSetSelectedItem;
 import vazkii.arl.util.DropInHandler;
 import vazkii.arl.util.RegistryHelper;
 
@@ -33,6 +35,8 @@ public class AutoRegLib {
 		
 		network = new NetworkHandler(MOD_ID, 1);
 		network.register(MessageDropIn.class, NetworkDirection.PLAY_TO_SERVER);
+		network.register(MessageDropInCreative.class, NetworkDirection.PLAY_TO_SERVER);
+		network.register(MessageSetSelectedItem.class, NetworkDirection.PLAY_TO_CLIENT);
 	}
 	
 	public void loadComplete(FMLLoadCompleteEvent event) {

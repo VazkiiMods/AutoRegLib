@@ -24,6 +24,8 @@ import net.minecraftforge.fml.common.Mod;
 import vazkii.arl.AutoRegLib;
 import vazkii.arl.interf.IDropInItem;
 import vazkii.arl.network.message.MessageDropIn;
+import vazkii.arl.network.message.MessageDropInCreative;
+import vazkii.arl.network.message.MessageSetSelectedItem;
 
 import java.util.concurrent.Callable;
 
@@ -84,18 +86,17 @@ public final class DropInHandler {
 				ItemStack stack = under.getStack();
 				IDropInItem dropin = getDropInHandler(stack);
 				if(dropin != null) {
-					int slotNumber = under.slotNumber;
-					if (under instanceof CreativeScreen.CreativeSlot)
-						slotNumber = ((CreativeScreen.CreativeSlot) under).slot.slotNumber;
-					ItemStack send = container instanceof CreativeScreen ? held : ItemStack.EMPTY;
-					AutoRegLib.network.sendToServer(new MessageDropIn(slotNumber, send));
+					AutoRegLib.network.sendToServer(container instanceof CreativeScreen ?
+							new MessageDropInCreative(under.getSlotIndex(), held) :
+							new MessageDropIn(under.slotNumber));
+
 					event.setCanceled(true);
 				}
 			}
 		}
 	}
 
-	public static void executeDropIn(PlayerEntity player, int slot, ItemStack stack) {
+	public static void executeDropIn(PlayerEntity player, int slot) {
 		if (player == null)
 			return;
 
@@ -104,25 +105,36 @@ public final class DropInHandler {
 		ItemStack target = slotObj.getStack();
 		IDropInItem dropin = getDropInHandler(target);
 
-		boolean changed = false;
-
-		if (stack.isEmpty())
-			stack = player.inventory.getItemStack();
-		else if (!player.isCreative())
-			return;
-		else
-			changed = true;
+		ItemStack stack = player.inventory.getItemStack();
 
 		if(dropin != null && dropin.canDropItemIn(player, target, stack)) {
 			ItemStack result = dropin.dropItemIn(player, target, stack);
 			slotObj.putStack(result);
 			player.inventory.setItemStack(stack);
 			if (player instanceof ServerPlayerEntity) {
-				((ServerPlayerEntity) player).isChangingQuantityOnly = !changed && !stack.isEmpty();
+				((ServerPlayerEntity) player).isChangingQuantityOnly = !stack.isEmpty();
 				((ServerPlayerEntity) player).updateHeldItem();
 			}
 		}
 	}
+
+	public static void executeCreativeDropIn(PlayerEntity player, int slot, ItemStack held) {
+		if (player == null || !player.isCreative())
+			return;
+
+		ItemStack target = player.inventory.getStackInSlot(slot);
+		IDropInItem dropin = getDropInHandler(target);
+
+		if(dropin != null && dropin.canDropItemIn(player, target, held)) {
+			ItemStack result = dropin.dropItemIn(player, target, held);
+			player.inventory.setInventorySlotContents(slot, result);
+			player.inventory.setItemStack(held);
+			if (player instanceof ServerPlayerEntity)
+				AutoRegLib.network.sendToPlayer(new MessageSetSelectedItem(held),
+					(ServerPlayerEntity) player);
+		}
+	}
+
 
 	public static IDropInItem getDropInHandler(ItemStack stack) {
 		LazyOptional<IDropInItem> opt = stack.getCapability(DROP_IN_CAPABILITY, null);
