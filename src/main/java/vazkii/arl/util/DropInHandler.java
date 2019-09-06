@@ -87,7 +87,8 @@ public final class DropInHandler {
 					int slotNumber = under.slotNumber;
 					if (under instanceof CreativeScreen.CreativeSlot)
 						slotNumber = ((CreativeScreen.CreativeSlot) under).slot.slotNumber;
-					AutoRegLib.network.sendToServer(new MessageDropIn(slotNumber, held));
+					ItemStack send = container instanceof CreativeScreen ? held : ItemStack.EMPTY;
+					AutoRegLib.network.sendToServer(new MessageDropIn(slotNumber, send));
 					event.setCanceled(true);
 				}
 			}
@@ -102,17 +103,22 @@ public final class DropInHandler {
 		Slot slotObj = container.inventorySlots.get(slot);
 		ItemStack target = slotObj.getStack();
 		IDropInItem dropin = getDropInHandler(target);
-		ItemStack held = player.inventory.getItemStack();
-		if (container instanceof CreativeScreen.CreativeContainer)
-			held = stack;
 
-		if(dropin != null && dropin.canDropItemIn(player, target, held)) {
+		boolean changed = false;
 
-			ItemStack result = dropin.dropItemIn(player, target, held);
+		if (stack.isEmpty())
+			stack = player.inventory.getItemStack();
+		else if (!player.isCreative())
+			return;
+		else
+			changed = true;
+
+		if(dropin != null && dropin.canDropItemIn(player, target, stack)) {
+			ItemStack result = dropin.dropItemIn(player, target, stack);
 			slotObj.putStack(result);
-			player.inventory.setItemStack(held);
+			player.inventory.setItemStack(stack);
 			if (player instanceof ServerPlayerEntity) {
-				((ServerPlayerEntity) player).isChangingQuantityOnly = !held.isEmpty();
+				((ServerPlayerEntity) player).isChangingQuantityOnly = changed || stack.isEmpty();
 				((ServerPlayerEntity) player).updateHeldItem();
 			}
 		}
