@@ -83,7 +83,7 @@ public final class DropInHandler {
 				ItemStack stack = under.getStack();
 				IDropInItem dropin = getDropInHandler(stack);
 				if(dropin != null) {
-					AutoRegLib.network.sendToServer(new MessageDropIn(under.getSlotIndex()));
+					AutoRegLib.network.sendToServer(new MessageDropIn(under.slotNumber));
 					event.setCanceled(true);
 				}
 			}
