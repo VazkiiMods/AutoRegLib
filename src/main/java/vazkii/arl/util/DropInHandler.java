@@ -72,7 +72,7 @@ public final class DropInHandler {
 
 	@SubscribeEvent
 	@OnlyIn(Dist.CLIENT)
-	public static void onRightClick(GuiScreenEvent.MouseClickedEvent event) {
+	public static void onRightClick(GuiScreenEvent.MouseReleasedEvent.Pre event) {
 		Minecraft mc = Minecraft.getInstance();
 		Screen gui = mc.currentScreen;
 		if(gui instanceof ContainerScreen && event.getButton() == 1) {
