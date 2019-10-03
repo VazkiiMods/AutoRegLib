@@ -1,7 +1,7 @@
 package vazkii.arl.util;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.MultimapBuilder;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -29,6 +29,7 @@ import vazkii.arl.interf.IItemColorProvider;
 import vazkii.arl.interf.IItemPropertiesFiller;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 public final class RegistryHelper {
 
@@ -60,8 +61,10 @@ public final class RegistryHelper {
 	public static void registerBlock(Block block, String resloc, boolean hasBlockItem) {
 		register(block, resloc);
 
-		if(hasBlockItem)
-			getCurrentModData().blocksNeedingItemBlock.add(block);
+		if(hasBlockItem) {
+			ModData data = getCurrentModData();
+			data.defers.put(Item.class, () -> data.createItemBlock(block));
+		}
 
 		if(block instanceof IBlockColorProvider)
 			blockColors.add(Pair.of(block, (IBlockColorProvider) block));
@@ -79,7 +82,7 @@ public final class RegistryHelper {
 			throw new IllegalArgumentException("Can't register null object.");
 
 		obj.setRegistryName(GameData.checkPrefix(resloc, false));
-		getCurrentModData().defers.put(obj.getRegistryType(), obj);
+		getCurrentModData().defers.put(obj.getRegistryType(), () -> obj);
 	}
 
 	public static <T extends IForgeRegistryEntry<T>> void register(IForgeRegistryEntry<T> obj) {
@@ -88,7 +91,7 @@ public final class RegistryHelper {
 		if(obj.getRegistryName() == null)
 			throw new IllegalArgumentException("Can't register object without registry name.");
 
-		getCurrentModData().defers.put(obj.getRegistryType(), obj);
+		getCurrentModData().defers.put(obj.getRegistryType(), () -> obj);
 	}
 
 	public static void setCreativeTab(Block block, ItemGroup group) {
@@ -137,47 +140,43 @@ public final class RegistryHelper {
 	private static class ModData {
 		
 		private Map<ResourceLocation, ItemGroup> groups = new LinkedHashMap<>();
-		private Queue<Block> blocksNeedingItemBlock = new ArrayDeque<>();
 
-		private Multimap<Class<?>, IForgeRegistryEntry<?>> defers = MultimapBuilder.hashKeys().arrayListValues().build();
+		private Multimap<Class<?>, Supplier<IForgeRegistryEntry<?>>> defers = ArrayListMultimap.create();
 		
 		@SuppressWarnings({ "rawtypes", "unchecked" }) 
 		private void register(IForgeRegistry registry) {
 			Class<?> type = registry.getRegistrySuperType();
 
 			if(defers.containsKey(type)) {
-				Collection<IForgeRegistryEntry<?>> ourEntries = defers.get(type);
-				for(IForgeRegistryEntry<?> entry : ourEntries) {
-					registry.register(entry);
+				Collection<Supplier<IForgeRegistryEntry<?>>> ourEntries = defers.get(type);
+				for(Supplier<IForgeRegistryEntry<?>> entry : ourEntries) {
+					registry.register(entry.get());
 				}
 
 				defers.removeAll(type);
 			}
+		}
 
-			if(type == Item.class)
-				while(!blocksNeedingItemBlock.isEmpty()) {
-					Block block = blocksNeedingItemBlock.poll();
+		private Item createItemBlock(Block block) {
+			Item.Properties props = new Item.Properties();
+			ResourceLocation registryName = block.getRegistryName();
 
-					Item.Properties props = new Item.Properties();
-					ResourceLocation registryName = block.getRegistryName();
+			ItemGroup group = groups.get(registryName);
+			if(group != null)
+				props = props.group(group);
 
-					ItemGroup group = groups.get(registryName);
-					if(group != null)
-						props = props.group(group);
+			if(block instanceof IItemPropertiesFiller)
+				((IItemPropertiesFiller) block).fillItemProperties(props);
 
-					if(block instanceof IItemPropertiesFiller)
-						((IItemPropertiesFiller) block).fillItemProperties(props);
+			BlockItem blockitem;
+			if(block instanceof IBlockItemProvider)
+				blockitem = ((IBlockItemProvider) block).provideItemBlock(block, props);
+			else blockitem = new BlockItem(block, props);
 
-					BlockItem blockitem;
-					if(block instanceof IBlockItemProvider)
-						blockitem = ((IBlockItemProvider) block).provideItemBlock(block, props);
-					else blockitem = new BlockItem(block, props);
+			if(block instanceof IItemColorProvider)
+				itemColors.add(Pair.of(blockitem, (IItemColorProvider) block));
 
-					if(block instanceof IItemColorProvider)
-						itemColors.add(Pair.of(blockitem, (IItemColorProvider) block));
-
-					registry.register(blockitem.setRegistryName(registryName));
-				}
+			return blockitem.setRegistryName(registryName);
 		}
 		
 	}
