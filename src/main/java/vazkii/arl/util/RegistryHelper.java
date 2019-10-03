@@ -1,7 +1,6 @@
 package vazkii.arl.util;
 
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -23,6 +22,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
+import vazkii.arl.AutoRegLib;
 import vazkii.arl.interf.IBlockColorProvider;
 import vazkii.arl.interf.IBlockItemProvider;
 import vazkii.arl.interf.IItemColorProvider;
@@ -107,8 +107,7 @@ public final class RegistryHelper {
 	}
 
 	public static void loadComplete(FMLLoadCompleteEvent event) {
-		DistExecutor.runForDist(() -> () -> loadCompleteClient(event), 
-				() -> () -> true);
+		DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> loadCompleteClient(event));
 
 		itemColors.clear();
 		blockColors.clear();
@@ -141,16 +140,18 @@ public final class RegistryHelper {
 		
 		private Map<ResourceLocation, ItemGroup> groups = new LinkedHashMap<>();
 
-		private Multimap<Class<?>, Supplier<IForgeRegistryEntry<?>>> defers = ArrayListMultimap.create();
+		private ArrayListMultimap<Class<?>, Supplier<IForgeRegistryEntry<?>>> defers = ArrayListMultimap.create();
 		
-		@SuppressWarnings({ "rawtypes", "unchecked" }) 
+		@SuppressWarnings({ "rawtypes", "unchecked" })
 		private void register(IForgeRegistry registry) {
 			Class<?> type = registry.getRegistrySuperType();
 
 			if(defers.containsKey(type)) {
 				Collection<Supplier<IForgeRegistryEntry<?>>> ourEntries = defers.get(type);
-				for(Supplier<IForgeRegistryEntry<?>> entry : ourEntries) {
-					registry.register(entry.get());
+				for(Supplier<IForgeRegistryEntry<?>> supplier : ourEntries) {
+					IForgeRegistryEntry<?> entry = supplier.get();
+					registry.register(entry);
+					AutoRegLib.LOGGER.debug("Registering to " + registry.getRegistryName() + " - " + entry.getRegistryName());
 				}
 
 				defers.removeAll(type);
