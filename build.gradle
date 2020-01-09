@@ -74,6 +74,14 @@ minecraft {
     }
 }
 
+repositories {
+    maven {
+        // for Yarn2MCP
+        name "yarn2mcp"
+        url "https://maven.tterrag.com/"
+    }
+}
+
 dependencies {
     minecraft "net.minecraftforge:forge:${config.mc_version}-${config.forge_version}"
 }

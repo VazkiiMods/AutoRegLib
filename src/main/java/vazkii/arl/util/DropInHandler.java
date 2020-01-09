@@ -45,7 +45,7 @@ public final class DropInHandler {
 		Minecraft mc = Minecraft.getInstance();
 		Screen gui = mc.currentScreen;
 		if(gui instanceof ContainerScreen) {
-			ContainerScreen containerGui = (ContainerScreen) gui;
+			ContainerScreen<?> containerGui = (ContainerScreen<?>) gui;
 			ItemStack held = mc.player.inventory.getItemStack();
 			if(!held.isEmpty()) {
 				Container container = containerGui.getContainer();
@@ -78,7 +78,7 @@ public final class DropInHandler {
 		Minecraft mc = Minecraft.getInstance();
 		Screen gui = mc.currentScreen;
 		if(gui instanceof ContainerScreen && event.getButton() == 1) {
-			ContainerScreen container = (ContainerScreen) gui;
+			ContainerScreen<?> container = (ContainerScreen<?>) gui;
 			Slot under = container.getSlotUnderMouse();
 			ItemStack held = mc.player.inventory.getItemStack();
 
