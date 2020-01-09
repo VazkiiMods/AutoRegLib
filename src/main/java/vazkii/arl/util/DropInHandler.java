@@ -112,7 +112,7 @@ public final class DropInHandler {
 			slotObj.putStack(result);
 			player.inventory.setItemStack(stack);
 			if (player instanceof ServerPlayerEntity) {
-				((ServerPlayerEntity) player).isChangingQuantityOnly = !stack.isEmpty();
+				((ServerPlayerEntity) player).isChangingQuantityOnly = false;
 				((ServerPlayerEntity) player).updateHeldItem();
 			}
 		}
