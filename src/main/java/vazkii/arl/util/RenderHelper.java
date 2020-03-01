@@ -72,7 +72,7 @@ public final class RenderHelper {
 			if (tooltipData.size() > 1)
 				var9 += 2 + (tooltipData.size() - 1) * 10;
 
-			MainWindow res = Minecraft.getInstance().getWindow();
+			MainWindow res = Minecraft.getInstance().getMainWindow();
 			int right = var6 + var5 + 5;
 			int swidth = res.getScaledWidth();
 			if(right > swidth) {
@@ -131,10 +131,10 @@ public final class RenderHelper {
 		Tessellator var15 = Tessellator.getInstance();
 		BufferBuilder buff = var15.getBuffer();
 		buff.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-		buff.vertex(par3, par2, z).color(var8, var9, var10, var7).endVertex();
-		buff.vertex(par1, par2, z).color(var8, var9, var10, var7).endVertex();
-		buff.vertex(par1, par4, z).color(var12, var13, var14, var11).endVertex();
-		buff.vertex(par3, par4, z).color(var12, var13, var14, var11).endVertex();
+		buff.pos(par3, par2, z).color(var8, var9, var10, var7).endVertex();
+		buff.pos(par1, par2, z).color(var8, var9, var10, var7).endVertex();
+		buff.pos(par1, par4, z).color(var12, var13, var14, var11).endVertex();
+		buff.pos(par3, par4, z).color(var12, var13, var14, var11).endVertex();
 		var15.draw();
 		RenderSystem.shadeModel(GL11.GL_FLAT);
 		RenderSystem.disableBlend();
@@ -150,10 +150,10 @@ public final class RenderHelper {
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder buff = tessellator.getBuffer();
 		buff.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-		buff.vertex(par1 + 0, par2 + par6, z).texture((par3 + 0) * f, (par4 + par6) * f1).endVertex();
-		buff.vertex(par1 + par5, par2 + par6, z).texture((par3 + par5) * f, (par4 + par6) * f1).endVertex();
-		buff.vertex(par1 + par5, par2 + 0, z).texture((par3 + par5) * f, (par4 + 0) * f1).endVertex();
-		buff.vertex(par1 + 0, par2 + 0, z).texture((par3 + 0) * f, (par4 + 0) * f1).endVertex();
+		buff.pos(par1 + 0, par2 + par6, z).tex((par3 + 0) * f, (par4 + par6) * f1).endVertex();
+		buff.pos(par1 + par5, par2 + par6, z).tex((par3 + par5) * f, (par4 + par6) * f1).endVertex();
+		buff.pos(par1 + par5, par2 + 0, z).tex((par3 + par5) * f, (par4 + 0) * f1).endVertex();
+		buff.pos(par1 + 0, par2 + 0, z).tex((par3 + 0) * f, (par4 + 0) * f1).endVertex();
 		tessellator.draw();
 	}
 	
@@ -197,11 +197,11 @@ public final class RenderHelper {
 			float r = ((color & 0xFF0000) >> 16) / 255F;
 			float g = ((color & 0xFF00) >> 8) / 255F;
 			float b = (color & 0xFF) / 255F;
-			tessellator.getBuffer().vertex(0, 0, 0).color(r, g, b, 1F - f2).endVertex();
-			tessellator.getBuffer().vertex(-0.866D * f4, f3, -0.5F * f4).color(0, 0, 0, 0).endVertex();
-			tessellator.getBuffer().vertex(0.866D * f4, f3, -0.5F * f4).color(0, 0, 0, 0).endVertex();
-			tessellator.getBuffer().vertex(0, f3, 1F * f4).color(0, 0, 0, 0).endVertex();
-			tessellator.getBuffer().vertex(-0.866D * f4, f3, -0.5F * f4).color(0, 0, 0, 0).endVertex();
+			tessellator.getBuffer().pos(0, 0, 0).color(r, g, b, 1F - f2).endVertex();
+			tessellator.getBuffer().pos(-0.866D * f4, f3, -0.5F * f4).color(0, 0, 0, 0).endVertex();
+			tessellator.getBuffer().pos(0.866D * f4, f3, -0.5F * f4).color(0, 0, 0, 0).endVertex();
+			tessellator.getBuffer().pos(0, f3, 1F * f4).color(0, 0, 0, 0).endVertex();
+			tessellator.getBuffer().pos(-0.866D * f4, f3, -0.5F * f4).color(0, 0, 0, 0).endVertex();
 			tessellator.draw();
 		}
 
