@@ -1,10 +1,15 @@
 package vazkii.arl.util;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import java.util.Collections;
+import java.util.concurrent.Callable;
+
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.screen.inventory.CreativeScreen;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
@@ -26,8 +31,6 @@ import vazkii.arl.interf.IDropInItem;
 import vazkii.arl.network.message.MessageDropIn;
 import vazkii.arl.network.message.MessageDropInCreative;
 import vazkii.arl.network.message.MessageSetSelectedItem;
-
-import java.util.concurrent.Callable;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = AutoRegLib.MOD_ID)
 public final class DropInHandler {
@@ -62,9 +65,12 @@ public final class DropInHandler {
 							int x = containerGui.getGuiLeft() + s.xPos;
 							int y = containerGui.getGuiTop() + s.yPos;
 
-							GlStateManager.disableDepthTest();
+							RenderSystem.pushMatrix();
+							RenderSystem.disableDepthTest();
+							RenderSystem.translatef(0, 0, 500);
 							mc.fontRenderer.drawStringWithShadow("+", x + 10, y + 8, 0xFFFF00);
-							GlStateManager.enableDepthTest();
+							RenderSystem.enableDepthTest();
+							RenderSystem.popMatrix();
 						}
 					}
 				}

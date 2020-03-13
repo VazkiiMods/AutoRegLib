@@ -99,7 +99,8 @@ public final class RenderHelper {
 			drawGradientRect(var6 - 3, var7 - 3, z, var6 + var5 + 3, var7 - 3 + 1, color, color);
 			drawGradientRect(var6 - 3, var7 + var9 + 2, z, var6 + var5 + 3, var7 + var9 + 3, var12, var12);
 
-			RenderSystem.disableDepthTest();
+			RenderSystem.pushMatrix();
+			RenderSystem.translatef(0, 0, 500);
 			for (int var13 = 0; var13 < tooltipData.size(); ++var13) {
 				String var14 = tooltipData.get(var13);
 				fontRenderer.drawStringWithShadow(var14, var6, var7, -1);
@@ -107,7 +108,7 @@ public final class RenderHelper {
 					var7 += 2;
 				var7 += 10;
 			}
-			RenderSystem.enableDepthTest();
+			RenderSystem.popMatrix();
 		}
 		if(!lighting)
 			net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
