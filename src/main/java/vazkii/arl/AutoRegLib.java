@@ -22,7 +22,7 @@ import vazkii.arl.util.RegistryHelper;
 @Mod(AutoRegLib.MOD_ID)
 public class AutoRegLib {
 
-	public static final String MOD_ID = "arl";
+	public static final String MOD_ID = "autoreglib";
 
 	public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 	

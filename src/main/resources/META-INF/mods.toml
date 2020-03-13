@@ -3,7 +3,7 @@ loaderVersion="[25,)"
 issueTrackerURL="https://github.com/Vazkii/AutoRegLib"
 
 [[mods]]
-modId="arl"
+modId="autoreglib"
 displayName="AutoRegLib"
 version="${version}"
 authors="Vazkii"
