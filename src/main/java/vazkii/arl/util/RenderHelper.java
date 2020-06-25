@@ -15,43 +15,48 @@ import java.util.Random;
 
 import org.lwjgl.opengl.GL11;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.text.ITextProperties;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public final class RenderHelper {
 
-	public static void renderTooltip(int x, int y, List<String> tooltipData) {
+	public static void renderTooltip(MatrixStack matrix, int x, int y, List<ITextProperties> tooltipData) {
 		int color = 0x505000ff;
 		int color2 = 0xf0100010;
 
-		renderTooltip(x, y, tooltipData, color, color2);
+		renderTooltip(matrix, x, y, tooltipData, color, color2);
 	}
 
-	public static void renderTooltipOrange(int x, int y, List<String> tooltipData) {
+	public static void renderTooltipOrange(MatrixStack matrix, int x, int y, List<ITextProperties> tooltipData) {
 		int color = 0x50a06600;
 		int color2 = 0xf01e1200;
 
-		renderTooltip(x, y, tooltipData, color, color2);
+		renderTooltip(matrix, x, y, tooltipData, color, color2);
 	}
 
-	public static void renderTooltipGreen(int x, int y, List<String> tooltipData) {
+	public static void renderTooltipGreen(MatrixStack matrix, int x, int y, List<ITextProperties> tooltipData) {
 		int color = 0x5000a000;
 		int color2 = 0xf0001e00;
 
-		renderTooltip(x, y, tooltipData, color, color2);
+		renderTooltip(matrix, x, y, tooltipData, color, color2);
 	}
 
-	public static void renderTooltip(int x, int y, List<String> tooltipData, int color, int color2) {
+	public static void renderTooltip(MatrixStack matrix, int x, int y, List<ITextProperties> tooltipData, int color, int color2) {
 		boolean lighting = GL11.glGetBoolean(GL11.GL_LIGHTING);
 		if(lighting)
 			net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
@@ -62,7 +67,7 @@ public final class RenderHelper {
 			int var7;
 			FontRenderer fontRenderer = Minecraft.getInstance().fontRenderer;
 			for (var6 = 0; var6 < tooltipData.size(); ++var6) {
-				var7 = fontRenderer.getStringWidth(tooltipData.get(var6));
+				var7 = fontRenderer.func_238414_a_(tooltipData.get(var6)); //getStringWidth
 				if (var7 > var5)
 					var5 = var7;
 			}
@@ -101,9 +106,16 @@ public final class RenderHelper {
 
 			RenderSystem.pushMatrix();
 			RenderSystem.translatef(0, 0, 500);
+
+			Matrix4f matrix4f = matrix.getLast().getMatrix();
+			IRenderTypeBuffer.Impl irendertypebuffer$impl = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
+
 			for (int var13 = 0; var13 < tooltipData.size(); ++var13) {
-				String var14 = tooltipData.get(var13);
-				fontRenderer.drawStringWithShadow(var14, var6, var7, -1);
+				ITextProperties itextproperties1 = tooltipData.get(var13);
+				if (itextproperties1 != null) {
+					fontRenderer.func_238416_a_(itextproperties1, (float) var6, (float) var7, -1, true, matrix4f, irendertypebuffer$impl, false, 0, 15728880);
+				}
+
 				if (var13 == 0)
 					var7 += 2;
 				var7 += 10;
@@ -157,11 +169,11 @@ public final class RenderHelper {
 		buff.pos(par1 + 0, par2 + 0, z).tex((par3 + 0) * f, (par4 + 0) * f1).endVertex();
 		tessellator.draw();
 	}
-	
+
 	public static void renderStar(int color, float scale, long seed) {
 		renderStar(color, scale, scale, scale, seed);
 	}
-	
+
 	public static void renderStar(int color, float xScale, float yScale, float zScale, long seed) {
 		Tessellator tessellator = Tessellator.getInstance();
 
@@ -221,10 +233,10 @@ public final class RenderHelper {
 		KeyBinding[] keys = Minecraft.getInstance().gameSettings.keyBindings;
 		for(KeyBinding otherKey : keys)
 			if(otherKey.getKeyDescription().equals(keyName)) {
-				key = otherKey.getLocalizedName();
+				key = otherKey.getTranslationKey();
 				break;
 			}
 
-		return key;
+		return I18n.format(key);
 	}
 }

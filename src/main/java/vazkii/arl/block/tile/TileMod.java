@@ -12,6 +12,7 @@ package vazkii.arl.block.tile;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
@@ -34,11 +35,12 @@ public abstract class TileMod extends TileEntity {
 		return nbt;
 	}
 
+	// read
 	@Override
-	public void read(CompoundNBT par1nbtTagCompound) {
-		super.read(par1nbtTagCompound);
+	public void func_230337_a_(BlockState p_230337_1_, CompoundNBT p_230337_2_) {
+		super.func_230337_a_(p_230337_1_, p_230337_2_);
 
-		readSharedNBT(par1nbtTagCompound);
+		readSharedNBT(p_230337_2_);
 	}
 
 	public void writeSharedNBT(CompoundNBT cmp) {

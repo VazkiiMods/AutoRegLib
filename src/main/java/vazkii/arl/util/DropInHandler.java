@@ -1,6 +1,5 @@
 package vazkii.arl.util;
 
-import java.util.Collections;
 import java.util.concurrent.Callable;
 
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -9,7 +8,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.screen.inventory.CreativeScreen;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
@@ -17,6 +15,8 @@ import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.GuiScreenEvent;
@@ -60,7 +60,7 @@ public final class DropInHandler {
 						if(s == under) {
 							int x = event.getMouseX();
 							int y = event.getMouseY();
-							RenderHelper.renderTooltip(x, y, dropin.getDropInTooltip(stack));
+							RenderHelper.renderTooltip(event.getMatrixStack(), x, y, dropin.getDropInTooltip(stack));
 						} else {
 							int x = containerGui.getGuiLeft() + s.xPos;
 							int y = containerGui.getGuiTop() + s.yPos;
@@ -68,7 +68,8 @@ public final class DropInHandler {
 							RenderSystem.pushMatrix();
 							RenderSystem.disableDepthTest();
 							RenderSystem.translatef(0, 0, 500);
-							mc.fontRenderer.drawStringWithShadow("+", x + 10, y + 8, 0xFFFF00);
+							
+							mc.fontRenderer.func_238405_a_(event.getMatrixStack(), "+", x + 10, y + 8, 0xFFFF00);
 							RenderSystem.enableDepthTest();
 							RenderSystem.popMatrix();
 						}
