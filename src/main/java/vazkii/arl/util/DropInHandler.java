@@ -15,8 +15,6 @@ import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.GuiScreenEvent;
@@ -25,6 +23,7 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.client.gui.GuiUtils;
 import net.minecraftforge.fml.common.Mod;
 import vazkii.arl.AutoRegLib;
 import vazkii.arl.interf.IDropInItem;
@@ -60,7 +59,10 @@ public final class DropInHandler {
 						if(s == under) {
 							int x = event.getMouseX();
 							int y = event.getMouseY();
-							RenderHelper.renderTooltip(event.getMatrixStack(), x, y, dropin.getDropInTooltip(stack));
+							int width = gui.field_230708_k_;
+							int height = gui.field_230709_l_;
+							
+							GuiUtils.drawHoveringText(event.getMatrixStack(), dropin.getDropInTooltip(stack), x, y, width, height, -1, mc.fontRenderer);
 						} else {
 							int x = containerGui.getGuiLeft() + s.xPos;
 							int y = containerGui.getGuiTop() + s.yPos;

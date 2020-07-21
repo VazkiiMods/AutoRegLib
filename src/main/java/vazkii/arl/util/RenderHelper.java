@@ -10,165 +10,22 @@
  */
 package vazkii.arl.util;
 
-import java.util.List;
 import java.util.Random;
 
 import org.lwjgl.opengl.GL11;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 
-import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.text.ITextProperties;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public final class RenderHelper {
-
-	public static void renderTooltip(MatrixStack matrix, int x, int y, List<ITextProperties> tooltipData) {
-		int color = 0x505000ff;
-		int color2 = 0xf0100010;
-
-		renderTooltip(matrix, x, y, tooltipData, color, color2);
-	}
-
-	public static void renderTooltipOrange(MatrixStack matrix, int x, int y, List<ITextProperties> tooltipData) {
-		int color = 0x50a06600;
-		int color2 = 0xf01e1200;
-
-		renderTooltip(matrix, x, y, tooltipData, color, color2);
-	}
-
-	public static void renderTooltipGreen(MatrixStack matrix, int x, int y, List<ITextProperties> tooltipData) {
-		int color = 0x5000a000;
-		int color2 = 0xf0001e00;
-
-		renderTooltip(matrix, x, y, tooltipData, color, color2);
-	}
-
-	public static void renderTooltip(MatrixStack matrix, int x, int y, List<ITextProperties> tooltipData, int color, int color2) {
-		boolean lighting = GL11.glGetBoolean(GL11.GL_LIGHTING);
-		if(lighting)
-			net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
-
-		if (!tooltipData.isEmpty()) {
-			int var5 = 0;
-			int var6;
-			int var7;
-			FontRenderer fontRenderer = Minecraft.getInstance().fontRenderer;
-			for (var6 = 0; var6 < tooltipData.size(); ++var6) {
-				var7 = fontRenderer.func_238414_a_(tooltipData.get(var6)); //getStringWidth
-				if (var7 > var5)
-					var5 = var7;
-			}
-			var6 = x + 12;
-			var7 = y - 12;
-			int var9 = 8;
-			if (tooltipData.size() > 1)
-				var9 += 2 + (tooltipData.size() - 1) * 10;
-
-			MainWindow res = Minecraft.getInstance().getMainWindow();
-			int right = var6 + var5 + 5;
-			int swidth = res.getScaledWidth();
-			if(right > swidth) {
-				int diff = right - swidth;
-				var6 -= diff;
-			}
-
-			int bottom = var7 + var9 + 5;
-			int sheight = res.getScaledHeight();
-			if(bottom > sheight) {
-				int diff = bottom - sheight;
-				var7 -= diff;
-			}
-
-			float z = 300F;
-			drawGradientRect(var6 - 3, var7 - 4, z, var6 + var5 + 3, var7 - 3, color2, color2);
-			drawGradientRect(var6 - 3, var7 + var9 + 3, z, var6 + var5 + 3, var7 + var9 + 4, color2, color2);
-			drawGradientRect(var6 - 3, var7 - 3, z, var6 + var5 + 3, var7 + var9 + 3, color2, color2);
-			drawGradientRect(var6 - 4, var7 - 3, z, var6 - 3, var7 + var9 + 3, color2, color2);
-			drawGradientRect(var6 + var5 + 3, var7 - 3, z, var6 + var5 + 4, var7 + var9 + 3, color2, color2);
-			int var12 = (color & 0xFFFFFF) >> 1 | color & -16777216;
-			drawGradientRect(var6 - 3, var7 - 3 + 1, z, var6 - 3 + 1, var7 + var9 + 3 - 1, color, var12);
-			drawGradientRect(var6 + var5 + 2, var7 - 3 + 1, z, var6 + var5 + 3, var7 + var9 + 3 - 1, color, var12);
-			drawGradientRect(var6 - 3, var7 - 3, z, var6 + var5 + 3, var7 - 3 + 1, color, color);
-			drawGradientRect(var6 - 3, var7 + var9 + 2, z, var6 + var5 + 3, var7 + var9 + 3, var12, var12);
-
-			RenderSystem.pushMatrix();
-			RenderSystem.translatef(0, 0, 500);
-
-			Matrix4f matrix4f = matrix.getLast().getMatrix();
-			IRenderTypeBuffer.Impl irendertypebuffer$impl = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
-
-			for (int var13 = 0; var13 < tooltipData.size(); ++var13) {
-				ITextProperties itextproperties1 = tooltipData.get(var13);
-				if (itextproperties1 != null) {
-					fontRenderer.func_238416_a_(itextproperties1, (float) var6, (float) var7, -1, true, matrix4f, irendertypebuffer$impl, false, 0, 15728880);
-				}
-
-				if (var13 == 0)
-					var7 += 2;
-				var7 += 10;
-			}
-			RenderSystem.popMatrix();
-		}
-		if(!lighting)
-			net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
-		RenderSystem.color4f(1F, 1F, 1F, 1F);
-	}
-
-	public static void drawGradientRect(int par1, int par2, float z, int par3, int par4, int par5, int par6) {
-		float var7 = (par5 >> 24 & 255) / 255F;
-		float var8 = (par5 >> 16 & 255) / 255F;
-		float var9 = (par5 >> 8 & 255) / 255F;
-		float var10 = (par5 & 255) / 255F;
-		float var11 = (par6 >> 24 & 255) / 255F;
-		float var12 = (par6 >> 16 & 255) / 255F;
-		float var13 = (par6 >> 8 & 255) / 255F;
-		float var14 = (par6 & 255) / 255F;
-		RenderSystem.disableTexture();
-		RenderSystem.enableBlend();
-		RenderSystem.disableAlphaTest();
-		RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		RenderSystem.shadeModel(GL11.GL_SMOOTH);
-		Tessellator var15 = Tessellator.getInstance();
-		BufferBuilder buff = var15.getBuffer();
-		buff.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-		buff.pos(par3, par2, z).color(var8, var9, var10, var7).endVertex();
-		buff.pos(par1, par2, z).color(var8, var9, var10, var7).endVertex();
-		buff.pos(par1, par4, z).color(var12, var13, var14, var11).endVertex();
-		buff.pos(par3, par4, z).color(var12, var13, var14, var11).endVertex();
-		var15.draw();
-		RenderSystem.shadeModel(GL11.GL_FLAT);
-		RenderSystem.disableBlend();
-		RenderSystem.enableAlphaTest();
-		RenderSystem.enableTexture();
-	}
-
-	public static void drawTexturedModalRect(int par1, int par2, float z, int par3, int par4, int par5, int par6) {
-		drawTexturedModalRect(par1, par2, z, par3, par4, par5, par6, 0.00390625F, 0.00390625F);
-	}
-
-	public static void drawTexturedModalRect(int par1, int par2, float z, int par3, int par4, int par5, int par6, float f, float f1) {
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder buff = tessellator.getBuffer();
-		buff.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-		buff.pos(par1 + 0, par2 + par6, z).tex((par3 + 0) * f, (par4 + par6) * f1).endVertex();
-		buff.pos(par1 + par5, par2 + par6, z).tex((par3 + par5) * f, (par4 + par6) * f1).endVertex();
-		buff.pos(par1 + par5, par2 + 0, z).tex((par3 + par5) * f, (par4 + 0) * f1).endVertex();
-		buff.pos(par1 + 0, par2 + 0, z).tex((par3 + 0) * f, (par4 + 0) * f1).endVertex();
-		tessellator.draw();
-	}
 
 	public static void renderStar(int color, float scale, long seed) {
 		renderStar(color, scale, scale, scale, seed);
