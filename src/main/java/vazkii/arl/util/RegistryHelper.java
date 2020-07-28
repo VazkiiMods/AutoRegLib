@@ -1,7 +1,16 @@
 package vazkii.arl.util;
 
+import java.util.ArrayDeque;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Queue;
+import java.util.function.Supplier;
+
 import com.google.common.collect.ArrayListMultimap;
 import com.mojang.datafixers.util.Pair;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.color.BlockColors;
@@ -15,6 +24,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
@@ -28,32 +38,34 @@ import vazkii.arl.interf.IBlockItemProvider;
 import vazkii.arl.interf.IItemColorProvider;
 import vazkii.arl.interf.IItemPropertiesFiller;
 
-import java.util.*;
-import java.util.function.Supplier;
-
 public final class RegistryHelper {
 
 	private static final Map<String, ModData> modData = new HashMap<>();
-	
+
 	private static Queue<Pair<Item, IItemColorProvider>> itemColors = new ArrayDeque<>();
 	private static Queue<Pair<Block, IBlockColorProvider>> blockColors = new ArrayDeque<>();
-	
+
 	private static ModData getCurrentModData() {
 		return getModData(ModLoadingContext.get().getActiveNamespace());
 	}
-	
+
 	private static ModData getModData(String modid) {
 		ModData data = modData.get(modid);
 		if(data == null) {
 			data = new ModData();
 			modData.put(modid, data);
-			
-			FMLJavaModLoadingContext.get().getModEventBus().addListener(RegistryHelper::onRegistryEvent);
+
+			FMLJavaModLoadingContext.get().getModEventBus().register(RegistryHelper.class);
 		}
-		
+
 		return data;
 	}
 	
+	@SubscribeEvent
+	public static void onRegistryEvent(RegistryEvent.Register<?> event) {
+		getCurrentModData().register(event.getRegistry());
+	}
+
 	public static void registerBlock(Block block, String resloc) {
 		registerBlock(block, resloc, true);
 	}
@@ -102,10 +114,6 @@ public final class RegistryHelper {
 		getCurrentModData().groups.put(block.getRegistryName(), group);
 	}
 
-	public static void onRegistryEvent(RegistryEvent.Register<?> event) {
-		getCurrentModData().register(event.getRegistry());
-	}
-
 	public static void loadComplete(FMLLoadCompleteEvent event) {
 		DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> loadCompleteClient(event));
 
@@ -135,13 +143,13 @@ public final class RegistryHelper {
 
 		return true;
 	}
-	
+
 	private static class ModData {
-		
+
 		private Map<ResourceLocation, ItemGroup> groups = new LinkedHashMap<>();
 
 		private ArrayListMultimap<Class<?>, Supplier<IForgeRegistryEntry<?>>> defers = ArrayListMultimap.create();
-		
+
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		private void register(IForgeRegistry registry) {
 			Class<?> type = registry.getRegistrySuperType();
@@ -179,8 +187,7 @@ public final class RegistryHelper {
 
 			return blockitem.setRegistryName(registryName);
 		}
-		
+
 	}
-	
 
 }
