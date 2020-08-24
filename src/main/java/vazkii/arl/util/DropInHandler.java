@@ -59,10 +59,11 @@ public final class DropInHandler {
 						if(s == under) {
 							int x = event.getMouseX();
 							int y = event.getMouseY();
-							int width = gui.field_230708_k_;
-							int height = gui.field_230709_l_;
+							int width = gui.width;
+							int height = gui.height;
 							
-							GuiUtils.drawHoveringText(event.getMatrixStack(), dropin.getDropInTooltip(stack), x, y, width, height, -1, mc.fontRenderer);
+							//This is currently broken so we not worrying bout it
+							//GuiUtils.drawHoveringText(event.getMatrixStack(), dropin.getDropInTooltip(stack), x, y, width, height, -1, mc.fontRenderer);
 						} else {
 							int x = containerGui.getGuiLeft() + s.xPos;
 							int y = containerGui.getGuiTop() + s.yPos;
@@ -71,7 +72,7 @@ public final class DropInHandler {
 							RenderSystem.disableDepthTest();
 							RenderSystem.translatef(0, 0, 500);
 							
-							mc.fontRenderer.func_238405_a_(event.getMatrixStack(), "+", x + 10, y + 8, 0xFFFF00);
+							mc.fontRenderer.drawStringWithShadow(event.getMatrixStack(), "+", x + 10, y + 8, 0xFFFF00);
 							RenderSystem.enableDepthTest();
 							RenderSystem.popMatrix();
 						}

@@ -21,7 +21,7 @@ public final class TooltipHandler {
 
 	@OnlyIn(Dist.CLIENT)
 	public static void tooltipIfShift(List<String> tooltip, Runnable r) {
-		if(Screen.func_231173_s_()) // isShiftDown
+		if(Screen.hasShiftDown())
 			r.run();
 		else addToTooltip(tooltip, "arl.misc.shift_for_info");
 	}

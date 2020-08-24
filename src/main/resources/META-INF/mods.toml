@@ -1,6 +1,7 @@
 modLoader="javafml"
 loaderVersion="[25,)"
 issueTrackerURL="https://github.com/Vazkii/AutoRegLib"
+license="https://github.com/Vazkii/AutoRegLib/blob/master/README.md"
 
 [[mods]]
 modId="autoreglib"

@@ -35,10 +35,9 @@ public abstract class TileMod extends TileEntity {
 		return nbt;
 	}
 
-	// read
 	@Override
-	public void func_230337_a_(BlockState p_230337_1_, CompoundNBT p_230337_2_) {
-		super.func_230337_a_(p_230337_1_, p_230337_2_);
+	public void read(BlockState p_230337_1_, CompoundNBT p_230337_2_) {
+		super.read(p_230337_1_, p_230337_2_);
 
 		readSharedNBT(p_230337_2_);
 	}
