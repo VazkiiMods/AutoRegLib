@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
-  <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="AutoRegLib"/>
-  <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="net.minecraftforge.userdev.LaunchTesting"/>
-  <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dforge.logging.console.level=debug -Dforge.logging.markers=SCAN,REGISTRIES,REGISTRYDUMP"/>
-  <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value=""/>
-  <stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="C:\Users\10elt\Documents\Git\AutoRegLib\run"/>
-  <mapAttribute key="org.eclipse.debug.core.environmentVariables">
-    <mapEntry key="MOD_CLASSES" value="examplemod%%C:\Users\10elt\Documents\Git\AutoRegLib\bin\main;examplemod%%C:\Users\10elt\Documents\Git\AutoRegLib\bin\main"/>
-    <mapEntry key="MCP_MAPPINGS" value="snapshot_20200820-1.16.1"/>
-    <mapEntry key="MCP_VERSION" value="20200812.004259"/>
-    <mapEntry key="FORGE_VERSION" value="33.0.20"/>
-    <mapEntry key="FORGE_GROUP" value="net.minecraftforge"/>
-    <mapEntry key="target" value="fmluserdevserver"/>
-    <mapEntry key="MC_VERSION" value="1.16.2"/>
-  </mapAttribute>
+<mapAttribute key="org.eclipse.debug.core.environmentVariables">
+<mapEntry key="FORGE_GROUP" value="net.minecraftforge"/>
+<mapEntry key="FORGE_VERSION" value="33.0.20"/>
+<mapEntry key="MCP_MAPPINGS" value="snapshot_20200820-1.16.1"/>
+<mapEntry key="MCP_VERSION" value="20200812.004259"/>
+<mapEntry key="MC_VERSION" value="1.16.2"/>
+<mapEntry key="MOD_CLASSES" value="examplemod%%C:\Users\10elt\Documents\Git\AutoRegLib\bin\main;examplemod%%C:\Users\10elt\Documents\Git\AutoRegLib\bin\main"/>
+<mapEntry key="target" value="fmluserdevserver"/>
+</mapAttribute>
+<stringAttribute key="org.eclipse.jdt.launching.CLASSPATH_PROVIDER" value="org.eclipse.buildship.core.classpathprovider"/>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="net.minecraftforge.userdev.LaunchTesting"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value=""/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="AutoRegLib"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dforge.logging.console.level=debug -Dforge.logging.markers=SCAN,REGISTRIES,REGISTRYDUMP"/>
+<stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="C:\Users\10elt\Documents\Git\AutoRegLib\run"/>
 </launchConfiguration>

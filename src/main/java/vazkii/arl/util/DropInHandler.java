@@ -62,8 +62,7 @@ public final class DropInHandler {
 							int width = gui.width;
 							int height = gui.height;
 							
-							//This is currently broken so we not worrying bout it
-							//GuiUtils.drawHoveringText(event.getMatrixStack(), dropin.getDropInTooltip(stack), x, y, width, height, -1, mc.fontRenderer);
+							GuiUtils.drawHoveringText(event.getMatrixStack(), dropin.getDropInTooltip(stack), x, y, width, height, -1, mc.fontRenderer);
 						} else {
 							int x = containerGui.getGuiLeft() + s.xPos;
 							int y = containerGui.getGuiTop() + s.yPos;
