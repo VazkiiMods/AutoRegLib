@@ -99,6 +99,7 @@ public final class DropInHandler {
 							new MessageDropInCreative(under.getSlotIndex(), held) :
 							new MessageDropIn(under.slotNumber));
 
+					container.dragSplitting = false;
 					event.setCanceled(true);
 				}
 			}
