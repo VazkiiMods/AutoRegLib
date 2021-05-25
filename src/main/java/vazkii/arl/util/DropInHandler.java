@@ -55,7 +55,7 @@ public final class DropInHandler {
 				for(Slot s : container.inventorySlots) {
 					ItemStack stack = s.getStack();
 					IDropInItem dropin = getDropInHandler(stack);
-					if(dropin != null && dropin.canDropItemIn(mc.player, stack, held)) {
+					if(dropin != null && dropin.canDropItemIn(mc.player, stack, held, s)) {
 						if(s == under) {
 							int x = event.getMouseX();
 							int y = event.getMouseY();
@@ -91,7 +91,7 @@ public final class DropInHandler {
 			Slot under = container.getSlotUnderMouse();
 			ItemStack held = mc.player.inventory.getItemStack();
 
-			if(under != null && !held.isEmpty()) {
+			if(under != null && !held.isEmpty() && under.canTakeStack(mc.player)) {
 				ItemStack stack = under.getStack();
 				IDropInItem dropin = getDropInHandler(stack);
 				if(dropin != null) {
@@ -117,8 +117,8 @@ public final class DropInHandler {
 
 		ItemStack stack = player.inventory.getItemStack();
 
-		if(dropin != null && dropin.canDropItemIn(player, target, stack)) {
-			ItemStack result = dropin.dropItemIn(player, target, stack);
+		if(dropin != null && dropin.canDropItemIn(player, target, stack, slotObj)) {
+			ItemStack result = dropin.dropItemIn(player, target, stack, slotObj);
 			slotObj.putStack(result);
 			player.inventory.setItemStack(stack);
 			if (player instanceof ServerPlayerEntity) {
@@ -134,9 +134,10 @@ public final class DropInHandler {
 
 		ItemStack target = player.inventory.getStackInSlot(slot);
 		IDropInItem dropin = getDropInHandler(target);
+		Slot slotObj = player.container.inventorySlots.get(slot);
 
-		if(dropin != null && dropin.canDropItemIn(player, target, held)) {
-			ItemStack result = dropin.dropItemIn(player, target, held);
+		if(dropin != null && dropin.canDropItemIn(player, target, held, slotObj)) {
+			ItemStack result = dropin.dropItemIn(player, target, held, slotObj);
 			player.inventory.setInventorySlotContents(slot, result);
 			player.inventory.setItemStack(held);
 			if (player instanceof ServerPlayerEntity)
@@ -179,12 +180,12 @@ public final class DropInHandler {
 		private static class DefaultImpl implements IDropInItem {
 
 			@Override
-			public boolean canDropItemIn(PlayerEntity player, ItemStack stack, ItemStack incoming) {
+			public boolean canDropItemIn(PlayerEntity player, ItemStack stack, ItemStack incoming, Slot slotObj) {
 				return false;
 			}
 
 			@Override
-			public ItemStack dropItemIn(PlayerEntity player, ItemStack stack, ItemStack incoming) {
+			public ItemStack dropItemIn(PlayerEntity player, ItemStack stack, ItemStack incoming, Slot slotObj) {
 				return incoming;
 			}
 
