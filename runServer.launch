@@ -2,10 +2,10 @@
 <launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
 <mapAttribute key="org.eclipse.debug.core.environmentVariables">
 <mapEntry key="FORGE_GROUP" value="net.minecraftforge"/>
-<mapEntry key="FORGE_VERSION" value="33.0.20"/>
-<mapEntry key="MCP_MAPPINGS" value="snapshot_20200820-1.16.1"/>
-<mapEntry key="MCP_VERSION" value="20200812.004259"/>
-<mapEntry key="MC_VERSION" value="1.16.2"/>
+<mapEntry key="FORGE_VERSION" value="36.2.9"/>
+<mapEntry key="MCP_MAPPINGS" value="snapshot_20210601-1.16.5"/>
+<mapEntry key="MCP_VERSION" value="20210115.110354"/>
+<mapEntry key="MC_VERSION" value="1.16.5"/>
 <mapEntry key="MOD_CLASSES" value="examplemod%%C:\Users\10elt\Documents\Git\AutoRegLib\bin\main;examplemod%%C:\Users\10elt\Documents\Git\AutoRegLib\bin\main"/>
 <mapEntry key="target" value="fmluserdevserver"/>
 </mapAttribute>
