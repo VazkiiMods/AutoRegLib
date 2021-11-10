@@ -170,12 +170,4 @@ artifacts {
     archives deobfJar
 }
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            repository(url: "file://" + (System.getenv("local_maven") != null ? System.getenv("local_maven") : System.getenv("bamboo_local_maven")))
-        }
-    }
-}
-
 defaultTasks 'clean', 'build', 'sortArtifacts', 'incrementBuildNumber'
