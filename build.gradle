@@ -11,7 +11,7 @@ buildscript {
 
 repositories {
 	maven {
-		url 'https://www.dogforce-games.com/maven/'
+		url 'https://files.minecraftforge.net/'
 	}
 }
 
