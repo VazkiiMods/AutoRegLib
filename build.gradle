@@ -86,6 +86,7 @@ processResources {
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'META-INF/mods.toml'
+        duplicatesStrategy include
 
         // replace version and mcversion
         expand '0version': project.version 
