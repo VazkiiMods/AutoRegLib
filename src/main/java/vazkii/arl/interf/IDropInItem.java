@@ -3,23 +3,23 @@ package vazkii.arl.interf;
 import java.util.Collections;
 import java.util.List;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextProperties;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public interface IDropInItem {
 
-	boolean canDropItemIn(PlayerEntity player, ItemStack stack, ItemStack incoming, Slot slot);
+	boolean canDropItemIn(Player player, ItemStack stack, ItemStack incoming, Slot slot);
 
-	ItemStack dropItemIn(PlayerEntity player, ItemStack stack, ItemStack incoming, Slot slot);
+	ItemStack dropItemIn(Player player, ItemStack stack, ItemStack incoming, Slot slot);
 
 	@OnlyIn(Dist.CLIENT)
-	default List<ITextProperties> getDropInTooltip(ItemStack stack) {
-		return Collections.singletonList(new TranslationTextComponent("arl.misc.right_click_add"));
+	default List<FormattedText> getDropInTooltip(ItemStack stack) {
+		return Collections.singletonList(new TranslatableComponent("arl.misc.right_click_add"));
 	}
 
 }

@@ -17,10 +17,10 @@ import org.lwjgl.opengl.GL11;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.client.settings.KeyBinding;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.client.KeyMapping;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -32,7 +32,7 @@ public final class RenderHelper {
 	}
 
 	public static void renderStar(int color, float xScale, float yScale, float zScale, long seed) {
-		Tessellator tessellator = Tessellator.getInstance();
+		Tesselator tessellator = Tesselator.getInstance();
 
 		float ticks = (ClientTicker.ticksInGame % 200) + ClientTicker.partialTicks;
 		if (ticks >= 100)
@@ -61,7 +61,7 @@ public final class RenderHelper {
 			RenderSystem.rotatef(random.nextFloat() * 360F, 1F, 0F, 0F);
 			RenderSystem.rotatef(random.nextFloat() * 360F, 0F, 1F, 0F);
 			RenderSystem.rotatef(random.nextFloat() * 360F + f1 * 90F, 0F, 0F, 1F);
-			tessellator.getBuilder().begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION_COLOR);
+			tessellator.getBuilder().begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR);
 			float f3 = random.nextFloat() * 20F + 5F + f2 * 10F;
 			float f4 = random.nextFloat() * 2F + 1F + f2 * 2F;
 			float r = ((color & 0xFF0000) >> 16) / 255F;
@@ -87,8 +87,8 @@ public final class RenderHelper {
 
 	public static String getKeyDisplayString(String keyName) {
 		String key = null;
-		KeyBinding[] keys = Minecraft.getInstance().options.keyMappings;
-		for(KeyBinding otherKey : keys)
+		KeyMapping[] keys = Minecraft.getInstance().options.keyMappings;
+		for(KeyMapping otherKey : keys)
 			if(otherKey.getName().equals(keyName)) {
 				key = otherKey.saveString();
 				break;

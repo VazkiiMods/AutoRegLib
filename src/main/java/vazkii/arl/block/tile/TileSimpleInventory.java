@@ -12,36 +12,36 @@ package vazkii.arl.block.tile;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.NonNullList;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
 
-public abstract class TileSimpleInventory extends TileMod implements ISidedInventory {
+public abstract class TileSimpleInventory extends TileMod implements WorldlyContainer {
 
-	public TileSimpleInventory(TileEntityType<?> tileEntityTypeIn) {
+	public TileSimpleInventory(BlockEntityType<?> tileEntityTypeIn) {
 		super(tileEntityTypeIn);
 	}
 
 	protected NonNullList<ItemStack> inventorySlots = NonNullList.withSize(getContainerSize(), ItemStack.EMPTY);
 	
 	@Override
-	public void readSharedNBT(CompoundNBT par1NBTTagCompound) {
+	public void readSharedNBT(CompoundTag par1NBTTagCompound) {
 		if(!needsToSyncInventory())
 			return;
 		
-		ListNBT var2 = par1NBTTagCompound.getList("Items", 10);
+		ListTag var2 = par1NBTTagCompound.getList("Items", 10);
 		clearContent();
 		for(int var3 = 0; var3 < var2.size(); ++var3) {
-			CompoundNBT var4 = var2.getCompound(var3);
+			CompoundTag var4 = var2.getCompound(var3);
 			byte var5 = var4.getByte("Slot");
 			if (var5 >= 0 && var5 < inventorySlots.size())
 				inventorySlots.set(var5, ItemStack.of(var4));
@@ -49,14 +49,14 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 	}
 
 	@Override
-	public void writeSharedNBT(CompoundNBT par1NBTTagCompound) {
+	public void writeSharedNBT(CompoundTag par1NBTTagCompound) {
 		if(!needsToSyncInventory())
 			return;
 		
-		ListNBT var2 = new ListNBT();
+		ListTag var2 = new ListTag();
 		for (int var3 = 0; var3 < inventorySlots.size(); ++var3) {
 			if(!inventorySlots.get(var3).isEmpty()) {
-				CompoundNBT var4 = new CompoundNBT();
+				CompoundTag var4 = new CompoundTag();
 				var4.putByte("Slot", (byte)var3);
 				inventorySlots.get(var3).save(var4);
 				var2.add(var4);
@@ -132,7 +132,7 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 	}
 
 	@Override
-	public boolean stillValid(@Nonnull PlayerEntity entityplayer) {
+	public boolean stillValid(@Nonnull Player entityplayer) {
 		return getLevel().getBlockEntity(getBlockPos()) == this && entityplayer.distanceToSqr(worldPosition.getX() + 0.5D, worldPosition.getY() + 0.5D, worldPosition.getZ() + 0.5D) <= 64;
 	}
 	
@@ -151,12 +151,12 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 	}
 
 	@Override
-	public void startOpen(@Nonnull PlayerEntity player) {
+	public void startOpen(@Nonnull Player player) {
 		// NO-OP
 	}
 
 	@Override
-	public void stopOpen(@Nonnull PlayerEntity player) {
+	public void stopOpen(@Nonnull Player player) {
 		// NO-OP
 	}
 

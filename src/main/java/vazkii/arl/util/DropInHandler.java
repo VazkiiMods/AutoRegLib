@@ -5,16 +5,16 @@ import java.util.concurrent.Callable;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.gui.screen.inventory.CreativeScreen;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.Direction;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.Tag;
+import net.minecraft.core.Direction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.GuiScreenEvent;
@@ -46,11 +46,11 @@ public final class DropInHandler {
 	public static void onDrawScreen(GuiScreenEvent.DrawScreenEvent.Post event) {
 		Minecraft mc = Minecraft.getInstance();
 		Screen gui = mc.screen;
-		if(gui instanceof ContainerScreen) {
-			ContainerScreen<?> containerGui = (ContainerScreen<?>) gui;
+		if(gui instanceof AbstractContainerScreen) {
+			AbstractContainerScreen<?> containerGui = (AbstractContainerScreen<?>) gui;
 			ItemStack held = mc.player.inventory.getCarried();
 			if(!held.isEmpty()) {
-				Container container = containerGui.getMenu();
+				AbstractContainerMenu container = containerGui.getMenu();
 				Slot under = containerGui.getSlotUnderMouse();
 				for(Slot s : container.slots) {
 					ItemStack stack = s.getItem();
@@ -86,8 +86,8 @@ public final class DropInHandler {
 	public static void onRightClick(GuiScreenEvent.MouseReleasedEvent.Pre event) {
 		Minecraft mc = Minecraft.getInstance();
 		Screen gui = mc.screen;
-		if(gui instanceof ContainerScreen && event.getButton() == 1) {
-			ContainerScreen<?> container = (ContainerScreen<?>) gui;
+		if(gui instanceof AbstractContainerScreen && event.getButton() == 1) {
+			AbstractContainerScreen<?> container = (AbstractContainerScreen<?>) gui;
 			Slot under = container.getSlotUnderMouse();
 			ItemStack held = mc.player.inventory.getCarried();
 
@@ -95,7 +95,7 @@ public final class DropInHandler {
 				ItemStack stack = under.getItem();
 				IDropInItem dropin = getDropInHandler(stack);
 				if(dropin != null) {
-					AutoRegLib.network.sendToServer(container instanceof CreativeScreen ?
+					AutoRegLib.network.sendToServer(container instanceof CreativeModeInventoryScreen ?
 							new MessageDropInCreative(under.getSlotIndex(), held) :
 							new MessageDropIn(under.index));
 
@@ -106,11 +106,11 @@ public final class DropInHandler {
 		}
 	}
 
-	public static void executeDropIn(PlayerEntity player, int slot) {
+	public static void executeDropIn(Player player, int slot) {
 		if (player == null)
 			return;
 
-		Container container = player.containerMenu;
+		AbstractContainerMenu container = player.containerMenu;
 		Slot slotObj = container.slots.get(slot);
 		ItemStack target = slotObj.getItem();
 		IDropInItem dropin = getDropInHandler(target);
@@ -121,14 +121,14 @@ public final class DropInHandler {
 			ItemStack result = dropin.dropItemIn(player, target, stack, slotObj);
 			slotObj.set(result);
 			player.inventory.setCarried(stack);
-			if (player instanceof ServerPlayerEntity) {
-				((ServerPlayerEntity) player).ignoreSlotUpdateHack = false;
-				((ServerPlayerEntity) player).broadcastCarriedItem();
+			if (player instanceof ServerPlayer) {
+				((ServerPlayer) player).ignoreSlotUpdateHack = false;
+				((ServerPlayer) player).broadcastCarriedItem();
 			}
 		}
 	}
 
-	public static void executeCreativeDropIn(PlayerEntity player, int slot, ItemStack held) {
+	public static void executeCreativeDropIn(Player player, int slot, ItemStack held) {
 		if (player == null || !player.isCreative())
 			return;
 
@@ -140,9 +140,9 @@ public final class DropInHandler {
 			ItemStack result = dropin.dropItemIn(player, target, held, slotObj);
 			player.inventory.setItem(slot, result);
 			player.inventory.setCarried(held);
-			if (player instanceof ServerPlayerEntity)
+			if (player instanceof ServerPlayer)
 				AutoRegLib.network.sendToPlayer(new MessageSetSelectedItem(held),
-					(ServerPlayerEntity) player);
+					(ServerPlayer) player);
 		}
 	}
 
@@ -163,12 +163,12 @@ public final class DropInHandler {
 		private static CapabilityFactory INSTANCE = new CapabilityFactory(); 
 
 		@Override
-		public INBT writeNBT(Capability<IDropInItem> capability, IDropInItem instance, Direction side) {
+		public Tag writeNBT(Capability<IDropInItem> capability, IDropInItem instance, Direction side) {
 			return null;
 		}
 
 		@Override
-		public void readNBT(Capability<IDropInItem> capability, IDropInItem instance, Direction side, INBT nbt) {
+		public void readNBT(Capability<IDropInItem> capability, IDropInItem instance, Direction side, Tag nbt) {
 			// NO-OP
 		}
 
@@ -180,12 +180,12 @@ public final class DropInHandler {
 		private static class DefaultImpl implements IDropInItem {
 
 			@Override
-			public boolean canDropItemIn(PlayerEntity player, ItemStack stack, ItemStack incoming, Slot slotObj) {
+			public boolean canDropItemIn(Player player, ItemStack stack, ItemStack incoming, Slot slotObj) {
 				return false;
 			}
 
 			@Override
-			public ItemStack dropItemIn(PlayerEntity player, ItemStack stack, ItemStack incoming, Slot slotObj) {
+			public ItemStack dropItemIn(Player player, ItemStack stack, ItemStack incoming, Slot slotObj) {
 				return incoming;
 			}
 

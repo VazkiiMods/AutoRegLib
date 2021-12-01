@@ -1,7 +1,7 @@
 package vazkii.arl.util;
 
-import net.minecraft.util.Direction;
-import net.minecraft.util.Rotation;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.Rotation;
 
 public final class RotationHandler {
 

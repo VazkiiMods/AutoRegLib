@@ -10,31 +10,31 @@
  */
 package vazkii.arl.util;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 
 public final class VanillaPacketDispatcher {
 
-	public static void dispatchTEToNearbyPlayers(TileEntity tile) {
-		World world = tile.getLevel();
-		if(world instanceof ServerWorld) {
-			SUpdateTileEntityPacket packet = tile.getUpdatePacket();
+	public static void dispatchTEToNearbyPlayers(BlockEntity tile) {
+		Level world = tile.getLevel();
+		if(world instanceof ServerLevel) {
+			ClientboundBlockEntityDataPacket packet = tile.getUpdatePacket();
 			BlockPos pos = tile.getBlockPos();
 			
-			for(PlayerEntity player : world.players()) {
-				if(player instanceof ServerPlayerEntity && pointDistancePlane(player.getX(), player.getZ(), pos.getX(), pos.getZ()) < 64)
-					((ServerPlayerEntity) player).connection.send(packet);
+			for(Player player : world.players()) {
+				if(player instanceof ServerPlayer && pointDistancePlane(player.getX(), player.getZ(), pos.getX(), pos.getZ()) < 64)
+					((ServerPlayer) player).connection.send(packet);
 			}
 		}
 	}
 
-	public static void dispatchTEToNearbyPlayers(World world, BlockPos pos) {
-		TileEntity tile = world.getBlockEntity(pos);
+	public static void dispatchTEToNearbyPlayers(Level world, BlockPos pos) {
+		BlockEntity tile = world.getBlockEntity(pos);
 		if(tile != null)
 			dispatchTEToNearbyPlayers(tile);
 	}

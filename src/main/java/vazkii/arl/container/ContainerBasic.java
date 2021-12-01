@@ -2,20 +2,20 @@ package vazkii.arl.container;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.Container;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 
-public abstract class ContainerBasic<T extends IInventory> extends Container {
+public abstract class ContainerBasic<T extends Container> extends AbstractContainerMenu {
 
 	protected final T tile;
 	protected final int tileSlots;
 
-	public ContainerBasic(ContainerType<?> type, int windowId, PlayerInventory playerInv, T tile) {
+	public ContainerBasic(MenuType<?> type, int windowId, Inventory playerInv, T tile) {
 		super(type, windowId);
 		this.tile = tile;
 		tileSlots = addSlots();
@@ -31,13 +31,13 @@ public abstract class ContainerBasic<T extends IInventory> extends Container {
 	public abstract int addSlots(); 
 
 	@Override
-	public boolean stillValid(@Nonnull PlayerEntity playerIn) {
+	public boolean stillValid(@Nonnull Player playerIn) {
 		return tile.stillValid(playerIn);
 	}
 
 	@Nonnull
 	@Override
-	public ItemStack quickMoveStack(PlayerEntity playerIn, int index) {
+	public ItemStack quickMoveStack(Player playerIn, int index) {
 		ItemStack itemstack = ItemStack.EMPTY;
 		Slot slot = slots.get(index);
 

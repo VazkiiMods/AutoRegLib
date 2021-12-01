@@ -1,6 +1,6 @@
 package vazkii.arl.network.message;
 
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.network.NetworkEvent;
 import vazkii.arl.network.IMessage;
 import vazkii.arl.util.DropInHandler;

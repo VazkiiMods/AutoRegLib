@@ -10,15 +10,15 @@
  */
 package vazkii.arl.network.message;
 
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
 import vazkii.arl.network.IMessage;
 
-public abstract class AbstractTEMessage<T extends TileEntity> implements IMessage {
+public abstract class AbstractTEMessage<T extends BlockEntity> implements IMessage {
 
 	private static final long serialVersionUID = 4703277631856386752L;
 	
@@ -27,7 +27,7 @@ public abstract class AbstractTEMessage<T extends TileEntity> implements IMessag
 	
 	public AbstractTEMessage() { }
 
-	public AbstractTEMessage(BlockPos pos, TileEntityType<T> type) {
+	public AbstractTEMessage(BlockPos pos, BlockEntityType<T> type) {
 		this.pos = pos;	
 		typeExpected = type.getRegistryName();
 	}
@@ -35,9 +35,9 @@ public abstract class AbstractTEMessage<T extends TileEntity> implements IMessag
 	@SuppressWarnings({ "deprecation", "unchecked" })
 	@Override
 	public final boolean receive(Context context) {
-		ServerWorld world = context.getSender().getLevel();
+		ServerLevel world = context.getSender().getLevel();
 		if(world.hasChunkAt(pos)) {
-			TileEntity tile = world.getBlockEntity(pos);
+			BlockEntity tile = world.getBlockEntity(pos);
 			if(tile != null && tile.getType().getRegistryName().equals(typeExpected))
 				context.enqueueWork(() -> receive((T) tile, context));
 		}

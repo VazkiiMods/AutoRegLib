@@ -1,6 +1,6 @@
 package vazkii.arl.interf;
 
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 
 public interface IItemPropertiesFiller {
 

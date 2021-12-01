@@ -11,16 +11,16 @@ import java.util.function.Supplier;
 import com.google.common.collect.ArrayListMultimap;
 import com.mojang.datafixers.util.Pair;
 
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.color.BlockColors;
-import net.minecraft.client.renderer.color.IBlockColor;
-import net.minecraft.client.renderer.color.IItemColor;
-import net.minecraft.client.renderer.color.ItemColors;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.color.block.BlockColors;
+import net.minecraft.client.color.block.BlockColor;
+import net.minecraft.client.color.item.ItemColor;
+import net.minecraft.client.color.item.ItemColors;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.RegistryEvent;
@@ -106,7 +106,7 @@ public final class RegistryHelper {
 		getCurrentModData().defers.put(obj.getRegistryType(), () -> obj);
 	}
 
-	public static void setCreativeTab(Block block, ItemGroup group) {
+	public static void setCreativeTab(Block block, CreativeModeTab group) {
 		ResourceLocation res = block.getRegistryName();
 		if(res == null)
 			throw new IllegalArgumentException("Can't set the creative tab for a block without a registry name yet");
@@ -129,14 +129,14 @@ public final class RegistryHelper {
 
 		while(!blockColors.isEmpty()) {
 			Pair<Block, IBlockColorProvider> pair = blockColors.poll();
-			IBlockColor color = pair.getSecond().getBlockColor();
+			BlockColor color = pair.getSecond().getBlockColor();
 
 			bcolors.register(color, pair.getFirst());
 		}
 
 		while(!itemColors.isEmpty()) {
 			Pair<Item, IItemColorProvider> pair = itemColors.poll();
-			IItemColor color = pair.getSecond().getItemColor();
+			ItemColor color = pair.getSecond().getItemColor();
 
 			icolors.register(color, pair.getFirst());
 		}
@@ -146,7 +146,7 @@ public final class RegistryHelper {
 
 	private static class ModData {
 
-		private Map<ResourceLocation, ItemGroup> groups = new LinkedHashMap<>();
+		private Map<ResourceLocation, CreativeModeTab> groups = new LinkedHashMap<>();
 
 		private ArrayListMultimap<Class<?>, Supplier<IForgeRegistryEntry<?>>> defers = ArrayListMultimap.create();
 
@@ -170,7 +170,7 @@ public final class RegistryHelper {
 			Item.Properties props = new Item.Properties();
 			ResourceLocation registryName = block.getRegistryName();
 
-			ItemGroup group = groups.get(registryName);
+			CreativeModeTab group = groups.get(registryName);
 			if(group != null)
 				props = props.tab(group);
 

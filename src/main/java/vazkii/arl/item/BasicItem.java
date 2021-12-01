@@ -1,9 +1,9 @@
 package vazkii.arl.item;
 
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 import vazkii.arl.util.RegistryHelper;
 
-import net.minecraft.item.Item.Properties;
+import net.minecraft.world.item.Item.Properties;
 
 public class BasicItem extends Item {
 

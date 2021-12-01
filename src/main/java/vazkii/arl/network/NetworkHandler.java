@@ -10,9 +10,9 @@
  */
 package vazkii.arl.network;
 
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkRegistry;
@@ -44,9 +44,9 @@ public class NetworkHandler {
 	}
 	
 	public <T extends IMessage> void register(Class<T> clazz, NetworkDirection dir) {
-		BiConsumer<T, PacketBuffer> encoder = MessageSerializer::writeObject;
+		BiConsumer<T, FriendlyByteBuf> encoder = MessageSerializer::writeObject;
 		
-		Function<PacketBuffer, T> decoder = (buf) -> {
+		Function<FriendlyByteBuf, T> decoder = (buf) -> {
 			try {
 				T msg = clazz.newInstance();
 				MessageSerializer.readObject(msg, buf);
@@ -68,7 +68,7 @@ public class NetworkHandler {
 		i++;
 	}
 
-	public void sendToPlayer(IMessage msg, ServerPlayerEntity player) {
+	public void sendToPlayer(IMessage msg, ServerPlayer player) {
 		channel.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
 	}
 	

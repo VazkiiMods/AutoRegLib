@@ -1,7 +1,7 @@
 package vazkii.arl.network.message;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.network.NetworkEvent;
 import vazkii.arl.network.IMessage;
 
@@ -22,7 +22,7 @@ public class MessageSetSelectedItem implements IMessage {
 
 	public boolean receive(NetworkEvent.Context context) {
 		context.enqueueWork(() -> {
-			PlayerEntity player = context.getSender();
+			Player player = context.getSender();
 			if (player != null)
 				player.inventory.setCarried(stack);
 		});

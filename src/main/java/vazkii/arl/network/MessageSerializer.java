@@ -13,13 +13,13 @@ import java.util.function.Function;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.network.chat.Component;
 
 @SuppressWarnings({ "unchecked", "rawtypes", "unused" })
 public final class MessageSerializer {
@@ -28,27 +28,27 @@ public final class MessageSerializer {
 	private static final HashMap<Class<?>, Field[]> fieldCache = new HashMap<>();
 
 	static {
-		MessageSerializer.<Byte> mapHandler(byte.class, PacketBuffer::readByte, PacketBuffer::writeByte);
-		MessageSerializer.<Short> mapHandler(short.class, PacketBuffer::readShort, PacketBuffer::writeShort);
-		MessageSerializer.<Integer> mapHandler(int.class, PacketBuffer::readInt, PacketBuffer::writeInt);
-		MessageSerializer.<Long> mapHandler(long.class, PacketBuffer::readLong, PacketBuffer::writeLong);
-		MessageSerializer.<Float> mapHandler(float.class, PacketBuffer::readFloat, PacketBuffer::writeFloat);
-		MessageSerializer.<Double> mapHandler(double.class, PacketBuffer::readDouble, PacketBuffer::writeDouble);
-		MessageSerializer.<Boolean> mapHandler(boolean.class, PacketBuffer::readBoolean, PacketBuffer::writeBoolean);
-		MessageSerializer.<Character> mapHandler(char.class, PacketBuffer::readChar, PacketBuffer::writeChar);
+		MessageSerializer.<Byte> mapHandler(byte.class, FriendlyByteBuf::readByte, FriendlyByteBuf::writeByte);
+		MessageSerializer.<Short> mapHandler(short.class, FriendlyByteBuf::readShort, FriendlyByteBuf::writeShort);
+		MessageSerializer.<Integer> mapHandler(int.class, FriendlyByteBuf::readInt, FriendlyByteBuf::writeInt);
+		MessageSerializer.<Long> mapHandler(long.class, FriendlyByteBuf::readLong, FriendlyByteBuf::writeLong);
+		MessageSerializer.<Float> mapHandler(float.class, FriendlyByteBuf::readFloat, FriendlyByteBuf::writeFloat);
+		MessageSerializer.<Double> mapHandler(double.class, FriendlyByteBuf::readDouble, FriendlyByteBuf::writeDouble);
+		MessageSerializer.<Boolean> mapHandler(boolean.class, FriendlyByteBuf::readBoolean, FriendlyByteBuf::writeBoolean);
+		MessageSerializer.<Character> mapHandler(char.class, FriendlyByteBuf::readChar, FriendlyByteBuf::writeChar);
 
-		mapHandler(BlockPos.class, PacketBuffer::readBlockPos, PacketBuffer::writeBlockPos);
-		mapHandler(ITextComponent.class, PacketBuffer::readComponent, PacketBuffer::writeComponent);
-		mapHandler(UUID.class, PacketBuffer::readUUID, PacketBuffer::writeUUID);
-		mapHandler(CompoundNBT.class, PacketBuffer::readNbt, PacketBuffer::writeNbt);
-		mapHandler(ItemStack.class, PacketBuffer::readItem, MessageSerializer::writeItemStack);
+		mapHandler(BlockPos.class, FriendlyByteBuf::readBlockPos, FriendlyByteBuf::writeBlockPos);
+		mapHandler(Component.class, FriendlyByteBuf::readComponent, FriendlyByteBuf::writeComponent);
+		mapHandler(UUID.class, FriendlyByteBuf::readUUID, FriendlyByteBuf::writeUUID);
+		mapHandler(CompoundTag.class, FriendlyByteBuf::readNbt, FriendlyByteBuf::writeNbt);
+		mapHandler(ItemStack.class, FriendlyByteBuf::readItem, MessageSerializer::writeItemStack);
 		mapHandler(String.class, MessageSerializer::readString, MessageSerializer::writeString);
-		mapHandler(ResourceLocation.class, PacketBuffer::readResourceLocation, PacketBuffer::writeResourceLocation);
-		mapHandler(Date.class, PacketBuffer::readDate, PacketBuffer::writeDate);
-		mapHandler(BlockRayTraceResult.class, PacketBuffer::readBlockHitResult, PacketBuffer::writeBlockHitResult);
+		mapHandler(ResourceLocation.class, FriendlyByteBuf::readResourceLocation, FriendlyByteBuf::writeResourceLocation);
+		mapHandler(Date.class, FriendlyByteBuf::readDate, FriendlyByteBuf::writeDate);
+		mapHandler(BlockHitResult.class, FriendlyByteBuf::readBlockHitResult, FriendlyByteBuf::writeBlockHitResult);
 	}
 	
-	public static void readObject(Object obj, PacketBuffer buf) {
+	public static void readObject(Object obj, FriendlyByteBuf buf) {
 		try {
 			Class<?> clazz = obj.getClass();
 			Field[] clFields = getClassFields(clazz);
@@ -62,7 +62,7 @@ public final class MessageSerializer {
 		}
 	}
 	
-	public static void writeObject(Object obj, PacketBuffer buf) {
+	public static void writeObject(Object obj, FriendlyByteBuf buf) {
 		try {
 			Class<?> clazz = obj.getClass();
 			Field[] clFields = getClassFields(clazz);
@@ -87,12 +87,12 @@ public final class MessageSerializer {
 		}
 	}
 
-	private static void writeField(Object obj, Field f, Class<?> clazz, PacketBuffer buf) throws IllegalArgumentException, IllegalAccessException {
+	private static void writeField(Object obj, Field f, Class<?> clazz, FriendlyByteBuf buf) throws IllegalArgumentException, IllegalAccessException {
 		Pair<Reader, Writer> handler = getHandler(clazz);
 		handler.getRight().write(buf, f, f.get(obj));
 	}
 
-	private static void readField(Object obj, Field f, Class<?> clazz, PacketBuffer buf) throws IllegalArgumentException, IllegalAccessException {
+	private static void readField(Object obj, Field f, Class<?> clazz, FriendlyByteBuf buf) throws IllegalArgumentException, IllegalAccessException {
 		Pair<Reader, Writer> handler = getHandler(clazz);
 		f.set(obj, handler.getLeft().read(buf, f));
 	}
@@ -112,18 +112,18 @@ public final class MessageSerializer {
 		return  handlers.containsKey(type);
 	}
 
-	private static <T> void mapHandler(Class<T> type, Function<PacketBuffer, T> readerLower, BiConsumer<PacketBuffer, T> writerLower) {
+	private static <T> void mapHandler(Class<T> type, Function<FriendlyByteBuf, T> readerLower, BiConsumer<FriendlyByteBuf, T> writerLower) {
 		Reader<T> reader = (buf, field) -> readerLower.apply(buf);
 		Writer<T> writer = (buf, field, t) -> writerLower.accept(buf, t);
 		mapHandler(type, reader, writer);
 	}
 
-	private static <T> void mapHandler(Class<T> type, Reader<T> reader, BiConsumer<PacketBuffer, T> writerLower) {
+	private static <T> void mapHandler(Class<T> type, Reader<T> reader, BiConsumer<FriendlyByteBuf, T> writerLower) {
 		Writer<T> writer = (buf, field, t) -> writerLower.accept(buf, t);
 		mapHandler(type, reader, writer);	
 	}
 
-	private static <T> void mapHandler(Class<T> type, Function<PacketBuffer, T> readerLower, Writer<T> writer) {
+	private static <T> void mapHandler(Class<T> type, Function<FriendlyByteBuf, T> readerLower, Writer<T> writer) {
 		Reader<T> reader = (buf, field) -> readerLower.apply(buf);
 		mapHandler(type, reader, writer);
 	}
@@ -159,15 +159,15 @@ public final class MessageSerializer {
 
 	// Needed because the methods are overloaded
 
-	private static void writeItemStack(PacketBuffer buf, ItemStack stack) {
+	private static void writeItemStack(FriendlyByteBuf buf, ItemStack stack) {
 		buf.writeItem(stack);
 	}
 
-	private static String readString(PacketBuffer buf) {
+	private static String readString(FriendlyByteBuf buf) {
 		return buf.readUtf(32767);
 	}
 
-	private static void writeString(PacketBuffer buf, String string) {
+	private static void writeString(FriendlyByteBuf buf, String string) {
 		buf.writeUtf(string);
 	}
 
@@ -176,11 +176,11 @@ public final class MessageSerializer {
 	// ================================================================
 
 	public static interface Reader<T> {
-		public T read(PacketBuffer buf, Field field);
+		public T read(FriendlyByteBuf buf, Field field);
 	}
 
 	public static interface Writer<T> {
-		public void write(PacketBuffer buf, Field field, T t);
+		public void write(FriendlyByteBuf buf, Field field, T t);
 	}
 
 }
