@@ -16,7 +16,7 @@ pipeline {
         stage('Build and Deploy') {
             steps {
                 echo 'Building and Deploying to Maven'
-					sh './gradlew build uploadArchives'
+					sh './gradlew build publish'
                 }
             }
         }
