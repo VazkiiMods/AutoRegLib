@@ -88,7 +88,9 @@ processResources {
         include 'META-INF/mods.toml'
 
         // replace version and mcversion
-        expand 'version': project.version
+        expand '0version': project.version 
+        // use 0version rather than version so the dev
+        // module doesn't die over not starting with a number
     }
 
     // copy everything else, thats not the mods.toml
