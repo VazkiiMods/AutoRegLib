@@ -86,6 +86,7 @@ processResources {
     // copy everything excluding psd files
     from(sourceSets.main.resources.srcDirs) {
         exclude '**/psd/**'
+        duplicatesStrategy 'include'
     }
 }
 
