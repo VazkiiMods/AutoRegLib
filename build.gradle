@@ -83,20 +83,9 @@ dependencies {
 }
 
 processResources {
-    // replace stuff in mcmod.info, nothing else
+    // copy everything excluding psd files
     from(sourceSets.main.resources.srcDirs) {
-        include 'META-INF/mods.toml'
-        duplicatesStrategy 'include'
-
-        // replace version and mcversion
-        expand '0version': project.version 
-        // use 0version rather than version so the dev
-        // module doesn't die over not starting with a number
-    }
-
-    // copy everything else, thats not the mods.toml
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'META-INF/mods.toml', '**/psd/**'
+        exclude '**/psd/**'
     }
 }
 
