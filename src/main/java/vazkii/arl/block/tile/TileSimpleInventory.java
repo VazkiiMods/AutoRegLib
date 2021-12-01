@@ -31,7 +31,7 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 		super(tileEntityTypeIn);
 	}
 
-	protected NonNullList<ItemStack> inventorySlots = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
+	protected NonNullList<ItemStack> inventorySlots = NonNullList.withSize(getContainerSize(), ItemStack.EMPTY);
 	
 	@Override
 	public void readSharedNBT(CompoundNBT par1NBTTagCompound) {
@@ -39,12 +39,12 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 			return;
 		
 		ListNBT var2 = par1NBTTagCompound.getList("Items", 10);
-		clear();
+		clearContent();
 		for(int var3 = 0; var3 < var2.size(); ++var3) {
 			CompoundNBT var4 = var2.getCompound(var3);
 			byte var5 = var4.getByte("Slot");
 			if (var5 >= 0 && var5 < inventorySlots.size())
-				inventorySlots.set(var5, ItemStack.read(var4));
+				inventorySlots.set(var5, ItemStack.of(var4));
 		}
 	}
 
@@ -58,7 +58,7 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 			if(!inventorySlots.get(var3).isEmpty()) {
 				CompoundNBT var4 = new CompoundNBT();
 				var4.putByte("Slot", (byte)var3);
-				inventorySlots.get(var3).write(var4);
+				inventorySlots.get(var3).save(var4);
 				var2.add(var4);
 			}
 		}
@@ -71,13 +71,13 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 	
 	@Nonnull
 	@Override
-	public ItemStack getStackInSlot(int i) {
+	public ItemStack getItem(int i) {
 		return inventorySlots.get(i);
 	}
 
 	@Nonnull
 	@Override
-	public ItemStack decrStackSize(int i, int j) {
+	public ItemStack removeItem(int i, int j) {
 		if (!inventorySlots.get(i).isEmpty()) {
 			ItemStack stackAt;
 
@@ -102,28 +102,28 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 
 	@Nonnull
 	@Override
-	public ItemStack removeStackFromSlot(int i) {
-		ItemStack stack = getStackInSlot(i);
-		setInventorySlotContents(i, ItemStack.EMPTY);
+	public ItemStack removeItemNoUpdate(int i) {
+		ItemStack stack = getItem(i);
+		setItem(i, ItemStack.EMPTY);
 		inventoryChanged(i);
 		return stack;
 	}
 
 	@Override
-	public void setInventorySlotContents(int i, @Nonnull ItemStack itemstack) {
+	public void setItem(int i, @Nonnull ItemStack itemstack) {
 		inventorySlots.set(i, itemstack);
 		inventoryChanged(i);
 	}
 
 	@Override
-	public int getInventoryStackLimit() {
+	public int getMaxStackSize() {
 		return 64;
 	}
 	
 	@Override
 	public boolean isEmpty() {
-		for(int i = 0; i < getSizeInventory(); i++) {
-			ItemStack stack = getStackInSlot(i);
+		for(int i = 0; i < getContainerSize(); i++) {
+			ItemStack stack = getItem(i);
 			if(!stack.isEmpty())
 				return false;
 		}
@@ -132,8 +132,8 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 	}
 
 	@Override
-	public boolean isUsableByPlayer(@Nonnull PlayerEntity entityplayer) {
-		return getWorld().getTileEntity(getPos()) == this && entityplayer.getDistanceSq(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) <= 64;
+	public boolean stillValid(@Nonnull PlayerEntity entityplayer) {
+		return getLevel().getBlockEntity(getBlockPos()) == this && entityplayer.distanceToSqr(worldPosition.getX() + 0.5D, worldPosition.getY() + 0.5D, worldPosition.getZ() + 0.5D) <= 64;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -146,23 +146,23 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 	}
 
 	@Override
-	public boolean isItemValidForSlot(int i, @Nonnull ItemStack itemstack) {
+	public boolean canPlaceItem(int i, @Nonnull ItemStack itemstack) {
 		return true;
 	}
 
 	@Override
-	public void openInventory(@Nonnull PlayerEntity player) {
+	public void startOpen(@Nonnull PlayerEntity player) {
 		// NO-OP
 	}
 
 	@Override
-	public void closeInventory(@Nonnull PlayerEntity player) {
+	public void stopOpen(@Nonnull PlayerEntity player) {
 		// NO-OP
 	}
 
 	@Override
-	public void clear() {
-		inventorySlots = NonNullList.withSize(getSizeInventory(), ItemStack.EMPTY);
+	public void clearContent() {
+		inventorySlots = NonNullList.withSize(getContainerSize(), ItemStack.EMPTY);
 	}
 
 	public void inventoryChanged(int i) {
@@ -174,12 +174,12 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 	}
 
 	@Override
-	public boolean canExtractItem(int index, @Nonnull ItemStack stack, @Nonnull Direction direction) {
+	public boolean canTakeItemThroughFace(int index, @Nonnull ItemStack stack, @Nonnull Direction direction) {
 		return isAutomationEnabled();
 	}
 
 	@Override
-	public boolean canInsertItem(int index, @Nonnull ItemStack itemStackIn, @Nonnull Direction direction) {
+	public boolean canPlaceItemThroughFace(int index, @Nonnull ItemStack itemStackIn, @Nonnull Direction direction) {
 		return isAutomationEnabled();
 	}
 
@@ -187,7 +187,7 @@ public abstract class TileSimpleInventory extends TileMod implements ISidedInven
 	@Override
 	public int[] getSlotsForFace(@Nonnull Direction side) {
 		if(isAutomationEnabled()) {
-			int[] slots = new int[getSizeInventory()];
+			int[] slots = new int[getContainerSize()];
 			for(int i = 0; i < slots.length; i++)
 				slots[i] = i;
 			return slots;

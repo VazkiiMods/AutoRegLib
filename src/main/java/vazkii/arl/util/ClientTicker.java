@@ -38,7 +38,7 @@ public final class ClientTicker {
 	@OnlyIn(Dist.CLIENT)
 	public static void clientTickEnd(ClientTickEvent event) {
 		if(event.phase == Phase.END) {
-			Screen gui = Minecraft.getInstance().currentScreen;
+			Screen gui = Minecraft.getInstance().screen;
 			if(gui == null || !gui.isPauseScreen()) {
 				ticksInGame++;
 				partialTicks = 0;

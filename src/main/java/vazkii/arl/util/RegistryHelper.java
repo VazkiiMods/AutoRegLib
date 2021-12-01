@@ -172,7 +172,7 @@ public final class RegistryHelper {
 
 			ItemGroup group = groups.get(registryName);
 			if(group != null)
-				props = props.group(group);
+				props = props.tab(group);
 
 			if(block instanceof IItemPropertiesFiller)
 				((IItemPropertiesFiller) block).fillItemProperties(props);

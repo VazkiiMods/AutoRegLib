@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1+', changing: true
     }
 }
 
@@ -17,7 +17,7 @@ repositories {
 
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
 ext.configFile = file('build.properties')
 ext.config = parseConfig(configFile)
@@ -176,12 +176,13 @@ artifacts {
     archives deobfJar
 }
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            repository(url: "file://" + (System.getenv("local_maven") != null ? System.getenv("local_maven") : System.getenv("bamboo_local_maven")))
-        }
-    }
-}
+// TODO Jared you figure this one out
+//uploadArchives {
+//    repositories {
+//        mavenDeployer {
+//            repository(url: "file://" + (System.getenv("local_maven") != null ? System.getenv("local_maven") : System.getenv("bamboo_local_maven")))
+//        }
+//    }
+//}
 
 defaultTasks 'clean', 'build', 'sortArtifacts', 'incrementBuildNumber'

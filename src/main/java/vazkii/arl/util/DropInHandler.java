@@ -45,15 +45,15 @@ public final class DropInHandler {
 	@OnlyIn(Dist.CLIENT)
 	public static void onDrawScreen(GuiScreenEvent.DrawScreenEvent.Post event) {
 		Minecraft mc = Minecraft.getInstance();
-		Screen gui = mc.currentScreen;
+		Screen gui = mc.screen;
 		if(gui instanceof ContainerScreen) {
 			ContainerScreen<?> containerGui = (ContainerScreen<?>) gui;
-			ItemStack held = mc.player.inventory.getItemStack();
+			ItemStack held = mc.player.inventory.getCarried();
 			if(!held.isEmpty()) {
-				Container container = containerGui.getContainer();
+				Container container = containerGui.getMenu();
 				Slot under = containerGui.getSlotUnderMouse();
-				for(Slot s : container.inventorySlots) {
-					ItemStack stack = s.getStack();
+				for(Slot s : container.slots) {
+					ItemStack stack = s.getItem();
 					IDropInItem dropin = getDropInHandler(stack);
 					if(dropin != null && dropin.canDropItemIn(mc.player, stack, held, s)) {
 						if(s == under) {
@@ -62,16 +62,16 @@ public final class DropInHandler {
 							int width = gui.width;
 							int height = gui.height;
 							
-							GuiUtils.drawHoveringText(event.getMatrixStack(), dropin.getDropInTooltip(stack), x, y, width, height, -1, mc.fontRenderer);
+							GuiUtils.drawHoveringText(event.getMatrixStack(), dropin.getDropInTooltip(stack), x, y, width, height, -1, mc.font);
 						} else {
-							int x = containerGui.getGuiLeft() + s.xPos;
-							int y = containerGui.getGuiTop() + s.yPos;
+							int x = containerGui.getGuiLeft() + s.x;
+							int y = containerGui.getGuiTop() + s.y;
 
 							RenderSystem.pushMatrix();
 							RenderSystem.disableDepthTest();
 							RenderSystem.translatef(0, 0, 500);
 							
-							mc.fontRenderer.drawStringWithShadow(event.getMatrixStack(), "+", x + 10, y + 8, 0xFFFF00);
+							mc.font.drawShadow(event.getMatrixStack(), "+", x + 10, y + 8, 0xFFFF00);
 							RenderSystem.enableDepthTest();
 							RenderSystem.popMatrix();
 						}
@@ -85,21 +85,21 @@ public final class DropInHandler {
 	@OnlyIn(Dist.CLIENT)
 	public static void onRightClick(GuiScreenEvent.MouseReleasedEvent.Pre event) {
 		Minecraft mc = Minecraft.getInstance();
-		Screen gui = mc.currentScreen;
+		Screen gui = mc.screen;
 		if(gui instanceof ContainerScreen && event.getButton() == 1) {
 			ContainerScreen<?> container = (ContainerScreen<?>) gui;
 			Slot under = container.getSlotUnderMouse();
-			ItemStack held = mc.player.inventory.getItemStack();
+			ItemStack held = mc.player.inventory.getCarried();
 
-			if(under != null && !held.isEmpty() && under.canTakeStack(mc.player)) {
-				ItemStack stack = under.getStack();
+			if(under != null && !held.isEmpty() && under.mayPickup(mc.player)) {
+				ItemStack stack = under.getItem();
 				IDropInItem dropin = getDropInHandler(stack);
 				if(dropin != null) {
 					AutoRegLib.network.sendToServer(container instanceof CreativeScreen ?
 							new MessageDropInCreative(under.getSlotIndex(), held) :
-							new MessageDropIn(under.slotNumber));
+							new MessageDropIn(under.index));
 
-					container.dragSplitting = false;
+					container.isQuickCrafting = false;
 					event.setCanceled(true);
 				}
 			}
@@ -110,20 +110,20 @@ public final class DropInHandler {
 		if (player == null)
 			return;
 
-		Container container = player.openContainer;
-		Slot slotObj = container.inventorySlots.get(slot);
-		ItemStack target = slotObj.getStack();
+		Container container = player.containerMenu;
+		Slot slotObj = container.slots.get(slot);
+		ItemStack target = slotObj.getItem();
 		IDropInItem dropin = getDropInHandler(target);
 
-		ItemStack stack = player.inventory.getItemStack();
+		ItemStack stack = player.inventory.getCarried();
 
 		if(dropin != null && dropin.canDropItemIn(player, target, stack, slotObj)) {
 			ItemStack result = dropin.dropItemIn(player, target, stack, slotObj);
-			slotObj.putStack(result);
-			player.inventory.setItemStack(stack);
+			slotObj.set(result);
+			player.inventory.setCarried(stack);
 			if (player instanceof ServerPlayerEntity) {
-				((ServerPlayerEntity) player).isChangingQuantityOnly = false;
-				((ServerPlayerEntity) player).updateHeldItem();
+				((ServerPlayerEntity) player).ignoreSlotUpdateHack = false;
+				((ServerPlayerEntity) player).broadcastCarriedItem();
 			}
 		}
 	}
@@ -132,14 +132,14 @@ public final class DropInHandler {
 		if (player == null || !player.isCreative())
 			return;
 
-		ItemStack target = player.inventory.getStackInSlot(slot);
+		ItemStack target = player.inventory.getItem(slot);
 		IDropInItem dropin = getDropInHandler(target);
-		Slot slotObj = player.container.inventorySlots.get(slot);
+		Slot slotObj = player.inventoryMenu.slots.get(slot);
 
 		if(dropin != null && dropin.canDropItemIn(player, target, held, slotObj)) {
 			ItemStack result = dropin.dropItemIn(player, target, held, slotObj);
-			player.inventory.setInventorySlotContents(slot, result);
-			player.inventory.setItemStack(held);
+			player.inventory.setItem(slot, result);
+			player.inventory.setCarried(held);
 			if (player instanceof ServerPlayerEntity)
 				AutoRegLib.network.sendToPlayer(new MessageSetSelectedItem(held),
 					(ServerPlayerEntity) player);

@@ -31,31 +31,31 @@ public abstract class ContainerBasic<T extends IInventory> extends Container {
 	public abstract int addSlots(); 
 
 	@Override
-	public boolean canInteractWith(@Nonnull PlayerEntity playerIn) {
-		return tile.isUsableByPlayer(playerIn);
+	public boolean stillValid(@Nonnull PlayerEntity playerIn) {
+		return tile.stillValid(playerIn);
 	}
 
 	@Nonnull
 	@Override
-	public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
+	public ItemStack quickMoveStack(PlayerEntity playerIn, int index) {
 		ItemStack itemstack = ItemStack.EMPTY;
-		Slot slot = inventorySlots.get(index);
+		Slot slot = slots.get(index);
 
-		if(slot != null && slot.getHasStack()) {
-			ItemStack itemstack1 = slot.getStack();
+		if(slot != null && slot.hasItem()) {
+			ItemStack itemstack1 = slot.getItem();
 			itemstack = itemstack1.copy();
 
 			if(index < tileSlots) {
-				if(!mergeItemStack(itemstack1, tileSlots, inventorySlots.size(), true))
+				if(!moveItemStackTo(itemstack1, tileSlots, slots.size(), true))
 					return ItemStack.EMPTY;
 			}
-			else if(!mergeItemStack(itemstack1, 0, tileSlots, false))
+			else if(!moveItemStackTo(itemstack1, 0, tileSlots, false))
 				return ItemStack.EMPTY;
 
 			if(itemstack1.isEmpty())
-				slot.putStack(ItemStack.EMPTY);
+				slot.set(ItemStack.EMPTY);
 			else
-				slot.onSlotChanged();
+				slot.setChanged();
 		}
 
 		return itemstack;
@@ -65,7 +65,7 @@ public abstract class ContainerBasic<T extends IInventory> extends Container {
 	// and was like yeah just take whatever you want lol
 	// https://github.com/CoFH/CoFHCore/blob/d4a79b078d257e88414f5eed598d57490ec8e97f/src/main/java/cofh/core/util/helpers/InventoryHelper.java
 	@Override
-	public boolean mergeItemStack(ItemStack stack, int start, int length, boolean r) {
+	public boolean moveItemStackTo(ItemStack stack, int start, int length, boolean r) {
 		boolean successful = false;
 		int i = !r ? start : length - 1;
 		int iterOrder = !r ? 1 : -1;
@@ -75,26 +75,26 @@ public abstract class ContainerBasic<T extends IInventory> extends Container {
 
 		if(stack.isStackable()) {
 			while(stack.getCount() > 0 && (!r && i < length || r && i >= start)) {
-				slot = inventorySlots.get(i);
+				slot = slots.get(i);
 
-				existingStack = slot.getStack();
+				existingStack = slot.getItem();
 
 				if(!existingStack.isEmpty()) {
-					int maxStack = Math.min(stack.getMaxStackSize(), slot.getSlotStackLimit());
+					int maxStack = Math.min(stack.getMaxStackSize(), slot.getMaxStackSize());
 					int rmv = Math.min(maxStack, stack.getCount());
 
-					if(slot.isItemValid(cloneStack(stack, rmv)) && existingStack.getItem().equals(stack.getItem()) && ItemStack.areItemStackTagsEqual(stack, existingStack)) {
+					if(slot.mayPlace(cloneStack(stack, rmv)) && existingStack.getItem().equals(stack.getItem()) && ItemStack.tagMatches(stack, existingStack)) {
 						int existingSize = existingStack.getCount() + stack.getCount();
 
 						if(existingSize <= maxStack) {
 							stack.setCount(0);
 							existingStack.setCount(existingSize);
-							slot.putStack(existingStack);
+							slot.set(existingStack);
 							successful = true;
 						} else if(existingStack.getCount() < maxStack) {
 							stack.shrink(maxStack - existingStack.getCount());
 							existingStack.setCount(maxStack);
-							slot.putStack(existingStack);
+							slot.set(existingStack);
 							successful = true;
 						}
 					}
@@ -105,16 +105,16 @@ public abstract class ContainerBasic<T extends IInventory> extends Container {
 		if(stack.getCount() > 0) {
 			i = !r ? start : length - 1;
 			while(stack.getCount() > 0 && (!r && i < length || r && i >= start)) {
-				slot = inventorySlots.get(i);
-				existingStack = slot.getStack();
+				slot = slots.get(i);
+				existingStack = slot.getItem();
 
 				if(existingStack.isEmpty()) {
-					int maxStack = Math.min(stack.getMaxStackSize(), slot.getSlotStackLimit());
+					int maxStack = Math.min(stack.getMaxStackSize(), slot.getMaxStackSize());
 					int rmv = Math.min(maxStack, stack.getCount());
 
-					if(slot.isItemValid(cloneStack(stack, rmv))) {
+					if(slot.mayPlace(cloneStack(stack, rmv))) {
 						existingStack = stack.split(rmv);
-						slot.putStack(existingStack);
+						slot.set(existingStack);
 						successful = true;
 					}
 				}

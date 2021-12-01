@@ -69,7 +69,7 @@ public class NetworkHandler {
 	}
 
 	public void sendToPlayer(IMessage msg, ServerPlayerEntity player) {
-		channel.sendTo(msg, player.connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
+		channel.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
 	}
 	
 	public void sendToServer(IMessage msg) {

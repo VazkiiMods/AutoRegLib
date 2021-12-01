@@ -24,7 +24,7 @@ public class MessageSetSelectedItem implements IMessage {
 		context.enqueueWork(() -> {
 			PlayerEntity player = context.getSender();
 			if (player != null)
-				player.inventory.setItemStack(stack);
+				player.inventory.setCarried(stack);
 		});
 
 		return true;

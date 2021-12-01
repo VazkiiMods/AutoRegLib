@@ -61,18 +61,18 @@ public final class RenderHelper {
 			RenderSystem.rotatef(random.nextFloat() * 360F, 1F, 0F, 0F);
 			RenderSystem.rotatef(random.nextFloat() * 360F, 0F, 1F, 0F);
 			RenderSystem.rotatef(random.nextFloat() * 360F + f1 * 90F, 0F, 0F, 1F);
-			tessellator.getBuffer().begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION_COLOR);
+			tessellator.getBuilder().begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION_COLOR);
 			float f3 = random.nextFloat() * 20F + 5F + f2 * 10F;
 			float f4 = random.nextFloat() * 2F + 1F + f2 * 2F;
 			float r = ((color & 0xFF0000) >> 16) / 255F;
 			float g = ((color & 0xFF00) >> 8) / 255F;
 			float b = (color & 0xFF) / 255F;
-			tessellator.getBuffer().pos(0, 0, 0).color(r, g, b, 1F - f2).endVertex();
-			tessellator.getBuffer().pos(-0.866D * f4, f3, -0.5F * f4).color(0, 0, 0, 0).endVertex();
-			tessellator.getBuffer().pos(0.866D * f4, f3, -0.5F * f4).color(0, 0, 0, 0).endVertex();
-			tessellator.getBuffer().pos(0, f3, 1F * f4).color(0, 0, 0, 0).endVertex();
-			tessellator.getBuffer().pos(-0.866D * f4, f3, -0.5F * f4).color(0, 0, 0, 0).endVertex();
-			tessellator.draw();
+			tessellator.getBuilder().vertex(0, 0, 0).color(r, g, b, 1F - f2).endVertex();
+			tessellator.getBuilder().vertex(-0.866D * f4, f3, -0.5F * f4).color(0, 0, 0, 0).endVertex();
+			tessellator.getBuilder().vertex(0.866D * f4, f3, -0.5F * f4).color(0, 0, 0, 0).endVertex();
+			tessellator.getBuilder().vertex(0, f3, 1F * f4).color(0, 0, 0, 0).endVertex();
+			tessellator.getBuilder().vertex(-0.866D * f4, f3, -0.5F * f4).color(0, 0, 0, 0).endVertex();
+			tessellator.end();
 		}
 
 		RenderSystem.depthMask(true);
@@ -87,13 +87,13 @@ public final class RenderHelper {
 
 	public static String getKeyDisplayString(String keyName) {
 		String key = null;
-		KeyBinding[] keys = Minecraft.getInstance().gameSettings.keyBindings;
+		KeyBinding[] keys = Minecraft.getInstance().options.keyMappings;
 		for(KeyBinding otherKey : keys)
-			if(otherKey.getKeyDescription().equals(keyName)) {
-				key = otherKey.getTranslationKey();
+			if(otherKey.getName().equals(keyName)) {
+				key = otherKey.saveString();
 				break;
 			}
 
-		return I18n.format(key);
+		return I18n.get(key);
 	}
 }

@@ -38,14 +38,14 @@ public final class MessageSerializer {
 		MessageSerializer.<Character> mapHandler(char.class, PacketBuffer::readChar, PacketBuffer::writeChar);
 
 		mapHandler(BlockPos.class, PacketBuffer::readBlockPos, PacketBuffer::writeBlockPos);
-		mapHandler(ITextComponent.class, PacketBuffer::readTextComponent, PacketBuffer::writeTextComponent);
-		mapHandler(UUID.class, PacketBuffer::readUniqueId, PacketBuffer::writeUniqueId);
-		mapHandler(CompoundNBT.class, PacketBuffer::readCompoundTag, PacketBuffer::writeCompoundTag);
-		mapHandler(ItemStack.class, PacketBuffer::readItemStack, MessageSerializer::writeItemStack);
+		mapHandler(ITextComponent.class, PacketBuffer::readComponent, PacketBuffer::writeComponent);
+		mapHandler(UUID.class, PacketBuffer::readUUID, PacketBuffer::writeUUID);
+		mapHandler(CompoundNBT.class, PacketBuffer::readNbt, PacketBuffer::writeNbt);
+		mapHandler(ItemStack.class, PacketBuffer::readItem, MessageSerializer::writeItemStack);
 		mapHandler(String.class, MessageSerializer::readString, MessageSerializer::writeString);
 		mapHandler(ResourceLocation.class, PacketBuffer::readResourceLocation, PacketBuffer::writeResourceLocation);
-		mapHandler(Date.class, PacketBuffer::readTime, PacketBuffer::writeTime);
-		mapHandler(BlockRayTraceResult.class, PacketBuffer::readBlockRay, PacketBuffer::writeBlockRay);
+		mapHandler(Date.class, PacketBuffer::readDate, PacketBuffer::writeDate);
+		mapHandler(BlockRayTraceResult.class, PacketBuffer::readBlockHitResult, PacketBuffer::writeBlockHitResult);
 	}
 	
 	public static void readObject(Object obj, PacketBuffer buf) {
@@ -160,15 +160,15 @@ public final class MessageSerializer {
 	// Needed because the methods are overloaded
 
 	private static void writeItemStack(PacketBuffer buf, ItemStack stack) {
-		buf.writeItemStack(stack);
+		buf.writeItem(stack);
 	}
 
 	private static String readString(PacketBuffer buf) {
-		return buf.readString(32767);
+		return buf.readUtf(32767);
 	}
 
 	private static void writeString(PacketBuffer buf, String string) {
-		buf.writeString(string);
+		buf.writeUtf(string);
 	}
 
 	// ================================================================

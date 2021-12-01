@@ -21,20 +21,20 @@ import net.minecraft.world.server.ServerWorld;
 public final class VanillaPacketDispatcher {
 
 	public static void dispatchTEToNearbyPlayers(TileEntity tile) {
-		World world = tile.getWorld();
+		World world = tile.getLevel();
 		if(world instanceof ServerWorld) {
 			SUpdateTileEntityPacket packet = tile.getUpdatePacket();
-			BlockPos pos = tile.getPos();
+			BlockPos pos = tile.getBlockPos();
 			
-			for(PlayerEntity player : world.getPlayers()) {
-				if(player instanceof ServerPlayerEntity && pointDistancePlane(player.getPosX(), player.getPosZ(), pos.getX(), pos.getZ()) < 64)
-					((ServerPlayerEntity) player).connection.sendPacket(packet);
+			for(PlayerEntity player : world.players()) {
+				if(player instanceof ServerPlayerEntity && pointDistancePlane(player.getX(), player.getZ(), pos.getX(), pos.getZ()) < 64)
+					((ServerPlayerEntity) player).connection.send(packet);
 			}
 		}
 	}
 
 	public static void dispatchTEToNearbyPlayers(World world, BlockPos pos) {
-		TileEntity tile = world.getTileEntity(pos);
+		TileEntity tile = world.getBlockEntity(pos);
 		if(tile != null)
 			dispatchTEToNearbyPlayers(tile);
 	}

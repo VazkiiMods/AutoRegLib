@@ -28,16 +28,16 @@ public abstract class TileMod extends TileEntity {
 
 	@Nonnull
 	@Override
-	public CompoundNBT write(CompoundNBT par1nbtTagCompound) {
-		CompoundNBT nbt = super.write(par1nbtTagCompound);
+	public CompoundNBT save(CompoundNBT par1nbtTagCompound) {
+		CompoundNBT nbt = super.save(par1nbtTagCompound);
 
 		writeSharedNBT(par1nbtTagCompound);
 		return nbt;
 	}
 
 	@Override
-	public void read(BlockState p_230337_1_, CompoundNBT p_230337_2_) {
-		super.read(p_230337_1_, p_230337_2_);
+	public void load(BlockState p_230337_1_, CompoundNBT p_230337_2_) {
+		super.load(p_230337_1_, p_230337_2_);
 
 		readSharedNBT(p_230337_2_);
 	}
@@ -58,13 +58,13 @@ public abstract class TileMod extends TileEntity {
 	public SUpdateTileEntityPacket getUpdatePacket() {
 		CompoundNBT cmp = new CompoundNBT();
 		writeSharedNBT(cmp);
-		return new SUpdateTileEntityPacket(getPos(), 0, cmp);
+		return new SUpdateTileEntityPacket(getBlockPos(), 0, cmp);
 	}
 	
 	@Override
 	public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket packet) {
 		super.onDataPacket(net, packet);
-		readSharedNBT(packet.getNbtCompound());
+		readSharedNBT(packet.getTag());
 	}
 
 }

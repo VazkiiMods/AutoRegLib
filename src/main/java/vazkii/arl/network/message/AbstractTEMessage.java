@@ -35,9 +35,9 @@ public abstract class AbstractTEMessage<T extends TileEntity> implements IMessag
 	@SuppressWarnings({ "deprecation", "unchecked" })
 	@Override
 	public final boolean receive(Context context) {
-		ServerWorld world = context.getSender().getServerWorld();
-		if(world.isBlockLoaded(pos)) {
-			TileEntity tile = world.getTileEntity(pos);
+		ServerWorld world = context.getSender().getLevel();
+		if(world.hasChunkAt(pos)) {
+			TileEntity tile = world.getBlockEntity(pos);
 			if(tile != null && tile.getType().getRegistryName().equals(typeExpected))
 				context.enqueueWork(() -> receive((T) tile, context));
 		}
