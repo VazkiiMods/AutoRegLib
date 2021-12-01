@@ -28,24 +28,24 @@ public final class MessageSerializer {
 	private static final HashMap<Class<?>, Field[]> fieldCache = new HashMap<>();
 
 	static {
-		MessageSerializer.<Byte> mapHandler(byte.class, FriendlyByteBuf::readByte, FriendlyByteBuf::writeByte);
-		MessageSerializer.<Short> mapHandler(short.class, FriendlyByteBuf::readShort, FriendlyByteBuf::writeShort);
-		MessageSerializer.<Integer> mapHandler(int.class, FriendlyByteBuf::readInt, FriendlyByteBuf::writeInt);
-		MessageSerializer.<Long> mapHandler(long.class, FriendlyByteBuf::readLong, FriendlyByteBuf::writeLong);
-		MessageSerializer.<Float> mapHandler(float.class, FriendlyByteBuf::readFloat, FriendlyByteBuf::writeFloat);
-		MessageSerializer.<Double> mapHandler(double.class, FriendlyByteBuf::readDouble, FriendlyByteBuf::writeDouble);
-		MessageSerializer.<Boolean> mapHandler(boolean.class, FriendlyByteBuf::readBoolean, FriendlyByteBuf::writeBoolean);
-		MessageSerializer.<Character> mapHandler(char.class, FriendlyByteBuf::readChar, FriendlyByteBuf::writeChar);
+		MessageSerializer.<Byte> mapFunctions(byte.class, FriendlyByteBuf::readByte, FriendlyByteBuf::writeByte);
+		MessageSerializer.<Short> mapFunctions(short.class, FriendlyByteBuf::readShort, FriendlyByteBuf::writeShort);
+		MessageSerializer.<Integer> mapFunctions(int.class, FriendlyByteBuf::readInt, FriendlyByteBuf::writeInt);
+		MessageSerializer.<Long> mapFunctions(long.class, FriendlyByteBuf::readLong, FriendlyByteBuf::writeLong);
+		MessageSerializer.<Float> mapFunctions(float.class, FriendlyByteBuf::readFloat, FriendlyByteBuf::writeFloat);
+		MessageSerializer.<Double> mapFunctions(double.class, FriendlyByteBuf::readDouble, FriendlyByteBuf::writeDouble);
+		MessageSerializer.<Boolean> mapFunctions(boolean.class, FriendlyByteBuf::readBoolean, FriendlyByteBuf::writeBoolean);
+		MessageSerializer.<Character> mapFunctions(char.class, FriendlyByteBuf::readChar, FriendlyByteBuf::writeChar);
 
-		mapHandler(BlockPos.class, FriendlyByteBuf::readBlockPos, FriendlyByteBuf::writeBlockPos);
-		mapHandler(Component.class, FriendlyByteBuf::readComponent, FriendlyByteBuf::writeComponent);
-		mapHandler(UUID.class, FriendlyByteBuf::readUUID, FriendlyByteBuf::writeUUID);
-		mapHandler(CompoundTag.class, FriendlyByteBuf::readNbt, FriendlyByteBuf::writeNbt);
-		mapHandler(ItemStack.class, FriendlyByteBuf::readItem, MessageSerializer::writeItemStack);
-		mapHandler(String.class, MessageSerializer::readString, MessageSerializer::writeString);
-		mapHandler(ResourceLocation.class, FriendlyByteBuf::readResourceLocation, FriendlyByteBuf::writeResourceLocation);
-		mapHandler(Date.class, FriendlyByteBuf::readDate, FriendlyByteBuf::writeDate);
-		mapHandler(BlockHitResult.class, FriendlyByteBuf::readBlockHitResult, FriendlyByteBuf::writeBlockHitResult);
+		mapFunctions(BlockPos.class, FriendlyByteBuf::readBlockPos, FriendlyByteBuf::writeBlockPos);
+		mapFunctions(Component.class, FriendlyByteBuf::readComponent, FriendlyByteBuf::writeComponent);
+		mapFunctions(UUID.class, FriendlyByteBuf::readUUID, FriendlyByteBuf::writeUUID);
+		mapFunctions(CompoundTag.class, FriendlyByteBuf::readNbt, FriendlyByteBuf::writeNbt);
+		mapFunctions(ItemStack.class, FriendlyByteBuf::readItem, MessageSerializer::writeItemStack);
+		mapFunctions(String.class, MessageSerializer::readString, MessageSerializer::writeString);
+		mapFunctions(ResourceLocation.class, FriendlyByteBuf::readResourceLocation, FriendlyByteBuf::writeResourceLocation);
+		mapFunctions(Date.class, FriendlyByteBuf::readDate, FriendlyByteBuf::writeDate);
+		mapFunctions(BlockHitResult.class, FriendlyByteBuf::readBlockHitResult, FriendlyByteBuf::writeBlockHitResult);
 	}
 	
 	public static void readObject(Object obj, FriendlyByteBuf buf) {
@@ -112,23 +112,23 @@ public final class MessageSerializer {
 		return  handlers.containsKey(type);
 	}
 
-	private static <T> void mapHandler(Class<T> type, Function<FriendlyByteBuf, T> readerLower, BiConsumer<FriendlyByteBuf, T> writerLower) {
+	private static <T> void mapFunctions(Class<T> type, Function<FriendlyByteBuf, T> readerLower, BiConsumer<FriendlyByteBuf, T> writerLower) {
 		Reader<T> reader = (buf, field) -> readerLower.apply(buf);
 		Writer<T> writer = (buf, field, t) -> writerLower.accept(buf, t);
-		mapHandler(type, reader, writer);
+		mapHandlers(type, reader, writer);
 	}
 
-	private static <T> void mapHandler(Class<T> type, Reader<T> reader, BiConsumer<FriendlyByteBuf, T> writerLower) {
+	private static <T> void mapWriterFunction(Class<T> type, Reader<T> reader, BiConsumer<FriendlyByteBuf, T> writerLower) {
 		Writer<T> writer = (buf, field, t) -> writerLower.accept(buf, t);
-		mapHandler(type, reader, writer);	
+		mapHandlers(type, reader, writer);	
 	}
 
-	private static <T> void mapHandler(Class<T> type, Function<FriendlyByteBuf, T> readerLower, Writer<T> writer) {
+	private static <T> void mapReaderFunction(Class<T> type, Function<FriendlyByteBuf, T> readerLower, Writer<T> writer) {
 		Reader<T> reader = (buf, field) -> readerLower.apply(buf);
-		mapHandler(type, reader, writer);
+		mapHandlers(type, reader, writer);
 	}
 
-	public static <T> void mapHandler(Class<T> type, Reader<T> reader, Writer<T> writer) {
+	public static <T> void mapHandlers(Class<T> type, Reader<T> reader, Writer<T> writer) {
 		Class<T[]> arrayType = (Class<T[]>) Array.newInstance(type, 0).getClass();
 
 		Reader<T[]> arrayReader = (buf, field) -> {

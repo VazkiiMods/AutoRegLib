@@ -10,17 +10,17 @@
  */
 package vazkii.arl.network;
 
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fml.network.NetworkDirection;
-import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
-
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.simple.SimpleChannel;
 
 public class NetworkHandler {
 	
@@ -48,10 +48,10 @@ public class NetworkHandler {
 		
 		Function<FriendlyByteBuf, T> decoder = (buf) -> {
 			try {
-				T msg = clazz.newInstance();
+				T msg = clazz.getDeclaredConstructor().newInstance();
 				MessageSerializer.readObject(msg, buf);
 				return msg;
-			} catch (InstantiationException | IllegalAccessException e) {
+			} catch (ReflectiveOperationException e) {
 				throw new RuntimeException(e);
 			} 
 		};

@@ -8,7 +8,7 @@
  *
  * File Created @ [10/01/2016, 15:13:46 (GMT)]
  */
-package vazkii.arl.block.tile;
+package vazkii.arl.block.be;
 
 import javax.annotation.Nonnull;
 
@@ -18,6 +18,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraftforge.common.capabilities.Capability;
@@ -25,10 +27,10 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
 
-public abstract class TileSimpleInventory extends TileMod implements WorldlyContainer {
+public abstract class SimpleInventoryBlockEntity extends ARLBlockEntity implements WorldlyContainer {
 
-	public TileSimpleInventory(BlockEntityType<?> tileEntityTypeIn) {
-		super(tileEntityTypeIn);
+	public SimpleInventoryBlockEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
+		super(tileEntityTypeIn, pos, state);
 	}
 
 	protected NonNullList<ItemStack> inventorySlots = NonNullList.withSize(getContainerSize(), ItemStack.EMPTY);

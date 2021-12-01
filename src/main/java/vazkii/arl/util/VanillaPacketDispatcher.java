@@ -12,6 +12,8 @@ package vazkii.arl.util;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
@@ -23,7 +25,7 @@ public final class VanillaPacketDispatcher {
 	public static void dispatchTEToNearbyPlayers(BlockEntity tile) {
 		Level world = tile.getLevel();
 		if(world instanceof ServerLevel) {
-			ClientboundBlockEntityDataPacket packet = tile.getUpdatePacket();
+			Packet<ClientGamePacketListener> packet = tile.getUpdatePacket();
 			BlockPos pos = tile.getBlockPos();
 			
 			for(Player player : world.players()) {

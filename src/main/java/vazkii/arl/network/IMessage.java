@@ -2,7 +2,7 @@ package vazkii.arl.network;
 
 import java.io.Serializable;
 
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 
 public interface IMessage extends Serializable {
 

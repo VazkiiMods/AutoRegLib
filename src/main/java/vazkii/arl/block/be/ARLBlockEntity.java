@@ -8,22 +8,23 @@
  *
  * File Created @ [Jan 21, 2014, 9:18:28 PM (GMT)]
  */
-package vazkii.arl.block.tile;
+package vazkii.arl.block.be;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import vazkii.arl.util.VanillaPacketDispatcher;
 
-public abstract class TileMod extends BlockEntity {
+public abstract class ARLBlockEntity extends BlockEntity {
 
-	public TileMod(BlockEntityType<?> tileEntityTypeIn) {
-		super(tileEntityTypeIn);
+	public ARLBlockEntity(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
+		super(tileEntityTypeIn, pos, state);
 	}
 
 	@Nonnull
@@ -36,8 +37,8 @@ public abstract class TileMod extends BlockEntity {
 	}
 
 	@Override
-	public void load(BlockState p_230337_1_, CompoundTag p_230337_2_) {
-		super.load(p_230337_1_, p_230337_2_);
+	public void load(CompoundTag p_230337_2_) {
+		super.load(p_230337_2_);
 
 		readSharedNBT(p_230337_2_);
 	}
@@ -58,7 +59,7 @@ public abstract class TileMod extends BlockEntity {
 	public ClientboundBlockEntityDataPacket getUpdatePacket() {
 		CompoundTag cmp = new CompoundTag();
 		writeSharedNBT(cmp);
-		return new ClientboundBlockEntityDataPacket(getBlockPos(), 0, cmp);
+		return ClientboundBlockEntityDataPacket.create(this);
 	}
 	
 	@Override
