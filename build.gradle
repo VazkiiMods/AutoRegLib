@@ -203,11 +203,6 @@ publishing {
             artifact sourcesJar {
                 classifier 'sources'
             }
-
-            artifact javadocJar {
-                classifier 'javadoc'
-            }
-
         }
     }
 
