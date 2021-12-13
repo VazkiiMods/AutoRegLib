@@ -1,2 +1,2 @@
-gradlew.bat
+gradlew build sortArtifacts incrementBuildNumber
 pause
