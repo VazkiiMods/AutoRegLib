@@ -56,16 +56,18 @@ public abstract class ARLBlockEntity extends BlockEntity {
 	}
 	
 	@Override
-	public ClientboundBlockEntityDataPacket getUpdatePacket() {
+	public CompoundTag getUpdateTag() {
 		CompoundTag cmp = new CompoundTag();
 		writeSharedNBT(cmp);
-		return ClientboundBlockEntityDataPacket.create(this);
+		return cmp;
 	}
 	
 	@Override
 	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket packet) {
 		super.onDataPacket(net, packet);
-		readSharedNBT(packet.getTag());
+		
+		if(packet != null)
+			readSharedNBT(packet.getTag());
 	}
 
 }
