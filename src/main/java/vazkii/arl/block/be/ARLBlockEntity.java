@@ -10,8 +10,6 @@
  */
 package vazkii.arl.block.be;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
@@ -27,20 +25,18 @@ public abstract class ARLBlockEntity extends BlockEntity {
 		super(tileEntityTypeIn, pos, state);
 	}
 
-	@Nonnull
 	@Override
-	public CompoundTag save(CompoundTag par1nbtTagCompound) {
-		CompoundTag nbt = super.save(par1nbtTagCompound);
-
-		writeSharedNBT(par1nbtTagCompound);
-		return nbt;
+	protected void saveAdditional(CompoundTag nbt) {
+		super.saveAdditional(nbt);
+		
+		writeSharedNBT(nbt);
 	}
 
 	@Override
-	public void load(CompoundTag p_230337_2_) {
-		super.load(p_230337_2_);
+	public void load(CompoundTag nbt) {
+		super.load(nbt);
 
-		readSharedNBT(p_230337_2_);
+		readSharedNBT(nbt);
 	}
 
 	public void writeSharedNBT(CompoundTag cmp) {
