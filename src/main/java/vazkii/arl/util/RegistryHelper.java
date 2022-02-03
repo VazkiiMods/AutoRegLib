@@ -131,14 +131,16 @@ public final class RegistryHelper {
 			Pair<Block, IBlockColorProvider> pair = blockColors.poll();
 			BlockColor color = pair.getSecond().getBlockColor();
 
-			bcolors.register(color, pair.getFirst());
+			if (color != null)
+				bcolors.register(color, pair.getFirst());
 		}
 
 		while(!itemColors.isEmpty()) {
 			Pair<Item, IItemColorProvider> pair = itemColors.poll();
 			ItemColor color = pair.getSecond().getItemColor();
 
-			icolors.register(color, pair.getFirst());
+			if (color != null)
+				icolors.register(color, pair.getFirst());
 		}
 
 		return true;
