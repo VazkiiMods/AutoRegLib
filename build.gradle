@@ -1,7 +1,6 @@
 buildscript {
     repositories {
         maven { url = 'https://maven.minecraftforge.net' }
-        jcenter()
         mavenCentral()
     }
     dependencies {
@@ -20,7 +19,11 @@ version = "${config.version}-${config.build_number}"
 group = "vazkii.${config.mod_id}" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = config.mod_name
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(17)
+    withSourcesJar()
+}
+
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 
 if (System.getenv('BUILD_NUMBER') != null) {
@@ -50,7 +53,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             mods {
-                examplemod {
+                autoreglib {
                     source sourceSets.main
                 }
             }
@@ -66,7 +69,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             mods {
-                examplemod {
+                autoreglib {
                     source sourceSets.main
                 }
             }
@@ -147,18 +150,12 @@ jar {
     exclude "**/unused"
 }
 
-task sourcesJar(type: Jar) {
-    classifier = "sources"
-    from sourceSets.main.allJava
-}
-
 task deobfJar(type: Jar) {
     classifier = "deobf"
     from sourceSets.main.output
 }
 
 artifacts {
-    archives sourcesJar
     archives deobfJar
 }
 
@@ -185,10 +182,6 @@ publishing {
                     println 'Surpressing artifact ' + dep.artifactId.last().value().last() + ' from maven dependencies.'
                     assert dep.parent().remove(dep)
                 }
-            }
-
-            artifact sourcesJar {
-                classifier 'sources'
             }
         }
     }
