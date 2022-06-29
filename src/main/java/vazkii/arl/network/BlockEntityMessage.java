@@ -11,6 +11,7 @@
 package vazkii.arl.network;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -28,7 +29,7 @@ public abstract class BlockEntityMessage<T extends BlockEntity> implements IMess
 
 	public BlockEntityMessage(BlockPos pos, BlockEntityType<T> type) {
 		this.pos = pos;	
-		typeExpected = type.getRegistryName();
+		typeExpected = Registry.BLOCK_ENTITY_TYPE.getKey(type);
 	}
 	
 	@SuppressWarnings({ "deprecation", "unchecked" })
@@ -37,7 +38,7 @@ public abstract class BlockEntityMessage<T extends BlockEntity> implements IMess
 		ServerLevel world = context.getSender().getLevel();
 		if(world.hasChunkAt(pos)) {
 			BlockEntity tile = world.getBlockEntity(pos);
-			if(tile != null && tile.getType().getRegistryName().equals(typeExpected))
+			if(tile != null && Registry.BLOCK_ENTITY_TYPE.getKey(tile.getType()).equals(typeExpected))
 				context.enqueueWork(() -> receive((T) tile, context));
 		}
 		

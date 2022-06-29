@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
-  <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="AutoRegLib"/>
-  <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="cpw.mods.bootstraplauncher.BootstrapLauncher"/>
-  <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dforge.logging.console.level=debug -Dforge.logging.markers=SCAN,REGISTRIES,REGISTRYDUMP -DlegacyClassPath.file=E:\MCPDev\AutoRegLib\build\classpath\runClient_minecraftClasspath.txt -DignoreList=bootstraplauncher,securejarhandler,asm-commons,asm-util,asm-analysis,asm-tree,asm,client-extra,fmlcore,javafmllanguage,mclanguage,forge- -DnativesDirectory=E:\MCPDev\AutoRegLib\build\natives -DmergeModules=jna-5.8.0.jar,jna-platform-58.0.jar,java-objc-bridge-1.0.0.jar -p E:\Gradle\cache\caches\modules-2\files-2.1\cpw.mods\bootstraplauncher\0.1.17\899fb8e3912bb7d14a6f9611de117f77db710ec3\bootstraplauncher-0.1.17.jar;E:\Gradle\cache\caches\modules-2\files-2.1\cpw.mods\securejarhandler\0.9.54\24b670f2c026ec9777e64a2c2126ebc8635dbe8d\securejarhandler-0.9.54.jar;E:\Gradle\cache\caches\modules-2\files-2.1\org.ow2.asm\asm-commons\9.1\8b971b182eb5cf100b9e8d4119152d83e00e0fdd\asm-commons-9.1.jar;E:\Gradle\cache\caches\modules-2\files-2.1\org.ow2.asm\asm-util\9.1\36464a45d871779f3383a8a9aba2b26562a86729\asm-util-9.1.jar;E:\Gradle\cache\caches\modules-2\files-2.1\org.ow2.asm\asm-analysis\9.1\4f61b83b81d8b659958f4bcc48907e93ecea55a0\asm-analysis-9.1.jar;E:\Gradle\cache\caches\modules-2\files-2.1\org.ow2.asm\asm-tree\9.1\c333f2a855069cb8eb17a40a3eb8b1b67755d0eb\asm-tree-9.1.jar;E:\Gradle\cache\caches\modules-2\files-2.1\org.ow2.asm\asm\9.1\a99500cf6eea30535eeac6be73899d048f8d12a8\asm-9.1.jar --add-modules ALL-MODULE-PATH --add-opens java.base/java.util.jar=cpw.mods.securejarhandler --add-exports java.base/sun.security.util=cpw.mods.securejarhandler --add-exports jdk.naming.dns/com.sun.jndi.dns=java.naming -XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump &quot;-Dos.name=Windows 10&quot; -Dos.version=10.0"/>
-  <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="--launchTarget forgeclientuserdev --version MOD_DEV --assetIndex 1.18 --assetsDir E:\Gradle\cache\caches\forge_gradle\assets --gameDir . --fml.forgeVersion 38.0.4 --fml.mcVersion 1.18 --fml.forgeGroup net.minecraftforge --fml.mcpVersion 20211130.085255"/>
-  <stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="E:\MCPDev\AutoRegLib\run"/>
-  <mapAttribute key="org.eclipse.debug.core.environmentVariables">
-    <mapEntry key="MOD_CLASSES" value="examplemod%%E:\MCPDev\AutoRegLib\bin\main;examplemod%%E:\MCPDev\AutoRegLib\bin\main"/>
-    <mapEntry key="MCP_MAPPINGS" value="official_1.18"/>
-  </mapAttribute>
+    <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+        <listEntry value="/AutoRegLib"/>
+    </listAttribute>
+    <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+        <listEntry value="4"/>
+    </listAttribute>
+    <mapAttribute key="org.eclipse.debug.core.environmentVariables">
+        <mapEntry key="MCP_MAPPINGS" value="official_1.19"/>
+        <mapEntry key="MOD_CLASSES" value="examplemod%%E:\MCPDev\AutoRegLib\bin\main;examplemod%%E:\MCPDev\AutoRegLib\bin\main"/>
+    </mapAttribute>
+    <booleanAttribute key="org.eclipse.jdt.launching.ATTR_ATTR_USE_ARGFILE" value="false"/>
+    <booleanAttribute key="org.eclipse.jdt.launching.ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES" value="true"/>
+    <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_CLASSPATH_ONLY_JAR" value="false"/>
+    <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="cpw.mods.bootstraplauncher.BootstrapLauncher"/>
+    <stringAttribute key="org.eclipse.jdt.launching.MODULE_NAME" value="AutoRegLib"/>
+    <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="--launchTarget forgeclientuserdev --version MOD_DEV --assetIndex 1.18 --assetsDir E:\Gradle\cache\caches\forge_gradle\assets --gameDir . --fml.forgeVersion 41.0.16 --fml.mcVersion 1.19 --fml.forgeGroup net.minecraftforge --fml.mcpVersion 20220607.102129"/>
+    <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="AutoRegLib"/>
+    <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dforge.logging.console.level=debug -Dforge.logging.markers=SCAN,REGISTRIES,REGISTRYDUMP -DlegacyClassPath.file=E:\MCPDev\AutoRegLib\build\classpath\runClient_minecraftClasspath.txt -DignoreList=bootstraplauncher,securejarhandler,asm-commons,asm-util,asm-analysis,asm-tree,asm,client-extra,fmlcore,javafmllanguage,lowcodelanguage,mclanguage,forge- -DnativesDirectory=E:\MCPDev\AutoRegLib\build\natives -DmergeModules=jna-5.10.0.jar,jna-platform-5.10.0.jar,java-objc-bridge-1.0.0.jar -Dforge.enableGameTest=true -p E:\Gradle\cache\caches\modules-2\files-2.1\cpw.mods\bootstraplauncher\1.0.0\f55ddbb35612c6745cefc47d1a0d6dbfb25d3982\bootstraplauncher-1.0.0.jar;E:\Gradle\cache\caches\modules-2\files-2.1\cpw.mods\securejarhandler\1.0.3\acbf5e3c8a38fb8bf824a54fe45eee121c510392\securejarhandler-1.0.3.jar;E:\Gradle\cache\caches\modules-2\files-2.1\org.ow2.asm\asm-commons\9.3\1f2a432d1212f5c352ae607d7b61dcae20c20af5\asm-commons-9.3.jar;E:\Gradle\cache\caches\modules-2\files-2.1\org.ow2.asm\asm-util\9.3\9595bc05510d0bd4b610188b77333fe4851a1975\asm-util-9.3.jar;E:\Gradle\cache\caches\modules-2\files-2.1\org.ow2.asm\asm-analysis\9.3\4b071f211b37c38e0e9f5998550197c8593f6ad8\asm-analysis-9.3.jar;E:\Gradle\cache\caches\modules-2\files-2.1\org.ow2.asm\asm-tree\9.3\78d2ecd61318b5a58cd04fb237636c0e86b77d97\asm-tree-9.3.jar;E:\Gradle\cache\caches\modules-2\files-2.1\org.ow2.asm\asm\9.3\8e6300ef51c1d801a7ed62d07cd221aca3a90640\asm-9.3.jar --add-modules ALL-MODULE-PATH --add-opens java.base/java.util.jar=cpw.mods.securejarhandler --add-exports java.base/sun.security.util=cpw.mods.securejarhandler --add-exports jdk.naming.dns/com.sun.jndi.dns=java.naming -XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump &quot;-Dos.name=Windows 10&quot; -Dos.version=10.0"/>
+    <stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="E:\MCPDev\AutoRegLib\run"/>
 </launchConfiguration>
