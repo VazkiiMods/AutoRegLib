@@ -31,6 +31,7 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.GameData;
+import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegisterEvent;
 import vazkii.arl.AutoRegLib;
 import vazkii.arl.interf.IBlockColorProvider;
@@ -80,7 +81,7 @@ public final class RegistryHelper {
 	
 	@SubscribeEvent
 	public static void onRegistryEvent(RegisterEvent event) {
-		getCurrentModData().register(event.getRegistryKey(), event.getVanillaRegistry());
+		getCurrentModData().register(event.getRegistryKey(), event.getForgeRegistry());
 	}
 
 	public static void registerBlock(Block block, String resloc) {
@@ -170,15 +171,20 @@ public final class RegistryHelper {
 		private ArrayListMultimap<ResourceLocation, Supplier<Object>> defers = ArrayListMultimap.create();
 
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		private <T>  void register(ResourceKey<? extends Registry<?>> key, Registry<T> registry) {
+		private <T>  void register(ResourceKey<? extends Registry<?>> key, IForgeRegistry<T> registry) {
 			ResourceLocation registryRes = key.location();
 
 			if(defers.containsKey(registryRes)) {
+				if(registry == null) {
+					AutoRegLib.LOGGER.error(registryRes + " does not have a forge registry");
+					return;
+				}
+				
 				Collection<Supplier<Object>> ourEntries = defers.get(registryRes);
 				for(Supplier<Object> supplier : ourEntries) {
 					T entry = (T) supplier.get();
 					ResourceLocation name = getInternalName(entry);
-					Registry.register(registry, name, entry);
+					registry.register(name, entry);
 					AutoRegLib.LOGGER.debug("Registering to " + registryRes + " - " + name);
 				}
 
