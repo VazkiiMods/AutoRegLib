@@ -59,7 +59,7 @@ public final class RegistryHelper {
 		return data;
 	}
 	
-	public static <T> ResourceLocation getRegistryName(T obj, Registry<T> registry) {
+	public static <T> ResourceLocation getRegistryName(T obj, IForgeRegistry<T> registry) {
 		if(internalNames.containsKey(obj))
 			return getInternalName(obj);
 		
@@ -76,7 +76,7 @@ public final class RegistryHelper {
 	
 	@SubscribeEvent
 	public static void onRegistryEvent(RegisterEvent event) {
-		getCurrentModData().register(event.getRegistryKey(), event.getForgeRegistry());
+		getCurrentModData().register(event.getForgeRegistry());
 	}
 
 	public static void registerBlock(Block block, String resloc) {
@@ -110,14 +110,14 @@ public final class RegistryHelper {
 		getCurrentModData().defers.put(registry.getRegistryName(), () -> obj);
 	}
 
-	public static <T> void register(T obj, ResourceKey<Registry<T>> registry) {
-		if(obj == null)
-			throw new IllegalArgumentException("Can't register null object.");
-		if(getInternalName(obj) == null)
-			throw new IllegalArgumentException("Can't register object without registry name.");
-
-		getCurrentModData().defers.put(registry.location(), () -> obj);
-	}
+//	public static <T> void register(T obj, ResourceKey<Registry<T>> registry) {
+//		if(obj == null)
+//			throw new IllegalArgumentException("Can't register null object.");
+//		if(getInternalName(obj) == null)
+//			throw new IllegalArgumentException("Can't register object without registry name.");
+//
+//		getCurrentModData().defers.put(registry.location(), () -> obj);
+//	}
 
 	public static void setCreativeTab(ItemLike itemlike, CreativeModeTab group) {
 		ResourceLocation res = getInternalName(itemlike);
@@ -141,16 +141,11 @@ public final class RegistryHelper {
 
 		private ArrayListMultimap<ResourceLocation, Supplier<Object>> defers = ArrayListMultimap.create();
 
-		@SuppressWarnings({ "rawtypes", "unchecked" })
-		private <T>  void register(ResourceKey<? extends Registry<?>> key, IForgeRegistry<T> registry) {
-			ResourceLocation registryRes = key.location();
+		@SuppressWarnings({ "unchecked" })
+		private <T>  void register(IForgeRegistry<T> registry) {
+			ResourceLocation registryRes = registry.getRegistryName();
 
 			if(defers.containsKey(registryRes)) {
-				if(registry == null) {
-					AutoRegLib.LOGGER.error(registryRes + " does not have a forge registry");
-					return;
-				}
-				
 				Collection<Supplier<Object>> ourEntries = defers.get(registryRes);
 				for(Supplier<Object> supplier : ourEntries) {
 					T entry = (T) supplier.get();
