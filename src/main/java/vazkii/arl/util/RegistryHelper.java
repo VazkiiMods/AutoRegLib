@@ -3,7 +3,6 @@ package vazkii.arl.util;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Queue;
 import java.util.function.BiConsumer;
@@ -20,10 +19,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegisterEvent;
@@ -83,11 +84,11 @@ public final class RegistryHelper {
 	}
 
 	public static void registerBlock(Block block, String resloc, boolean hasBlockItem) {
-		register(block, resloc, Registry.BLOCK_REGISTRY);
+		register(block, resloc, ForgeRegistries.BLOCKS);
 
 		if(hasBlockItem) {
 			ModData data = getCurrentModData();
-			data.defers.put(Registry.ITEM_REGISTRY.location(), () -> data.createItemBlock(block));
+			data.defers.put(ForgeRegistries.ITEMS.getRegistryName(), () -> data.createItemBlock(block));
 		}
 
 		if(block instanceof IBlockColorProvider)
@@ -95,18 +96,18 @@ public final class RegistryHelper {
 	}
 
 	public static void registerItem(Item item, String resloc) {
-		register(item, resloc, Registry.ITEM_REGISTRY);
+		register(item, resloc, ForgeRegistries.ITEMS);
 
 		if(item instanceof IItemColorProvider)
 			itemColors.add(Pair.of(item, (IItemColorProvider) item));
 	}
 	
-	public static <T> void register(T obj, String resloc, ResourceKey<Registry<T>> registry) {
+	public static <T> void register(T obj, String resloc, IForgeRegistry<T> registry) {
 		if(obj == null)
 			throw new IllegalArgumentException("Can't register null object.");
 
 		setInternalName(obj, GameData.checkPrefix(resloc, false));
-		getCurrentModData().defers.put(registry.location(), () -> obj);
+		getCurrentModData().defers.put(registry.getRegistryName(), () -> obj);
 	}
 
 	public static <T> void register(T obj, ResourceKey<Registry<T>> registry) {
@@ -118,12 +119,12 @@ public final class RegistryHelper {
 		getCurrentModData().defers.put(registry.location(), () -> obj);
 	}
 
-	public static void setCreativeTab(Block block, CreativeModeTab group) {
-		ResourceLocation res = getInternalName(block);
+	public static void setCreativeTab(ItemLike itemlike, CreativeModeTab group) {
+		ResourceLocation res = getInternalName(itemlike);
 		if(res == null)
-			throw new IllegalArgumentException("Can't set the creative tab for a block without a registry name yet");
+			throw new IllegalArgumentException("Can't set the creative tab for an ItemLike without a registry name yet");
 
-		getCurrentModData().groups.put(res, group);
+		CreativeTabHandler.itemsPerCreativeTab.put(group, itemlike);
 	}
 
 	public static void submitBlockColors(BiConsumer<BlockColor, Block> consumer) {
@@ -137,8 +138,6 @@ public final class RegistryHelper {
 	}
 
 	private static class ModData {
-
-		private Map<ResourceLocation, CreativeModeTab> groups = new LinkedHashMap<>();
 
 		private ArrayListMultimap<ResourceLocation, Supplier<Object>> defers = ArrayListMultimap.create();
 
@@ -167,10 +166,6 @@ public final class RegistryHelper {
 		private Item createItemBlock(Block block) {
 			Item.Properties props = new Item.Properties();
 			ResourceLocation registryName = getInternalName(block);
-
-			CreativeModeTab group = groups.get(registryName);
-			if(group != null)
-				props = props.tab(group);
 
 			if(block instanceof IItemPropertiesFiller)
 				((IItemPropertiesFiller) block).fillItemProperties(props);
