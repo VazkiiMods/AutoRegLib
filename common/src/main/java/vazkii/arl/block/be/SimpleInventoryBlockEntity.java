@@ -10,8 +10,6 @@
  */
 package vazkii.arl.block.be;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.item.ItemStack;
@@ -22,10 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.wrapper.SidedInvWrapper;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class SimpleInventoryBlockEntity extends ARLBlockEntity implements WorldlyContainer {
 
@@ -137,15 +132,16 @@ public abstract class SimpleInventoryBlockEntity extends ARLBlockEntity implemen
 	public boolean stillValid(@NotNull Player entityplayer) {
 		return getLevel().getBlockEntity(getBlockPos()) == this && entityplayer.distanceToSqr(worldPosition.getX() + 0.5D, worldPosition.getY() + 0.5D, worldPosition.getZ() + 0.5D) <= 64;
 	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, Direction facing) {
-		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-			return (LazyOptional<T>) LazyOptional.of(() -> new SidedInvWrapper(this, facing));
-		
-		return LazyOptional.empty();
-	}
+
+	// TODO Fix if needed
+//	@SuppressWarnings("unchecked")
+//	@Override
+//	public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, Direction facing) {
+//		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+//			return (LazyOptional<T>) LazyOptional.of(() -> new SidedInvWrapper(this, facing));
+//
+//		return LazyOptional.empty();
+//	}
 
 	@Override
 	public boolean canPlaceItem(int i, @NotNull ItemStack itemstack) {

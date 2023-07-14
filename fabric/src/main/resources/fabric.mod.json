@@ -5,7 +5,7 @@
 
   "name": "AutoRegLib",
   "description": "Automatically item, block, and model registration for mods.",
-  "authors": ["Vazkii", "IThundxr"],
+  "authors": ["Vazkii"],
   "contact": {
     "sources": "https://github.com/Vazkii/AutoRegLib"
   },

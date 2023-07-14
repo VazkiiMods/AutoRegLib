@@ -1,43 +1,29 @@
 package vazkii.arl.util;
 
-import java.util.ArrayDeque;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Queue;
-import java.util.function.BiConsumer;
-import java.util.function.Supplier;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.mojang.datafixers.util.Pair;
-
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.client.color.item.ItemColor;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.GameData;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.RegisterEvent;
-import org.jetbrains.annotations.ApiStatus;
-import vazkii.arl.AutoRegLib;
 import vazkii.arl.interf.IBlockColorProvider;
 import vazkii.arl.interf.IBlockItemProvider;
 import vazkii.arl.interf.IItemColorProvider;
 import vazkii.arl.interf.IItemPropertiesFiller;
 
-public final class RegistryHelper {
+import java.util.ArrayDeque;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Queue;
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
+public final class RegistryHelper {
 	//private static final Map<String, ModData> modData = new HashMap<>();
 
 	private static final Queue<Pair<Item, IItemColorProvider>> itemColors = new ArrayDeque<>();
@@ -65,6 +51,7 @@ public final class RegistryHelper {
 		return internalNames.get(obj);
 	}
 
+	// FIXME
 //	//@SubscribeEvent
 //	@ExpectPlatform
 //	public static void onRegistryEvent(RegisterEvent event) {
@@ -75,6 +62,7 @@ public final class RegistryHelper {
 		registerBlock(block, resloc, true);
 	}
 
+	// FIXME
 	public static void registerBlock(Block block, String resloc, boolean hasBlockItem) {
 		register(block, resloc, ForgeRegistries.BLOCKS);
 
@@ -87,6 +75,7 @@ public final class RegistryHelper {
 			blockColors.add(Pair.of(block, (IBlockColorProvider) block));
 	}
 
+	// FIXME
 	public static void registerItem(Item item, String resloc) {
 		register(item, resloc, ForgeRegistries.ITEMS);
 
@@ -158,5 +147,4 @@ public final class RegistryHelper {
 		}
 
 	}
-
 }

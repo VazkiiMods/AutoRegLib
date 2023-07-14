@@ -15,7 +15,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 
 public final class ItemNBTHelper {
-
 	/** Checks if an ItemStack has a Tag Compound **/
 	public static boolean detectNBT(ItemStack stack) {
 		return stack.hasTag();
@@ -138,5 +137,4 @@ public final class ItemNBTHelper {
 	public static ListTag getList(ItemStack stack, String tag, int objtype, boolean nullifyOnFail) {
 		return verifyExistence(stack, tag) ? getNBT(stack).getList(tag, objtype) : nullifyOnFail ? null : new ListTag();
 	}
-
 }

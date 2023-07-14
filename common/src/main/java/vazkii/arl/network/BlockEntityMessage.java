@@ -15,9 +15,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.registries.ForgeRegistries;
 
+// FIXME
 public abstract class BlockEntityMessage<T extends BlockEntity> implements IMessage {
 
 	private static final long serialVersionUID = 4703277631856386752L;

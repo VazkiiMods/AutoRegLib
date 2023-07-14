@@ -4,7 +4,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Rotation;
 
 public final class RotationHandler {
-
 	private static final Rotation[] FACING_TO_ROTATION = new Rotation[] {
 			Rotation.NONE,
 			Rotation.NONE,
@@ -34,5 +33,4 @@ public final class RotationHandler {
 			default -> new int[]{x, z};
 		};
 	}
-
 }

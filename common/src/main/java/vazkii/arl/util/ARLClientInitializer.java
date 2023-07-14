@@ -1,11 +1,8 @@
 package vazkii.arl.util;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RegisterColorHandlersEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 import vazkii.arl.AutoRegLib;
 
+// FIXME
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = AutoRegLib.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ARLClientInitializer {
 	@SubscribeEvent

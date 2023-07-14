@@ -23,7 +23,6 @@ import net.minecraft.network.chat.Component;
 
 @SuppressWarnings({ "unchecked", "rawtypes", "unused" })
 public final class MessageSerializer {
-
 	private static final HashMap<Class<?>, Pair<Reader, Writer>> handlers = new HashMap<>();
 	private static final HashMap<Class<?>, Field[]> fieldCache = new HashMap<>();
 
@@ -182,5 +181,4 @@ public final class MessageSerializer {
 	public static interface Writer<T> {
 		public void write(FriendlyByteBuf buf, Field field, T t);
 	}
-
 }

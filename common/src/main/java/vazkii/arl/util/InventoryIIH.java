@@ -1,16 +1,10 @@
 package vazkii.arl.util;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 
+// FIXME
 public class InventoryIIH implements IItemHandlerModifiable {
-
 	private final IItemHandlerModifiable iih;
 	final ItemStack stack;
 

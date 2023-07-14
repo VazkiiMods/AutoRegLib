@@ -7,5 +7,5 @@ license="https://github.com/Vazkii/AutoRegLib/blob/master/README.md"
 modId = "autoreglib"
 displayName = "AutoRegLib"
 version = "${version}"
-authors="Vazkii, IThundxr"
+authors="Vazkii"
 description='''Automatically item, block, and model registration for mods.'''
