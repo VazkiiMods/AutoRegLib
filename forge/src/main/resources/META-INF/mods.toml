@@ -1,0 +1,11 @@
+modLoader = "javafml"
+loaderVersion = "[${forge_version},)"
+issueTrackerURL="https://github.com/Vazkii/AutoRegLib"
+license="https://github.com/Vazkii/AutoRegLib/blob/master/README.md"
+
+[[mods]]
+modId = "autoreglib"
+displayName = "AutoRegLib"
+version = "${version}"
+authors="Vazkii, IThundxr"
+description='''Automatically item, block, and model registration for mods.'''

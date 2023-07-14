@@ -2,30 +2,30 @@
 Thumbs.db
 
 ## gradle
-/.gradle
-/build
+.gradle/
+build/
 
 ## ForgeGradle
-/run
+run/
 
 ## eclipse
-/.settings
-/.metadata
-/.classpath
-/.project
-/eclipse
-/bin
+.settings/
+.metadata/
+.classpath/
+.project/
+eclipse/
+bin/
 
 ## intellij
-/out
-/.idea
-/atlassian-ide-plugin.xml
-/*.ipr
-/*.iws
-/*.iml
+out/
+.idea/
+atlassian-ide-plugin.xml
+*.ipr/
+*.iws/
+*.iml/
 
 ## Private Stuffs
-/private.properties
+private.properties/
 
 ## Jars
 *.jar

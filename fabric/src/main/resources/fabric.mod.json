@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "autoreglib",
+  "version": "${version}",
+
+  "name": "AutoRegLib",
+  "description": "Automatically item, block, and model registration for mods.",
+  "authors": ["Vazkii", "IThundxr"],
+  "contact": {
+    "sources": "https://github.com/Vazkii/AutoRegLib"
+  },
+
+  "license": "https://github.com/Vazkii/AutoRegLib/blob/master/README.md",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "vazkii.arl.fabric.AutoRegLibImpl"
+    ]
+  }
+}
